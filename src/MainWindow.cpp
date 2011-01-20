@@ -54,6 +54,7 @@ MainWindow::MainWindow()
   updateSaveAction();
   readSettings();
   setUnifiedTitleAndToolBarOnMac(true);
+  setWindowTitle(tr("%1 - v%2").arg(SETTING_APPLICATION).arg(VERSION));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -208,12 +209,11 @@ void MainWindow::deleteSymbol()
 
 void MainWindow::about()
 {
-    QString abouttext = SETTING_APPLICATION;
-    abouttext.append(" ");
-    abouttext.append(VERSION);
-    abouttext.append("\n");
-    abouttext.append(tr( "tesseract box files editor\n\nCopyright 2010 Marcel Kolodziejczyk\nCopyright 2011, Zdenko Podobný\n"));
-    abouttext.append(tr( "\nThis software is released under <a href=\"http://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a>\n"));
+    QString abouttext = tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(VERSION);
+    abouttext.append(tr( "<p>tesseract box files editor</p>"));
+    abouttext.append(tr( "<p>Copyright 2010 Marcel Kolodziejczyk,<br/>Copyright 2011 Zdenko Podobný</p>"));
+    abouttext.append(tr( "<p>This software is released under "
+                     "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a></p>"));
     QMessageBox::about(this, tr("About application"), abouttext);
 }
 
@@ -376,6 +376,9 @@ void MainWindow::createActions()
   aboutAct = new QAction(QIcon(":/images/about.png"), tr("&About"), this);
   aboutAct->setStatusTip(tr("Show the application's About box"));
   connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
+  
+  aboutQtAct = new QAction(tr("About &Qt"), this);
+  connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
 
 void MainWindow::createMenus()
@@ -404,6 +407,7 @@ void MainWindow::createMenus()
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
   helpMenu->addAction(aboutAct);
+  helpMenu->addAction(aboutQtAct);
 }
 
 void MainWindow::createToolBars()

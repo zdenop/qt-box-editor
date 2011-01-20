@@ -108,6 +108,7 @@ private:
     QAction *joinAct;
     QAction *deleteAct;
     QAction *aboutAct;
+    QAction *aboutQtAct;
 };
 
 #endif /* MAINWINDOW_H_ */

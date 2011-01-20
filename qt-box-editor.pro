@@ -1,6 +1,6 @@
-TARGET = qt-box-editor
 TEMPLATE = app
 VERSION = 1.00
+TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
     resource/images \
@@ -25,7 +25,10 @@ HEADERS += src/include/MainWindow.h \
 
 RESOURCES = resources/application.qrc
 
-#RC_FILE = resource/win.rc
-DESTDIR = ./win32
-DIR_SEPARATOR = \
-CONFIG   += console
+win32: {
+    DESTDIR = ./win32
+    DIR_SEPARATOR = \
+    CONFIG += static release embed_manifest_exe
+    TMAKE_CXXFLAGS += -DQT_NODLL 
+    TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
+}
