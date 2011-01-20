@@ -5,6 +5,7 @@
  * Created:     2010-01-04
  *
  * (C) Copyright 2010, Marcel Kolodziejczyk
+ * (C) Copyright 2011, Zdenko Podobny
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -24,18 +25,24 @@
 #include <QTextCodec>
 
 #include "MainWindow.h"
+#include "settings.h"
 
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(application);
 
     QApplication app(argc, argv);
+    app.setOrganizationName(SETTING_ORGANIZATION);
+    app.setApplicationName(SETTING_APPLICATION);
+
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+
     MainWindow mainWin;
     mainWin.show();
     for (int i = 1; i < argc; ++i) {
       mainWin.addChild(argv[i]);
     }
+
     return app.exec();
 }
 

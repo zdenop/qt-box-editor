@@ -5,6 +5,7 @@
  * Created:     2010-01-04
  *
  * (C) Copyright 2010, Marcel Kolodziejczyk
+ * (C) Copyright 2011, Zdenko Podobny
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -24,6 +25,7 @@
 
 #include "MainWindow.h"
 #include "ChildWidget.h"
+#include "settings.h"
 
 MainWindow::MainWindow()
 {
@@ -206,14 +208,13 @@ void MainWindow::deleteSymbol()
 
 void MainWindow::about()
 {
-   QMessageBox::about(
-      this,
-      tr("About"),
-      tr(
-          "tesseract-gui\n\ntesseract box files editor\n\nCopyright 2010 Marcel Kolodziejczyk\n\n\"THE BEER-WARE LICENSE\" (Revision 42):\n"
-            "<mk219533 (a) students.mimuw.edu.pl> wrote this file. As long as you retain "
-            "this notice you can do whatever you want with this stuff. If we meet some day, "
-            "and you think this stuff is worth it, you can buy me a beer in return."));
+    QString abouttext = SETTING_APPLICATION;
+    abouttext.append(" ");
+    abouttext.append(VERSION);
+    abouttext.append("\n");
+    abouttext.append(tr( "tesseract box files editor\n\nCopyright 2010 Marcel Kolodziejczyk\nCopyright 2011, Zdenko Podobný\n"));
+    abouttext.append(tr( "\nThis software is released under <a href=\"http://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a>\n"));
+    QMessageBox::about(this, tr("About application"), abouttext);
 }
 
 void MainWindow::handleClose(int i)
@@ -426,7 +427,7 @@ void MainWindow::createToolBars()
 
 void MainWindow::readSettings()
 {
-  QSettings settings("", "tesseract-gui");
+  QSettings settings;
   QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
   QSize size = settings.value("size", QSize(400, 400)).toSize();
   move(pos);
@@ -435,7 +436,7 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-  QSettings settings("", "tesseract-gui");
+  QSettings settings;
   settings.setValue("pos", pos());
   settings.setValue("size", size());
 }
