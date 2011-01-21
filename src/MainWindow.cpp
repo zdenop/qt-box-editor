@@ -80,7 +80,7 @@ void MainWindow::open()
       this,
       QString(),
       QString(),
-      "TIFF Images (*.tif *.tiff)");
+      tr("Image files (*.bmp *.png *.jpeg *.jpg *.tif *.tiff);;Tiff files (*.tif *.tiff);;All files (*.*)"));
   addChild(imageFile);
 }
 

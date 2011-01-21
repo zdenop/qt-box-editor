@@ -32,9 +32,10 @@ ChildWidget::ChildWidget(QWidget * parent) :
   model->setHeaderData(2, Qt::Horizontal, tr("Bottom"));
   model->setHeaderData(3, Qt::Horizontal, tr("Right"));
   model->setHeaderData(4, Qt::Horizontal, tr("Top"));
-  model->setHeaderData(5, Qt::Horizontal, tr("Italic"));
-  model->setHeaderData(6, Qt::Horizontal, tr("Bold"));
-  model->setHeaderData(7, Qt::Horizontal, tr("Underline"));
+  model->setHeaderData(5, Qt::Horizontal, tr("Page"));
+  model->setHeaderData(6, Qt::Horizontal, tr("Italic"));
+  model->setHeaderData(7, Qt::Horizontal, tr("Bold"));
+  model->setHeaderData(8, Qt::Horizontal, tr("Underline"));
 
   table = new QTableView;
   table->setModel(model);
@@ -56,6 +57,7 @@ ChildWidget::ChildWidget(QWidget * parent) :
   //table->hideColumn(5);
   //table->hideColumn(6);
   //table->hideColumn(7);
+  //table->hideColumn(8);
 
   addWidget(table);
 
@@ -140,14 +142,16 @@ bool ChildWidget::loadBoxes(const QString &fileName)
       int bottom = imageHeight - pieces.value(2).toInt();
       int right = pieces.value(3).toInt();
       int top = imageHeight - pieces.value(4).toInt();
+      int page = pieces.value(5).toInt();
       model->setData(model->index(row, 0, QModelIndex()), letter);
       model->setData(model->index(row, 1, QModelIndex()), left);
       model->setData(model->index(row, 2, QModelIndex()), bottom);
       model->setData(model->index(row, 3, QModelIndex()), right);
       model->setData(model->index(row, 4, QModelIndex()), top);
-      model->setData(model->index(row, 5, QModelIndex()), italic);
-      model->setData(model->index(row, 6, QModelIndex()), bold);
-      model->setData(model->index(row, 7, QModelIndex()), underline);
+      model->setData(model->index(row, 5, QModelIndex()), page);
+      model->setData(model->index(row, 6, QModelIndex()), italic);
+      model->setData(model->index(row, 7, QModelIndex()), bold);
+      model->setData(model->index(row, 8, QModelIndex()), underline);
       row++;
     }
   } while (!line.isEmpty());
@@ -181,9 +185,10 @@ bool ChildWidget::save()
     int bottom = model->index(row, 2).data().toInt();
     int right = model->index(row, 3).data().toInt();
     int top = model->index(row, 4).data().toInt();
-    bool italic = model->index(row, 5).data().toBool();
-    bool bold = model->index(row, 6).data().toBool();
-    bool underline = model->index(row, 7).data().toBool();
+    int page = model->index(row, 5).data().toInt();
+    bool italic = model->index(row, 6).data().toBool();
+    bool bold = model->index(row, 7).data().toBool();
+    bool underline = model->index(row, 8).data().toBool();
     if (bold)
       out << "@";
     if (italic)
@@ -191,7 +196,7 @@ bool ChildWidget::save()
     if (underline)
       out << "\'";
     out << letter << " " << left << " " << imageHeight - bottom << " " << right << " "
-        << imageHeight - top << "\n";
+        << imageHeight - top << " " << page << "\n";
   }
 
   QApplication::restoreOverrideCursor();
@@ -274,6 +279,7 @@ void ChildWidget::splitSymbol()
   if (index.isValid()) {
     QModelIndex left = model->index(index.row(), 1);
     QModelIndex right = model->index(index.row(), 3);
+    QModelIndex page = model->index(index.row(), 5);
     int width = right.data().toInt() - left.data().toInt();
     model->insertRow(index.row() + 1);
     model->setData(model->index(index.row() + 1, 0), "*");
@@ -281,9 +287,10 @@ void ChildWidget::splitSymbol()
     model->setData(model->index(index.row() + 1, 2), model->index(index.row(), 2).data().toInt());
     model->setData(model->index(index.row() + 1, 3), right.data().toInt());
     model->setData(model->index(index.row() + 1, 4), model->index(index.row(), 4).data().toInt());
-    model->setData(model->index(index.row() + 1, 5), model->index(index.row(), 5).data().toBool());
-    model->setData(model->index(index.row() + 1, 6), model->index(index.row(), 6).data().toBool());
-    model->setData(model->index(index.row() + 1, 7), model->index(index.row(), 7).data().toBool());
+    model->setData(model->index(index.row() + 1, 5), page.data().toInt());
+    model->setData(model->index(index.row() + 1, 6), model->index(index.row(), 5).data().toBool());
+    model->setData(model->index(index.row() + 1, 7), model->index(index.row(), 6).data().toBool());
+    model->setData(model->index(index.row() + 1, 8), model->index(index.row(), 7).data().toBool());
     model->setData(right, right.data().toInt() - width / 2);
     drawSelectionRects();
   }
@@ -320,12 +327,14 @@ void ChildWidget::joinSymbol()
         + 1, 3).data().toInt()));
     model->setData(model->index(row, 4), min(model->index(row, 4).data().toInt(), model->index(row
         + 1, 4).data().toInt()));
-    model->setData(model->index(row, 5), model->index(row, 5).data().toBool() || model->index(row
-        + 1, 5).data().toBool());
+    model->setData(model->index(row, 5), min(model->index(row, 5).data().toInt(), model->index(row
+        + 1, 5).data().toInt()));
     model->setData(model->index(row, 6), model->index(row, 6).data().toBool() || model->index(row
         + 1, 6).data().toBool());
     model->setData(model->index(row, 7), model->index(row, 7).data().toBool() || model->index(row
         + 1, 7).data().toBool());
+    model->setData(model->index(row, 8), model->index(row, 8).data().toBool() || model->index(row
+        + 1, 8).data().toBool());
     model->removeRow(row + 1);
     drawSelectionRects();
   }
@@ -363,6 +372,7 @@ void ChildWidget::drawSelectionRects()
     int bottom = model->index(index.row(), 2).data().toInt();
     int right = model->index(index.row(), 3).data().toInt();
     int top = model->index(index.row(), 4).data().toInt();
+    int page = model->index(index.row(), 5).data().toInt();
     imageSelectionRect->setRect(QRectF(QPoint(left, top), QPointF(right, bottom)));
     imageSelectionRect->setVisible(true);
     imageView->ensureVisible(imageSelectionRect);
