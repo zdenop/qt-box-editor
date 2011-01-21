@@ -210,7 +210,8 @@ void MainWindow::deleteSymbol()
 void MainWindow::about()
 {
     QString abouttext = tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(VERSION);
-    abouttext.append(tr( "<p>tesseract box files editor</p>"));
+    abouttext.append(tr( "<p>QT4 editor of tesseract-ocr box files</p>"));
+    abouttext.append(tr( "<p>Project page: <a href=\"http://github.com/zdenop/qt-box-editor\">github.com/zdenop/qt-box-editor</a></p>"));
     abouttext.append(tr( "<p>Copyright 2010 Marcel Kolodziejczyk,<br/>Copyright 2011 Zdenko Podobný</p>"));
     abouttext.append(tr( "<p>This software is released under "
                      "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a></p>"));
