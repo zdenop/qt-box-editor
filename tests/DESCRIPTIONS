@@ -1,0 +1,9 @@
+= Description of Test Files =
+-----------------------------
+
+8.box/tif               - Polish example files
+kan01.box/png           - kannada example box files
+                          (thanks to withblessings at gmail.com)
+pangrams-stam.box/png   - RTL (Hebrew ) box file example
+                          (thanks to enrico.segre at weizmann.ac.il)
+slk.example.001.box/bmp - Slovak example files
