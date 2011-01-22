@@ -20,7 +20,22 @@
  *
  **********************************************************************/
 
-#include <QtGui>
+//#include <QtGui>
+#include <QStandardItemModel>
+#include <QTableView>
+#include <QAbstractItemView>
+#include <QGraphicsScene>
+#include <QHeaderView>
+#include <QGraphicsView>
+#include <QPixmap>
+#include <QGraphicsRectItem>
+#include <QFileInfo>
+#include <QDir>
+#include <QTextStream>
+#include <QApplication>
+#include <QDebug>
+#include <QCloseEvent>
+
 #include "ChildWidget.h"
 
 ChildWidget::ChildWidget(QWidget * parent) :

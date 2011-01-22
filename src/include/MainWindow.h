@@ -23,11 +23,22 @@
 #ifndef MAINWINDOW_H_
 #define MAINWINDOW_H_
 
+#include <QSignalMapper>
+#include <QCloseEvent>
+#include <QFileDialog>
+#include <QStatusBar>
+#include <QEventLoop>
+#include <QAction>
+#include <QMenu>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QSettings>
+#include <QMessageBox>
 #include <QMainWindow>
-#include <QUrl>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
+#include <QUrl>
 
 class ChildWidget;
 class QAction;
@@ -69,6 +80,7 @@ private slots:
     void joinSymbol();
     void deleteSymbol();
     void about();
+    void aboutQt();
     void handleClose(int i);
     void updateMenus();
     void updateFileMenu();

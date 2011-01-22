@@ -24,6 +24,7 @@
 #define CHILDWIDGET_H_
 
 #include <QSplitter>
+#include <QMessageBox>
 
 class QGraphicsScene;
 class QGraphicsView;

@@ -21,15 +21,9 @@
  *
  **********************************************************************/
 
-#include <QtGui>
-
 #include "MainWindow.h"
 #include "ChildWidget.h"
 #include "settings.h"
-
-#include <QNetworkRequest>
-#include <QNetworkReply>
-#include <QMessageBox>
 
 MainWindow::MainWindow()
 {
@@ -279,6 +273,11 @@ void MainWindow::about()
     QMessageBox::about(this, tr("About application"), abouttext);
 }
 
+void MainWindow::aboutQt()
+{
+    QMessageBox::aboutQt(this, tr("About Qt"));
+}
+
 void MainWindow::handleClose(int i)
 {
   if (tabWidget->widget(i) && tabWidget->widget(i)->close())
@@ -444,7 +443,7 @@ void MainWindow::createActions()
   connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
   
   aboutQtAct = new QAction(tr("About &Qt"), this);
-  connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+  connect(aboutQtAct, SIGNAL(triggered()), this, SLOT(aboutQt()));
 }
 
 void MainWindow::createMenus()
