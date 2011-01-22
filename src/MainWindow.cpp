@@ -27,6 +27,10 @@
 #include "ChildWidget.h"
 #include "settings.h"
 
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <stdio.h>
+
 MainWindow::MainWindow()
 {
   tabWidget = new QTabWidget;
@@ -207,6 +211,70 @@ void MainWindow::deleteSymbol()
   }
 }
 
+/* HTTP Response text from the version check
+ * Should contain the updated version number of the program
+ * (Could also be helpful in determining causes of errors)
+ */
+const QByteArray & MainWindow::httpResponse() const {
+    return _httpResponse;
+}
+
+void MainWindow::checkForUpdate()
+{
+  //not implemented yet
+    statusBar()->showMessage(tr("Checking for new version..."), 2000);
+    QNetworkAccessManager manager;
+
+    //request.setUrl(QUrl(QString("http://kludgets.com/checkUpdate.php?version="));
+    //const QUrl url = "";
+    //QNetworkRequest request;
+    QNetworkRequest request(QUrl("https://github.com/zdenop/qt-box-editor/raw/master/README"));
+
+    //request.setUrl(QUrl("https://github.com/zdenop/qt-box-editor/raw/master/README"));
+    //request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.7) Gecko/20091221 Firefox/3.5.7 (.NET CLR 3.5.30729)" );
+    QNetworkReply *reply = manager.get(request);
+    QUrl url = reply->url();
+    qDebug() << "url:" << url;
+
+    QString result = reply->readAll();
+    qDebug() << "result:" << result;
+    qDebug() << "reply:" <<  reply;
+
+    qDebug() << "reply->error():" <<  reply->error();
+
+/*
+    QEventLoop loop;
+    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
+    loop.exec();
+*/
+    //QNetworkReply *reply = manager.get( QNetworkRequest( QUrl( "https://github.com/zdenop/qt-box-editor/raw/master/README" ) ) );
+
+
+    if (reply->error() != QNetworkReply::NoError)
+    {
+        qDebug() << "reply->error():" <<  reply->error();
+        //return reply->error();
+    }
+
+     _httpResponse = reply->readAll();
+    qDebug() << "_httpResponse:" <<  _httpResponse;
+    qDebug() << "QNetworkReply::NoError:" <<  QNetworkReply::NoError;
+    qDebug() << "errorString:" << reply->errorString();
+    delete reply;
+    //return QNetworkReply::NoError;
+    /*
+    if (reply->error()) {
+        qDebug() << "errorString:" << reply->errorString();
+    }
+    else {
+        QByteArray data = reply->readAll();
+        QString datastr = QString::fromUtf8(data, data.size());
+        qDebug() << "data:" << data;
+        qDebug() << "datastr:" << datastr;
+    }*/
+
+}
+
 void MainWindow::about()
 {
     QString abouttext = tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(VERSION);
@@ -374,6 +442,10 @@ void MainWindow::createActions()
   deleteAct->setShortcut(QKeySequence::Delete);
   connect(deleteAct, SIGNAL(triggered()), this, SLOT(deleteSymbol()));
 
+  checkForUpdateAct = new QAction(tr("&Check for update"), this);
+  checkForUpdateAct->setStatusTip(tr("Check whether a newer version exits"));
+  connect(checkForUpdateAct, SIGNAL(triggered()), this, SLOT(checkForUpdate()));
+
   aboutAct = new QAction(QIcon(":/images/about.png"), tr("&About"), this);
   aboutAct->setStatusTip(tr("Show the application's About box"));
   connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
@@ -407,6 +479,8 @@ void MainWindow::createMenus()
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
+  helpMenu->addAction(checkForUpdateAct);
+  helpMenu->addSeparator();
   helpMenu->addAction(aboutAct);
   helpMenu->addAction(aboutQtAct);
 }

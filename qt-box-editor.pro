@@ -9,6 +9,8 @@ DEPENDPATH += ./ \
 INCLUDEPATH += ./ \
     src/include \
     src
+QT += network
+CONFIG += console
 
 OBJECTS_DIR += temp
 MOC_DIR += temp
@@ -21,7 +23,8 @@ SOURCES += src/main.cpp \
     src/ChildWidget.cpp
 
 HEADERS += src/include/MainWindow.h \
-    src/include/ChildWidget.h
+    src/include/ChildWidget.h \
+    src/include/settings.h
 
 RESOURCES = resources/application.qrc
 

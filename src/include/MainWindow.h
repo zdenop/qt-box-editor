@@ -24,6 +24,10 @@
 #define MAINWINDOW_H_
 
 #include <QMainWindow>
+#include <QUrl>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 class ChildWidget;
 class QAction;
@@ -34,11 +38,18 @@ class QSignalMapper;
 class MainWindow: public QMainWindow
 {
 Q_OBJECT
+QNetworkAccessManager manager;
 
 public:
   MainWindow();
 
   void addChild(const QString &imageFileName);
+
+  /* HTTP Response text from the version check
+   * Should contain the updated version number of the program
+   * (Could also be helpful in determining causes of errors)
+   */
+  const QByteArray & httpResponse() const;
 
 protected:
 
@@ -59,6 +70,7 @@ private slots:
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();
+    void checkForUpdate();
     void about();
     void handleClose(int i);
     void updateMenus();
@@ -107,8 +119,13 @@ private:
     QAction *splitAct;
     QAction *joinAct;
     QAction *deleteAct;
+    QAction *checkForUpdateAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
+
+    // Query response string
+    // (Should contain the new version number)
+    QByteArray _httpResponse;
 };
 
 #endif /* MAINWINDOW_H_ */
