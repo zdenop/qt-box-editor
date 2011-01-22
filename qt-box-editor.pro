@@ -10,7 +10,6 @@ INCLUDEPATH += ./ \
     src/include \
     src
 QT += network
-CONFIG += console
 
 OBJECTS_DIR += temp
 MOC_DIR += temp
@@ -24,7 +23,7 @@ SOURCES += src/main.cpp \
 
 HEADERS += src/include/MainWindow.h \
     src/include/ChildWidget.h \
-    src/include/settings.h
+    src/include/Settings.h
 
 RESOURCES = resources/application.qrc
 

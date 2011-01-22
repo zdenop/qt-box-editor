@@ -95,7 +95,7 @@ bool ChildWidget::loadImage(const QString &fileName)
     return false;
   }
   QString boxFileName = QFileInfo(fileName).path() + QDir::separator()
-      + QFileInfo(fileName).baseName() + ".box";
+      + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
     QMessageBox::warning(this, tr("Missing file"), tr(
@@ -259,14 +259,6 @@ void ChildWidget::setBolded(bool v)
   QModelIndex index = selectionModel->currentIndex();
   if (index.isValid()) {
     model->setData(model->index(index.row(), 6, QModelIndex()), v);
-    qDebug() << "*****____ index.row():" << index.row();
-    table->setStyleSheet("QTableView { border: none;"
-                         "background-color: #8EDE21;"
-                         "selection-background-color: #999}"); //for demo purposes
-    //QFont font;
-    //font.setBold(true);
-    //table->item((index.row(), 1)->setFont(font);
-    //http://www.qtcentre.org/threads/11247-how-to-color-a-cell-in-a-QTableView
   }
 }
 

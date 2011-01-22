@@ -23,7 +23,7 @@
 
 #include "MainWindow.h"
 #include "ChildWidget.h"
-#include "settings.h"
+#include "Settings.h"
 
 MainWindow::MainWindow()
 {
@@ -74,10 +74,13 @@ ChildWidget *MainWindow::activeChild()
 
 void MainWindow::open()
 {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+  QString last_path = settings.value("last_path").toString();   // try to get path from settings
+
   QString imageFile = QFileDialog::getOpenFileName(
       this,
-      QString(),
-      QString(),
+      tr("Select image file..."),
+      last_path,
       tr("Image files (*.bmp *.png *.jpeg *.jpg *.tif *.tiff);;Tiff files (*.tif *.tiff);;All files (*.*)"));
   addChild(imageFile);
 }
@@ -101,6 +104,11 @@ void MainWindow::addChild(const QString &imageFileName)
       connect(child, SIGNAL(boxChanged()), this, SLOT(updateCommandActions()));
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateTabTitle()));
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
+
+      // save path of open box file
+      QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+      QString filePath = QFileInfo(imageFileName).absolutePath();
+      settings.setValue("last_path", filePath);
     } else {
       child->close();
     }
@@ -498,7 +506,8 @@ void MainWindow::createToolBars()
 
 void MainWindow::readSettings()
 {
-  QSettings settings;
+  //QSettings settings;
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
   QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
   QSize size = settings.value("size", QSize(400, 400)).toSize();
   move(pos);
@@ -507,7 +516,8 @@ void MainWindow::readSettings()
 
 void MainWindow::writeSettings()
 {
-  QSettings settings;
+  //QSettings settings;
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
   settings.setValue("pos", pos());
   settings.setValue("size", size());
 }
