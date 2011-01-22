@@ -45,11 +45,9 @@ public:
 
   void addChild(const QString &imageFileName);
 
-  /* HTTP Response text from the version check
-   * Should contain the updated version number of the program
-   * (Could also be helpful in determining causes of errors)
-   */
-  const QByteArray & httpResponse() const;
+public slots:
+  void checkForUpdate();
+  void requestFinished(QNetworkReply *);
 
 protected:
 
@@ -70,7 +68,6 @@ private slots:
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();
-    void checkForUpdate();
     void about();
     void handleClose(int i);
     void updateMenus();
@@ -86,6 +83,7 @@ private:
     void createToolBars();
     void readSettings();
     void writeSettings();
+    void checkVersion(QNetworkReply *);
 
     QTabWidget *tabWidget;
 

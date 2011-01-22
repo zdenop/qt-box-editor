@@ -25,6 +25,10 @@
 
 #define SETTING_ORGANIZATION "Tesseract-OCR"
 #define SETTING_APPLICATION "QT Box Editor"
-#define UPDATE_URL "https://github.com/zdenop/qt-box-editor/raw/master/README"
+
+#define UPDATE_URL "file:////opt2/svn/qt-box-editor/CURRENT_VERSION"
+//#define UPDATE_URL "https://github.com/zdenop/qt-box-editor/raw/master/CURRENT_VERSION"
+#define PROJECT_URL "http://github.com/zdenop/qt-box-editor"
+#define PROJECT_URL_NAME "github.com/zdenop/qt-box-editor"
 
 #endif // SETTINGS_H

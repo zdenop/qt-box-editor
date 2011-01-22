@@ -29,7 +29,7 @@
 
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include <stdio.h>
+#include <QMessageBox>
 
 MainWindow::MainWindow()
 {
@@ -211,75 +211,49 @@ void MainWindow::deleteSymbol()
   }
 }
 
-/* HTTP Response text from the version check
- * Should contain the updated version number of the program
- * (Could also be helpful in determining causes of errors)
- */
-const QByteArray & MainWindow::httpResponse() const {
-    return _httpResponse;
-}
 
 void MainWindow::checkForUpdate()
 {
-  //not implemented yet
     statusBar()->showMessage(tr("Checking for new version..."), 2000);
-    QNetworkAccessManager manager;
+    QNetworkRequest request;
 
-    //request.setUrl(QUrl(QString("http://kludgets.com/checkUpdate.php?version="));
-    //const QUrl url = "";
-    //QNetworkRequest request;
-    QNetworkRequest request(QUrl("https://github.com/zdenop/qt-box-editor/raw/master/README"));
+    QNetworkAccessManager *manager = new QNetworkAccessManager();
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "text/xml");
+    request.setUrl(QUrl(UPDATE_URL));
 
-    //request.setUrl(QUrl("https://github.com/zdenop/qt-box-editor/raw/master/README"));
-    //request.setRawHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.1.7) Gecko/20091221 Firefox/3.5.7 (.NET CLR 3.5.30729)" );
-    QNetworkReply *reply = manager.get(request);
-    QUrl url = reply->url();
-    qDebug() << "url:" << url;
+    QNetworkReply *reply = manager->get(request);
 
-    QString result = reply->readAll();
-    qDebug() << "result:" << result;
-    qDebug() << "reply:" <<  reply;
+    QEventLoop *loop = new QEventLoop;
 
-    qDebug() << "reply->error():" <<  reply->error();
+    QObject::connect(manager, SIGNAL(finished(QNetworkReply *)),
+                     loop, SLOT(quit()));
+    loop->exec();
 
-/*
-    QEventLoop loop;
-    QObject::connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
-    loop.exec();
-*/
-    //QNetworkReply *reply = manager.get( QNetworkRequest( QUrl( "https://github.com/zdenop/qt-box-editor/raw/master/README" ) ) );
+    checkVersion(reply);
+    delete manager;
+}
 
+void MainWindow::requestFinished(QNetworkReply *reply)
+{
+    checkVersion(reply);
+}
 
-    if (reply->error() != QNetworkReply::NoError)
-    {
-        qDebug() << "reply->error():" <<  reply->error();
-        //return reply->error();
-    }
-
-     _httpResponse = reply->readAll();
-    qDebug() << "_httpResponse:" <<  _httpResponse;
-    qDebug() << "QNetworkReply::NoError:" <<  QNetworkReply::NoError;
-    qDebug() << "errorString:" << reply->errorString();
-    delete reply;
-    //return QNetworkReply::NoError;
-    /*
-    if (reply->error()) {
-        qDebug() << "errorString:" << reply->errorString();
+void MainWindow::checkVersion(QNetworkReply *reply)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        // TODO: version analyze
+        QMessageBox::information(this, tr("Version info"), QString(reply->readAll()));
     }
     else {
-        QByteArray data = reply->readAll();
-        QString datastr = QString::fromUtf8(data, data.size());
-        qDebug() << "data:" << data;
-        qDebug() << "datastr:" << datastr;
-    }*/
-
+        QMessageBox::critical(this, tr("Network"), tr("ERROR: %1").arg(reply->errorString()));
+    }
 }
 
 void MainWindow::about()
 {
     QString abouttext = tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(VERSION);
     abouttext.append(tr( "<p>QT4 editor of tesseract-ocr box files</p>"));
-    abouttext.append(tr( "<p>Project page: <a href=\"http://github.com/zdenop/qt-box-editor\">github.com/zdenop/qt-box-editor</a></p>"));
+    abouttext.append(tr( "<p>Project page: <a href=%1>%2</a></p>").arg(PROJECT_URL).arg(PROJECT_URL_NAME));
     abouttext.append(tr( "<p>Copyright 2010 Marcel Kolodziejczyk,<br/>Copyright 2011 Zdenko Podobný</p>"));
     abouttext.append(tr( "<p>This software is released under "
                      "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a></p>"));
