@@ -240,9 +240,28 @@ void MainWindow::requestFinished(QNetworkReply *reply)
 
 void MainWindow::checkVersion(QNetworkReply *reply)
 {
-    if (reply->error() == QNetworkReply::NoError) {
-        // TODO: version analyze
-        QMessageBox::information(this, tr("Version info"), QString(reply->readAll()));
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        float current_version = QString(reply->readAll()).toFloat();
+        float app_version = (QString("%1").arg(VERSION)).toFloat();
+
+        QString messageText;
+
+        if (app_version == current_version)
+            {
+            messageText = tr("<p>No newer version is available.</p>");
+            }
+        else if (app_version > current_version)
+            {
+            messageText = tr("<p>Your version is higher than released stable version.<p>");
+            messageText += tr("<p>Do you use develepment version? ");
+            messageText += tr("Do not forget to install stable version manually!</p>");
+        } else {
+            messageText = tr("<p>New version is available!<br/>Please with ");
+            messageText += tr("<a href=%1/downloads>downloads on project homepage!</a></p>").arg(PROJECT_URL);
+        }
+
+        QMessageBox::information(this, tr("Version info"), messageText);
     }
     else {
         QMessageBox::critical(this, tr("Network"), tr("ERROR: %1").arg(reply->errorString()));
@@ -417,7 +436,7 @@ void MainWindow::createActions()
   connect(deleteAct, SIGNAL(triggered()), this, SLOT(deleteSymbol()));
 
   checkForUpdateAct = new QAction(tr("&Check for update"), this);
-  checkForUpdateAct->setStatusTip(tr("Check whether a newer version exits"));
+  checkForUpdateAct->setStatusTip(tr("Check whether a newer version exits."));
   connect(checkForUpdateAct, SIGNAL(triggered()), this, SLOT(checkForUpdate()));
 
   aboutAct = new QAction(QIcon(":/images/about.png"), tr("&About"), this);
