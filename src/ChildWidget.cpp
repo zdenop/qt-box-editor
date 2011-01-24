@@ -20,23 +20,8 @@
  *
  **********************************************************************/
 
-//#include <QtGui>
-#include <QStandardItemModel>
-#include <QTableView>
-#include <QAbstractItemView>
-#include <QGraphicsScene>
-#include <QHeaderView>
-#include <QGraphicsView>
-#include <QPixmap>
-#include <QGraphicsRectItem>
-#include <QFileInfo>
-#include <QDir>
-#include <QTextStream>
-#include <QApplication>
-#include <QDebug>
-#include <QCloseEvent>
-
 #include "ChildWidget.h"
+#include "Settings.h"
 
 ChildWidget::ChildWidget(QWidget * parent) :
   QSplitter(Qt::Horizontal, parent)
@@ -179,13 +164,13 @@ bool ChildWidget::loadBoxes(const QString &fileName)
   return true;
 }
 
-bool ChildWidget::save()
+bool ChildWidget::save(const QString &fileName)
 {
-  QFile file(boxFile);
+  QFile file(fileName);
   if (!file.open(QFile::WriteOnly | QFile::Text)) {
     QMessageBox::warning(
         this,
-        tr("tesseract-gui"),
+        SETTING_APPLICATION,
         tr("Cannot write file %1:\n%2.") .arg(boxFile) .arg(file.errorString()));
     return false;
   }
@@ -367,6 +352,12 @@ QString ChildWidget::userFriendlyCurrentFile()
 {
   return strippedName(boxFile);
 }
+
+QString ChildWidget::currentBoxFile()
+{
+  return QFileInfo(boxFile).canonicalFilePath();
+}
+
 void ChildWidget::documentWasModified()
 {
   modified = true;
@@ -411,7 +402,7 @@ bool ChildWidget::maybeSave()
       "Do you want to save your changes?") .arg(userFriendlyCurrentFile()), QMessageBox::Save
         | QMessageBox::Discard | QMessageBox::Cancel);
     if (ret == QMessageBox::Save)
-      return save();
+      return save(boxFile);
     else if (ret == QMessageBox::Cancel)
       return false;
   }

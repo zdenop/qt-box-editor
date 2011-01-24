@@ -67,6 +67,7 @@ protected:
 private slots:
     void open();
     void save();
+    void saveAs();
     bool closeActiveTab();
     bool closeAllTabs();
     void nextTab();
@@ -112,6 +113,7 @@ private:
 
     QAction *openAct;
     QAction *saveAct;
+    QAction *saveAsAct;
     QAction *closeAct;
     QAction *closeAllAct;
     QAction *exitAct;

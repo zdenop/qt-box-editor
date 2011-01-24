@@ -105,7 +105,7 @@ void MainWindow::addChild(const QString &imageFileName)
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateTabTitle()));
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
 
-      // save path of open box file
+      // save path of open image file
       QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
       QString filePath = QFileInfo(imageFileName).absolutePath();
       settings.setValue("last_path", filePath);
@@ -117,8 +117,27 @@ void MainWindow::addChild(const QString &imageFileName)
 
 void MainWindow::save()
 {
-  if (activeChild() && activeChild()->save())
+  QString fileName = activeChild()->currentBoxFile();
+  if (activeChild() && activeChild()->save(fileName))
       statusBar()->showMessage(tr("File saved"), 2000);
+}
+
+void MainWindow::saveAs()
+{
+    // Make a copy but do not update title of tab etc.
+    // because theere is not correcponding image file
+    // or should be SaveAs image?
+    QString currentFileName = activeChild()->currentBoxFile();
+    QString fileName = QFileDialog::getSaveFileName(this,
+               tr("Save a copy of box file..."),
+               currentFileName,
+               tr("Tesseract-ocr box files (*.box);;All files (*)"));
+    if (fileName.isEmpty())
+        return;
+
+    if (activeChild() && activeChild()->save(fileName))
+        statusBar()->showMessage(tr("File saved"), 2000);
+
 }
 
 bool MainWindow::closeActiveTab()
@@ -294,6 +313,7 @@ void MainWindow::handleClose(int i)
 
 void MainWindow::updateMenus()
 {
+  saveAsAct->setEnabled((activeChild()) != 0);
   closeAct->setEnabled(activeChild() != 0);
   closeAllAct->setEnabled(activeChild() != 0);
   nextAct->setEnabled(activeChild() != 0);
@@ -338,6 +358,7 @@ void MainWindow::updateFileMenu()
   fileMenu->clear();
   fileMenu->addAction(openAct);
   fileMenu->addAction(saveAct);
+  fileMenu->addAction(saveAsAct);
   fileMenu->addSeparator();
   fileMenu->addAction(closeAct);
   fileMenu->addAction(closeAllAct);
@@ -378,6 +399,12 @@ void MainWindow::createActions()
   saveAct->setStatusTip(tr("Save the document to disk"));
   saveAct->setEnabled(false);
   connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+
+  saveAsAct = new QAction(tr("Save &As"), this);
+  saveAsAct->setShortcut(tr("Ctrl+Shift+S"));
+  saveAsAct->setStatusTip(tr("Save document after prompting the user for a file name."));
+  saveAsAct->setEnabled(false);
+  connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   closeAct = new QAction(QIcon(":/images/close.png"), tr("Cl&ose"), this);
   closeAct->setShortcut(QKeySequence::Close);

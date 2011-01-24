@@ -23,6 +23,20 @@
 #ifndef CHILDWIDGET_H_
 #define CHILDWIDGET_H_
 
+#include <QStandardItemModel>
+#include <QTableView>
+#include <QAbstractItemView>
+#include <QGraphicsScene>
+#include <QHeaderView>
+#include <QGraphicsView>
+#include <QPixmap>
+#include <QGraphicsRectItem>
+#include <QFileInfo>
+#include <QDir>
+#include <QTextStream>
+#include <QApplication>
+#include <QDebug>
+#include <QCloseEvent>
 #include <QSplitter>
 #include <QMessageBox>
 
@@ -48,9 +62,10 @@ public:
   bool isUnderLine();
 
   QString userFriendlyCurrentFile();
+  QString currentBoxFile();
   QString canonicalImageFileName() { return imageFile; }
 
-  bool save();
+  bool save(const QString &fileName);
   bool loadImage(const QString &fileName);
   bool loadBoxes(const QString &fileName);
   void setBolded(bool v);
