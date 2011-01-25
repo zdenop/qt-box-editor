@@ -192,6 +192,14 @@ void MainWindow::underline(bool checked)
   }
 }
 
+void MainWindow::zoomOriginal()
+{
+  if (activeChild()) {
+    activeChild()->zoomOriginal();
+    statusBar()->showMessage(tr("Zoom to original size"), 2000);
+  }
+}
+
 void MainWindow::zoomIn()
 {
   if (activeChild()) {
@@ -319,6 +327,7 @@ void MainWindow::updateMenus()
   nextAct->setEnabled(activeChild() != 0);
   previousAct->setEnabled(activeChild() != 0);
   separatorAct->setVisible(activeChild() != 0);
+  zoomOriginalAct->setEnabled(activeChild() != 0);
   zoomInAct->setEnabled(activeChild() != 0);
   zoomOutAct->setEnabled(activeChild() != 0);
 }
@@ -438,7 +447,11 @@ void MainWindow::createActions()
   underlineAct->setShortcut(QKeySequence::Underline);
   underlineAct->setCheckable(true);
   connect(underlineAct, SIGNAL(triggered(bool)), this, SLOT(underline(bool)));
-
+  
+  zoomOriginalAct = new QAction(tr("Zoom &1:1"), this);
+  zoomOriginalAct->setShortcut(tr("Ctrl+*"));
+  connect(zoomOriginalAct, SIGNAL(triggered()), this, SLOT(zoomOriginal()));
+  
   zoomInAct = new QAction(QIcon(":/images/zoomin.png"), tr("Zoom &in"), this);
   zoomInAct->setShortcut(QKeySequence::ZoomIn);
   connect(zoomInAct, SIGNAL(triggered()), this, SLOT(zoomIn()));
@@ -500,6 +513,7 @@ void MainWindow::createMenus()
   viewMenu->addAction(nextAct);
   viewMenu->addAction(previousAct);
   viewMenu->addSeparator();
+  viewMenu->addAction(zoomOriginalAct);
   viewMenu->addAction(zoomInAct);
   viewMenu->addAction(zoomOutAct);
 
@@ -522,6 +536,7 @@ void MainWindow::createToolBars()
   viewToolBar = addToolBar(tr("View"));
   viewToolBar->addAction(previousAct);
   viewToolBar->addAction(nextAct);
+  //viewToolBar->addAction(zoomOriginalAct);
   viewToolBar->addAction(zoomInAct);
   viewToolBar->addAction(zoomOutAct);
 

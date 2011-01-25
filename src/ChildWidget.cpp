@@ -5,6 +5,7 @@
  * Created:     2010-01-06
  *
  * (C) Copyright 2010, Marcel Kolodziejczyk
+ * (C) Copyright 2011, Zdenko Podobny
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -22,6 +23,8 @@
 
 #include "ChildWidget.h"
 #include "Settings.h"
+#include <QTransform>
+#include <QGraphicsItem>
 
 ChildWidget::ChildWidget(QWidget * parent) :
   QSplitter(Qt::Horizontal, parent)
@@ -61,12 +64,15 @@ ChildWidget::ChildWidget(QWidget * parent) :
 
   addWidget(table);
 
+  // Make graphics Scene and View
   imageScene = new QGraphicsScene;
   QColor selectionColor(Qt::red);
   selectionColor.setAlpha(127);
   imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(Qt::red), selectionColor);
   imageSelectionRect->setZValue(1);
+
   imageView = new QGraphicsView(imageScene);
+  imageView -> setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
   addWidget(imageView);
 
   modified = false;
@@ -263,14 +269,31 @@ void ChildWidget::setUnderline(bool v)
   }
 }
 
+void ChildWidget::setZoom(int zoom)
+{
+    qreal scale = qPow(qreal(2), (zoom - 250) / qreal(50));
+    QTransform transform;
+    transform.scale(scale, scale);
+    imageView->setTransform(transform);
+//    qreal scaleFactor = transform.m11();
+}
+
+void ChildWidget::zoomOriginal()
+{
+  setZoom(250);
+  imageView->ensureVisible(imageSelectionRect);
+}
+
 void ChildWidget::zoomIn()
 {
   imageView->scale(1.2, 1.2);
+  imageView->ensureVisible(imageSelectionRect);
 }
-
+  
 void ChildWidget::zoomOut()
 {
   imageView->scale(1 / 1.2, 1 / 1.2);
+  imageView->ensureVisible(imageSelectionRect);
 }
 
 void ChildWidget::splitSymbol()

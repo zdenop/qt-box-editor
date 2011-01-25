@@ -5,6 +5,7 @@
  * Created:     2010-01-04
  *
  * (C) Copyright 2010, Marcel Kolodziejczyk
+ * (C) Copyright 2011, Zdenko Podobny
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -75,6 +76,7 @@ private slots:
     void bold(bool checked);
     void italic(bool checked);
     void underline(bool checked);
+    void zoomOriginal();
     void zoomIn();
     void zoomOut();
     void splitSymbol();
@@ -122,6 +124,7 @@ private:
     QAction *italicAct;
     QAction *underlineAct;
 
+    QAction *zoomOriginalAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *nextAct;

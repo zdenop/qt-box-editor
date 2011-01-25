@@ -5,6 +5,7 @@
  * Created:     2010-01-06
  *
  * (C) Copyright 2010, Marcel Kolodziejczyk
+ * (C) Copyright 2011, Zdenko Podobny
  **
  ** Licensed under the Apache License, Version 2.0 (the "License");
  ** you may not use this file except in compliance with the License.
@@ -26,19 +27,20 @@
 #include <QStandardItemModel>
 #include <QTableView>
 #include <QAbstractItemView>
-#include <QGraphicsScene>
 #include <QHeaderView>
-#include <QGraphicsView>
-#include <QPixmap>
-#include <QGraphicsRectItem>
+#include <QtGui/QGraphicsScene>
+#include <QtGui/QGraphicsView>
+#include <QtGui/QGraphicsRectItem>
+#include <QtGui/QPixmap>
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
-#include <QApplication>
+#include <QtGui/QApplication>
 #include <QDebug>
 #include <QCloseEvent>
 #include <QSplitter>
 #include <QMessageBox>
+#include <QtCore/qmath.h>
 
 class QGraphicsScene;
 class QGraphicsView;
@@ -71,6 +73,8 @@ public:
   void setBolded(bool v);
   void setItalic(bool v);
   void setUnderline(bool v);
+  void setZoom(int zoom);
+  void zoomOriginal();
   void zoomIn();
   void zoomOut();
   void splitSymbol();

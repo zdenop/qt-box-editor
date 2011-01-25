@@ -1,0 +1,9 @@
+1.01
+- fixed problem that application did not find box file if there where multiple dots in filename
+- add support for tesseract v3.00 box files
+- Open dialog remembers last open directory
+- added Check for update (did not work on windows)
+- added Save As function
+
+1.00
+- initial release
