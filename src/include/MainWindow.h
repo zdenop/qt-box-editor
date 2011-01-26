@@ -33,6 +33,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QToolBar>
+#include <QList>
 #include <QSettings>
 #include <QMessageBox>
 #include <QMainWindow>
@@ -67,6 +68,7 @@ protected:
 
 private slots:
     void open();
+    void openRecentFile();
     void save();
     void saveAs();
     bool closeActiveTab();
@@ -99,6 +101,7 @@ private:
     void readSettings();
     void writeSettings();
     void checkVersion(QNetworkReply *);
+    void updateRecentFileActions();
 
     QTabWidget *tabWidget;
 
@@ -109,6 +112,9 @@ private:
     QMenu *viewMenu;
     QMenu *helpMenu;
 
+    enum { MaxRecentFiles = 8 };
+    QAction *recentFileActs[MaxRecentFiles];
+
     QToolBar *fileToolBar;
     QToolBar *editToolBar;
     QToolBar *viewToolBar;
@@ -118,6 +124,7 @@ private:
     QAction *saveAsAct;
     QAction *closeAct;
     QAction *closeAllAct;
+    QAction *fSeparatorAct;
     QAction *exitAct;
 
     QAction *boldAct;

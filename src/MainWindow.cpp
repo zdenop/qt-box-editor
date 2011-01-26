@@ -109,10 +109,46 @@ void MainWindow::addChild(const QString &imageFileName)
       QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
       QString filePath = QFileInfo(imageFileName).absolutePath();
       settings.setValue("last_path", filePath);
+
+      QStringList files = settings.value("recentFileList").toStringList();
+      files.removeAll(imageFileName);
+      files.prepend(imageFileName);
+      while (files.size() > MaxRecentFiles)
+          files.removeLast();
+
+      settings.setValue("recentFileList", files);
+
+      foreach (QWidget *widget, QApplication::topLevelWidgets())
+      {
+          MainWindow *mainWin = qobject_cast<MainWindow *>(widget);
+          if (mainWin)
+              mainWin->updateRecentFileActions();
+      }
     } else {
       child->close();
     }
   }
+}
+
+void MainWindow::updateRecentFileActions()
+{
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+    QStringList files = settings.value("recentFileList").toStringList();
+
+    int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
+
+    for (int i = 0; i < numRecentFiles; ++i)
+    {
+        QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
+
+        recentFileActs[i]->setText(text);
+        recentFileActs[i]->setData(files[i]);
+        recentFileActs[i]->setVisible(true);
+    }
+    for (int j = numRecentFiles; j < MaxRecentFiles; ++j)
+        recentFileActs[j]->setVisible(false);
+
+    fSeparatorAct->setVisible(numRecentFiles > 0);
 }
 
 void MainWindow::save()
@@ -156,6 +192,14 @@ bool MainWindow::closeAllTabs()
       return false;
   }
   return true;
+}
+
+void MainWindow::openRecentFile()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+
+    if (action)
+        addChild(action->data().toString());
 }
 
 void MainWindow::nextTab()
@@ -492,6 +536,14 @@ void MainWindow::createActions()
 
 void MainWindow::createMenus()
 {
+    for (int i = 0; i < MaxRecentFiles; ++i)
+    {
+        recentFileActs[i] = new QAction(this);
+        recentFileActs[i]->setVisible(false);
+        connect(recentFileActs[i], SIGNAL(triggered()),
+                this, SLOT(openRecentFile()));
+    }
+
   fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(openAct);
   fileMenu->addAction(saveAct);
@@ -499,8 +551,12 @@ void MainWindow::createMenus()
   fileMenu->addSeparator();
   fileMenu->addAction(closeAct);
   fileMenu->addAction(closeAllAct);
+  fSeparatorAct = fileMenu->addSeparator();
+  for (int i = 0; i < MaxRecentFiles; ++i)
+      fileMenu->addAction(recentFileActs[i]);
   fileMenu->addSeparator();
   fileMenu->addAction(exitAct);
+  updateRecentFileActions();
 
   editMenu = menuBar()->addMenu(tr("&Edit"));
   editMenu->addAction(boldAct);
