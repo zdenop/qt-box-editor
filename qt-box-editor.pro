@@ -33,4 +33,5 @@ win32: {
     CONFIG += static release embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL 
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
+    DEFINES += WINDOWS
 }

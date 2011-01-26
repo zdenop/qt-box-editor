@@ -520,7 +520,9 @@ void MainWindow::createMenus()
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
-  helpMenu->addAction(checkForUpdateAct);
+  #ifndef WINDOWS   // this does not work on Windows: TODO
+    helpMenu->addAction(checkForUpdateAct);
+  #endif
   helpMenu->addSeparator();
   helpMenu->addAction(aboutAct);
   helpMenu->addAction(aboutQtAct);

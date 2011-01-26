@@ -2,11 +2,10 @@ QT Box Editor
 =============
 
 
-
 DESCRIPTION
 -----------
 
-QT Box Editor is tool for editing [tesseract-ocr](http://code.google.com/p/tesseract-ocr/) box file used for traning if new language. 
+QT Box Editor is tool for editing [tesseract-ocr](http://code.google.com/p/tesseract-ocr/) box file used for traning of new language. 
 
 Project homepage: (https://github.com/zdenop/qt-box-editor)
 Download: (https://github.com/zdenop/qt-box-editor/downloads)
