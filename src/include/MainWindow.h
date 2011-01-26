@@ -86,7 +86,7 @@ private slots:
     void aboutQt();
     void handleClose(int i);
     void updateMenus();
-    void updateFileMenu();
+    void updateViewMenu();
     void updateCommandActions();
     void updateTabTitle();
     void updateSaveAction();
@@ -137,10 +137,6 @@ private:
     QAction *checkForUpdateAct;
     QAction *aboutAct;
     QAction *aboutQtAct;
-
-    // Query response string
-    // (Should contain the new version number)
-    QByteArray _httpResponse;
 };
 
 #endif /* MAINWINDOW_H_ */

@@ -361,17 +361,12 @@ void MainWindow::updateTabTitle()
   }
 }
 
-
-void MainWindow::updateFileMenu()
+void MainWindow::updateViewMenu()
 {
-  fileMenu->clear();
-  fileMenu->addAction(openAct);
-  fileMenu->addAction(saveAct);
-  fileMenu->addAction(saveAsAct);
-  fileMenu->addSeparator();
-  fileMenu->addAction(closeAct);
-  fileMenu->addAction(closeAllAct);
-  fileMenu->addAction(separatorAct);
+  viewMenu->clear();
+  viewMenu->addAction(nextAct);
+  viewMenu->addAction(previousAct);
+  viewMenu->addAction(separatorAct);
 
   separatorAct->setVisible(tabWidget->count() > 0);
 
@@ -384,16 +379,17 @@ void MainWindow::updateFileMenu()
     } else {
       text = tr("%1 %2").arg(i + 1) .arg(child->userFriendlyCurrentFile());
     }
-    QAction *action = fileMenu->addAction(text);
+    QAction *action = viewMenu->addAction(text);
     action->setCheckable(true);
     action ->setChecked(child == activeChild());
     connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
     windowMapper->setMapping(action, i);
   }
 
-  fileMenu->addSeparator();
-  fileMenu->addAction(exitAct);
-
+  viewMenu->addSeparator();
+  viewMenu->addAction(zoomOriginalAct);
+  viewMenu->addAction(zoomInAct);
+  viewMenu->addAction(zoomOutAct);
 }
 
 void MainWindow::createActions()
@@ -497,8 +493,14 @@ void MainWindow::createActions()
 void MainWindow::createMenus()
 {
   fileMenu = menuBar()->addMenu(tr("&File"));
-  updateFileMenu();
-  connect(fileMenu, SIGNAL(aboutToShow()), this, SLOT(updateFileMenu()));
+  fileMenu->addAction(openAct);
+  fileMenu->addAction(saveAct);
+  fileMenu->addAction(saveAsAct);
+  fileMenu->addSeparator();
+  fileMenu->addAction(closeAct);
+  fileMenu->addAction(closeAllAct);
+  fileMenu->addSeparator();
+  fileMenu->addAction(exitAct);
 
   editMenu = menuBar()->addMenu(tr("&Edit"));
   editMenu->addAction(boldAct);
@@ -510,12 +512,8 @@ void MainWindow::createMenus()
   editMenu->addAction(deleteAct);
 
   viewMenu = menuBar()->addMenu(tr("&View"));
-  viewMenu->addAction(nextAct);
-  viewMenu->addAction(previousAct);
-  viewMenu->addSeparator();
-  viewMenu->addAction(zoomOriginalAct);
-  viewMenu->addAction(zoomInAct);
-  viewMenu->addAction(zoomOutAct);
+  updateViewMenu();
+  connect(viewMenu, SIGNAL(aboutToShow()), this, SLOT(updateViewMenu()));
 
   menuBar()->addSeparator();
 

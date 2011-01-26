@@ -46,13 +46,11 @@ ChildWidget::ChildWidget(QWidget * parent) :
   connect(
       selectionModel,
       SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
-      this,
-      SLOT(emitBoxChanged()));
+      this, SLOT(emitBoxChanged()));
   connect(
       selectionModel,
       SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
-      this,
-      SLOT(drawSelectionRects()));
+      this, SLOT(drawSelectionRects()));
   table->setSelectionModel(selectionModel);
   table->verticalHeader()->hide();
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
@@ -100,8 +98,7 @@ bool ChildWidget::loadImage(const QString &fileName)
     imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
     imageSelectionRect->setParentItem(imageItem);
     modified = false;
-    emit
-    modifiedChanged();
+    emit modifiedChanged();
     connect(model, SIGNAL(itemChanged ( QStandardItem * ) ), this, SLOT(emitBoxChanged()));
     connect(model, SIGNAL(itemChanged ( QStandardItem * ) ), this, SLOT(documentWasModified()));
   } else
@@ -250,6 +247,7 @@ void ChildWidget::setBolded(bool v)
   QModelIndex index = selectionModel->currentIndex();
   if (index.isValid()) {
     model->setData(model->index(index.row(), 6, QModelIndex()), v);
+
   }
 }
 
