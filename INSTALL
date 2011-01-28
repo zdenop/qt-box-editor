@@ -1,0 +1,13 @@
+REQUIREMENTS
+============
+* QT4 (tested with QT-4.7.1)
+
+
+
+BUILDING
+========
+
+qmake
+make
+
+In case of Windows, output is in win32 directory.
