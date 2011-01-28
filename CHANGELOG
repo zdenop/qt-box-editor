@@ -3,7 +3,9 @@
 - add support for tesseract v3.00 box files
 - Open dialog remembers last open directory
 - added Check for update (it did not work on windows)
+- added Recent files to File menu
 - added Save As function
+- added Zoom 1:1
 
 1.00
 - initial release

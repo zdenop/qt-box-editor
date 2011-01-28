@@ -34,4 +34,5 @@ win32: {
     TMAKE_CXXFLAGS += -DQT_NODLL 
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
     DEFINES += WINDOWS
+    RC_FILE = resources/win.rc
 }

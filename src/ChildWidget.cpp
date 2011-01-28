@@ -56,9 +56,9 @@ ChildWidget::ChildWidget(QWidget * parent) :
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
   table->setSelectionMode(QAbstractItemView::SingleSelection);
   //table->hideColumn(5);
-  //table->hideColumn(6);
-  //table->hideColumn(7);
-  //table->hideColumn(8);
+  table->hideColumn(6);
+  table->hideColumn(7);
+  table->hideColumn(8);
 
   addWidget(table);
 
