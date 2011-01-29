@@ -2,8 +2,11 @@ QT Box Editor
 =============
 
 Project homepage: [github.com](https://github.com/zdenop/qt-box-editor)
+
 Screenshots: [wiki](https://github.com/zdenop/qt-box-editor/wiki)
+
 [Download](https://github.com/zdenop/qt-box-editor/downloads)
+
 Licence: [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 
 

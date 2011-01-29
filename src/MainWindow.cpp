@@ -52,7 +52,7 @@ MainWindow::MainWindow()
   updateSaveAction();
   readSettings();
   setUnifiedTitleAndToolBarOnMac(true);
-  //setWindowIcon(QIcon(":/images/qbe.svg"));
+  setWindowIcon(QIcon(":/images/qbe.svg"));
   setWindowTitle(tr("%1 - v%2").arg(SETTING_APPLICATION).arg(VERSION));
 }
 
@@ -489,7 +489,7 @@ void MainWindow::createActions()
   underlineAct->setCheckable(true);
   connect(underlineAct, SIGNAL(triggered(bool)), this, SLOT(underline(bool)));
   
-  zoomOriginalAct = new QAction(tr("Zoom &1:1"), this);
+  zoomOriginalAct = new QAction(QIcon(":/images/zoom_normal.png"), tr("Zoom &1:1"), this);
   zoomOriginalAct->setShortcut(tr("Ctrl+*"));
   connect(zoomOriginalAct, SIGNAL(triggered()), this, SLOT(zoomOriginal()));
   
@@ -586,6 +586,7 @@ void MainWindow::createMenus()
 void MainWindow::createToolBars()
 {
   fileToolBar = addToolBar(tr("File"));
+  fileToolBar->addAction(exitAct);
   fileToolBar->addAction(openAct);
   fileToolBar->addAction(saveAct);
   fileToolBar->addAction(closeAct);
@@ -593,7 +594,7 @@ void MainWindow::createToolBars()
   viewToolBar = addToolBar(tr("View"));
   viewToolBar->addAction(previousAct);
   viewToolBar->addAction(nextAct);
-  //viewToolBar->addAction(zoomOriginalAct);
+  viewToolBar->addAction(zoomOriginalAct);
   viewToolBar->addAction(zoomInAct);
   viewToolBar->addAction(zoomOutAct);
 

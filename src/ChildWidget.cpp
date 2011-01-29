@@ -27,7 +27,7 @@
 #include <QGraphicsItem>
 
 ChildWidget::ChildWidget(QWidget * parent) :
-  QSplitter(Qt::Horizontal, parent)
+        QSplitter(Qt::Horizontal, parent)
 {
   model = new QStandardItemModel(0, 8, this);
   model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
@@ -55,12 +55,16 @@ ChildWidget::ChildWidget(QWidget * parent) :
   table->verticalHeader()->hide();
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
   table->setSelectionMode(QAbstractItemView::SingleSelection);
-  //table->hideColumn(5);
+  table->hideColumn(5);
   table->hideColumn(6);
   table->hideColumn(7);
   table->hideColumn(8);
 
-  addWidget(table);
+  //  Font for table
+  QFont fnt;
+  fnt.setPointSize(TABLE_FONT_SIZE);
+  fnt.setFamily(TABLE_FONT);
+  table->setFont(fnt);
 
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
@@ -71,7 +75,12 @@ ChildWidget::ChildWidget(QWidget * parent) :
 
   imageView = new QGraphicsView(imageScene);
   imageView -> setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+
+  // splitter
+  addWidget(table);
   addWidget(imageView);
+  setStretchFactor(0, 0);
+  setStretchFactor(1, 1);
 
   modified = false;
 }

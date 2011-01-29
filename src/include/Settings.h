@@ -26,9 +26,10 @@
 #define SETTING_ORGANIZATION "qt-box-editor"
 #define SETTING_APPLICATION "QT Box Editor"
 
-//#define UPDATE_URL "file:////opt2/svn/qt-box-editor/CURRENT_VERSION"
 #define UPDATE_URL "https://github.com/zdenop/qt-box-editor/raw/master/CURRENT_VERSION"
 #define PROJECT_URL "http://github.com/zdenop/qt-box-editor"
 #define PROJECT_URL_NAME "github.com/zdenop/qt-box-editor"
+#define TABLE_FONT "Aegyptus"
+#define TABLE_FONT_SIZE 20
 
 #endif // SETTINGS_H
