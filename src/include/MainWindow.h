@@ -81,6 +81,7 @@ private slots:
     void zoomOriginal();
     void zoomIn();
     void zoomOut();
+    void drawBoxes();
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();
@@ -134,6 +135,7 @@ private:
     QAction *zoomOriginalAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
+    QAction *drawBoxesAct;
     QAction *nextAct;
     QAction *previousAct;
     QAction *separatorAct;

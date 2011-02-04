@@ -70,6 +70,7 @@ public:
   bool save(const QString &fileName);
   bool loadImage(const QString &fileName);
   bool loadBoxes(const QString &fileName);
+  void setSelectionRect();
   void setBolded(bool v);
   void setItalic(bool v);
   void setUnderline(bool v);
@@ -77,6 +78,8 @@ public:
   void zoomOriginal();
   void zoomIn();
   void zoomOut();
+  void drawBoxes();
+  void deleteBoxes(const QList<QGraphicsItem*> &items);
   void splitSymbol();
   void joinSymbol();
   void deleteSymbol();
@@ -102,6 +105,7 @@ protected:
   QGraphicsScene *imageScene;
   QGraphicsView *imageView;
   QGraphicsItem * imageItem;
+  //QGraphicsRectItem *imageBoxes;
   QGraphicsRectItem *imageSelectionRect;
 
   QTableView *table;
@@ -113,6 +117,7 @@ protected:
   QString boxFile;
 
   bool modified;
+  bool boxesVisible;
   int imageHeight;
 };
 

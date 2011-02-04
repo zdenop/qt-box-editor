@@ -261,6 +261,13 @@ void MainWindow::zoomOut()
   }
 }
 
+void MainWindow::drawBoxes()
+{
+  if (activeChild()) {
+    activeChild()->drawBoxes();
+  }
+}
+
 void MainWindow::splitSymbol()
 {
   if (activeChild()) {
@@ -375,6 +382,7 @@ void MainWindow::updateMenus()
   zoomOriginalAct->setEnabled(activeChild() != 0);
   zoomInAct->setEnabled(activeChild() != 0);
   zoomOutAct->setEnabled(activeChild() != 0);
+  drawBoxesAct->setEnabled(activeChild() != 0);
 }
 
 void MainWindow::updateCommandActions()
@@ -435,6 +443,8 @@ void MainWindow::updateViewMenu()
   viewMenu->addAction(zoomOriginalAct);
   viewMenu->addAction(zoomInAct);
   viewMenu->addAction(zoomOutAct);
+  viewMenu->addSeparator();
+  viewMenu->addAction(drawBoxesAct);
 }
 
 void MainWindow::createActions()
@@ -500,6 +510,12 @@ void MainWindow::createActions()
   zoomOutAct = new QAction(QIcon(":/images/zoomout.png"), tr("Zoom &out"), this);
   zoomOutAct->setShortcut(QKeySequence::ZoomOut);
   connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(zoomOut()));
+
+  drawBoxesAct = new QAction(QIcon(":/images/drawRect.png"), tr("S&how boxes"), this);
+  drawBoxesAct->setCheckable(true);
+  drawBoxesAct->setShortcut(tr("Ctrl+H"));
+  drawBoxesAct->setStatusTip(tr("Show/hide rectangles for all boxes"));
+  connect(drawBoxesAct, SIGNAL(triggered()), this, SLOT(drawBoxes()));
 
   nextAct = new QAction(QIcon(":/images/next.png"), tr("Ne&xt"), this);
   nextAct->setShortcuts(QKeySequence::NextChild);
@@ -597,6 +613,7 @@ void MainWindow::createToolBars()
   viewToolBar->addAction(zoomOriginalAct);
   viewToolBar->addAction(zoomInAct);
   viewToolBar->addAction(zoomOutAct);
+  viewToolBar->addAction(drawBoxesAct);
 
   editToolBar = addToolBar(tr("Edit"));
   editToolBar->addAction(boldAct);

@@ -9,6 +9,7 @@ DEPENDPATH += ./ \
 INCLUDEPATH += ./ \
     src/include \
     src
+
 QT += network
 
 OBJECTS_DIR += temp

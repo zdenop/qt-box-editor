@@ -60,7 +60,7 @@ ChildWidget::ChildWidget(QWidget * parent) :
   table->hideColumn(7);
   table->hideColumn(8);
 
-  //  Font for table
+  // Font for table
   QFont fnt;
   fnt.setPointSize(TABLE_FONT_SIZE);
   fnt.setFamily(TABLE_FONT);
@@ -68,11 +68,6 @@ ChildWidget::ChildWidget(QWidget * parent) :
 
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
-  QColor selectionColor(Qt::red);
-  selectionColor.setAlpha(127);
-  imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(Qt::red), selectionColor);
-  imageSelectionRect->setZValue(1);
-
   imageView = new QGraphicsView(imageScene);
   imageView -> setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
 
@@ -82,7 +77,9 @@ ChildWidget::ChildWidget(QWidget * parent) :
   setStretchFactor(0, 0);
   setStretchFactor(1, 1);
 
+  setSelectionRect();
   modified = false;
+  boxesVisible = false;
 }
 
 bool ChildWidget::loadImage(const QString &fileName)
@@ -260,6 +257,14 @@ void ChildWidget::setBolded(bool v)
   }
 }
 
+void ChildWidget::setSelectionRect()
+{
+    QColor selectionColor(Qt::red);
+    selectionColor.setAlpha(127);
+    imageSelectionRect = imageScene->addRect(0, 0, 0, 0, SELECTED_BOX_COLOR, selectionColor);
+    imageSelectionRect->setZValue(1);
+}
+
 void ChildWidget::setItalic(bool v)
 {
   QModelIndex index = selectionModel->currentIndex();
@@ -301,6 +306,35 @@ void ChildWidget::zoomOut()
 {
   imageView->scale(1 / 1.2, 1 / 1.2);
   imageView->ensureVisible(imageSelectionRect);
+}
+
+void ChildWidget::drawBoxes()
+{
+    if (boxesVisible == false) {
+        for (int row = 0; row < model->rowCount(); ++row) {
+            int left = model->index(row, 1).data().toInt();
+            int top = model->index(row, 4).data().toInt();
+            int width = model->index(row, 3).data().toInt() - left;
+            int height = model->index(row, 2).data().toInt() - top;
+            imageScene->addRect(left, top, width, height, DRAWBOX_COLOR);
+            boxesVisible = true;
+        }
+
+    } else {
+        deleteBoxes(imageScene->items());
+        boxesVisible = false;
+    }
+}
+
+void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
+        {
+    foreach (QGraphicsItem *item, items) {
+        qint32 type = static_cast<qint32>(item->type());
+        if (type == 3) // delete only rectagles
+            imageScene->removeItem(item);
+    }
+    setSelectionRect(); //initialize removed selection rectangle
+    drawSelectionRects();
 }
 
 void ChildWidget::splitSymbol()
@@ -408,7 +442,7 @@ void ChildWidget::drawSelectionRects()
     int bottom = model->index(index.row(), 2).data().toInt();
     int right = model->index(index.row(), 3).data().toInt();
     int top = model->index(index.row(), 4).data().toInt();
-    int page = model->index(index.row(), 5).data().toInt();
+    //int page = model->index(index.row(), 5).data().toInt(); //not used for the moment
     imageSelectionRect->setRect(QRectF(QPoint(left, top), QPointF(right, bottom)));
     imageSelectionRect->setVisible(true);
     imageView->ensureVisible(imageSelectionRect);

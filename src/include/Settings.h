@@ -31,5 +31,7 @@
 #define PROJECT_URL_NAME "github.com/zdenop/qt-box-editor"
 #define TABLE_FONT "Aegyptus"
 #define TABLE_FONT_SIZE 20
+#define DRAWBOX_COLOR QPen(Qt::green)
+#define SELECTED_BOX_COLOR QPen(Qt::red)
 
 #endif // SETTINGS_H
