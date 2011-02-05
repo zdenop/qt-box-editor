@@ -17,5 +17,7 @@
         <file>images/qbe.png</file>
         <file>images/qbe.svg</file>
         <file>images/drawRect.png</file>
+        <file>images/zoom-fit.png</file>
+        <file>images/zoom-selection.png</file>
     </qresource>
 </RCC>

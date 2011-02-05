@@ -42,8 +42,10 @@ These icons are Faenza Icons:
     text_italic.png
     text_under.png
     window-close.png
-    zoom-out.png
     zoom-in.png
+    zoom-fit.png
     zoom-original.png
+    zoom-out.png
+    zoom-selection.png (is modified zoom-fit.png)
 
 Other icons/artwork were created for Qt Box Editor and they are release under Apache License, Version 2.0.

@@ -290,12 +290,6 @@ void ChildWidget::setZoom(int zoom)
 //    qreal scaleFactor = transform.m11();
 }
 
-void ChildWidget::zoomOriginal()
-{
-  setZoom(250);
-  imageView->ensureVisible(imageSelectionRect);
-}
-
 void ChildWidget::zoomIn()
 {
   imageView->scale(1.2, 1.2);
@@ -306,6 +300,25 @@ void ChildWidget::zoomOut()
 {
   imageView->scale(1 / 1.2, 1 / 1.2);
   imageView->ensureVisible(imageSelectionRect);
+}
+
+void ChildWidget::zoomOriginal()
+{
+  setZoom(250);
+  imageView->ensureVisible(imageSelectionRect);
+}
+
+void ChildWidget::zoomToSelection()
+{
+    if (ToSelection == false) {
+        imageView->fitInView(imageSelectionRect,Qt::KeepAspectRatio);
+        imageView->ensureVisible(imageSelectionRect);
+        imageView->centerOn(imageSelectionRect);
+        ToSelection = true;
+    } else {
+        // Lets keep zoom factor
+        ToSelection = false;
+    }
 }
 
 void ChildWidget::drawBoxes()
@@ -448,6 +461,10 @@ void ChildWidget::drawSelectionRects()
     imageView->ensureVisible(imageSelectionRect);
   } else {
     imageSelectionRect->setVisible(false);
+  }
+  if (ToSelection == true){  //if zoomToSelection is enable, than keep zooming to selection
+      ToSelection = false;
+      zoomToSelection();
   }
 }
 

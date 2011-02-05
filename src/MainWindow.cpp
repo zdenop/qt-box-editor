@@ -242,7 +242,15 @@ void MainWindow::zoomOriginal()
 {
   if (activeChild()) {
     activeChild()->zoomOriginal();
-    statusBar()->showMessage(tr("Zoom to original size"), 2000);
+    statusBar()->showMessage(tr("Zoomed to original size"), 2000);
+  }
+}
+
+void MainWindow::zoomToSelection()
+{
+  if (activeChild()) {
+    activeChild()->zoomToSelection();
+    statusBar()->showMessage(tr("Zoomed to fit in view"), 2000);
   }
 }
 
@@ -389,6 +397,7 @@ void MainWindow::updateMenus()
 void MainWindow::updateCommandActions()
 {
   bool enable = (activeChild()) ? activeChild()->isBoxSelected() : false;
+  zoomToSelectionAct->setEnabled(enable);
   boldAct->setEnabled(enable);
   boldAct->setChecked((activeChild()) ? activeChild()->isBold() : false);
   italicAct->setEnabled(enable);
@@ -441,9 +450,10 @@ void MainWindow::updateViewMenu()
   }
 
   viewMenu->addSeparator();
-  viewMenu->addAction(zoomOriginalAct);
   viewMenu->addAction(zoomInAct);
   viewMenu->addAction(zoomOutAct);
+  viewMenu->addAction(zoomOriginalAct);
+  viewMenu->addAction(zoomToSelectionAct);
   viewMenu->addSeparator();
   viewMenu->addAction(drawBoxesAct);
 }
@@ -499,11 +509,7 @@ void MainWindow::createActions()
   underlineAct->setShortcut(QKeySequence::Underline);
   underlineAct->setCheckable(true);
   connect(underlineAct, SIGNAL(triggered(bool)), this, SLOT(underline(bool)));
-  
-  zoomOriginalAct = new QAction(QIcon(":/images/zoom-original.png"), tr("Zoom &1:1"), this);
-  zoomOriginalAct->setShortcut(tr("Ctrl+*"));
-  connect(zoomOriginalAct, SIGNAL(triggered()), this, SLOT(zoomOriginal()));
-  
+   
   zoomInAct = new QAction(QIcon(":/images/zoom-in.png"), tr("Zoom &in"), this);
   zoomInAct->setShortcut(QKeySequence::ZoomIn);
   connect(zoomInAct, SIGNAL(triggered()), this, SLOT(zoomIn()));
@@ -511,6 +517,16 @@ void MainWindow::createActions()
   zoomOutAct = new QAction(QIcon(":/images/zoom-out.png"), tr("Zoom &out"), this);
   zoomOutAct->setShortcut(QKeySequence::ZoomOut);
   connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(zoomOut()));
+
+  zoomOriginalAct = new QAction(QIcon(":/images/zoom-original.png"), tr("Zoom &1:1"), this);
+  zoomOriginalAct->setShortcut(tr("Ctrl+*"));
+  connect(zoomOriginalAct, SIGNAL(triggered()), this, SLOT(zoomOriginal()));
+
+  zoomToSelectionAct = new QAction(QIcon(":/images/zoom-selection.png"), tr("Zoom to selection"), this);
+  zoomToSelectionAct->setCheckable(true);
+  zoomToSelectionAct->setShortcut(tr("Ctrl+/"));
+  zoomToSelectionAct->setStatusTip(tr("Zoom to selected box"));
+  connect(zoomToSelectionAct, SIGNAL(triggered()), this, SLOT(zoomToSelection()));
 
   drawBoxesAct = new QAction(QIcon(":/images/drawRect.png"), tr("S&how boxes"), this);
   drawBoxesAct->setCheckable(true);
@@ -611,9 +627,10 @@ void MainWindow::createToolBars()
   viewToolBar = addToolBar(tr("View"));
   viewToolBar->addAction(previousAct);
   viewToolBar->addAction(nextAct);
-  viewToolBar->addAction(zoomOriginalAct);
   viewToolBar->addAction(zoomInAct);
   viewToolBar->addAction(zoomOutAct);
+  viewToolBar->addAction(zoomOriginalAct);
+  viewToolBar->addAction(zoomToSelectionAct);
   viewToolBar->addAction(drawBoxesAct);
 
   editToolBar = addToolBar(tr("Edit"));
