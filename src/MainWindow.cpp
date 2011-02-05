@@ -24,6 +24,7 @@
 #include "MainWindow.h"
 #include "ChildWidget.h"
 #include "Settings.h"
+#include <QTabWidget>
 
 MainWindow::MainWindow()
 {
@@ -449,24 +450,24 @@ void MainWindow::updateViewMenu()
 
 void MainWindow::createActions()
 {
-  openAct = new QAction(QIcon(":/images/open.png"), tr("&Open..."), this);
+  openAct = new QAction(QIcon(":/images/fileopen.png"), tr("&Open..."), this);
   openAct->setShortcuts(QKeySequence::Open);
   openAct->setStatusTip(tr("Open an existing file"));
   connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
-  saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
+  saveAct = new QAction(QIcon(":/images/filesave.png"), tr("&Save"), this);
   saveAct->setShortcuts(QKeySequence::Save);
   saveAct->setStatusTip(tr("Save the document to disk"));
   saveAct->setEnabled(false);
   connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
-  saveAsAct = new QAction(tr("Save &As"), this);
+  saveAsAct = new QAction(QIcon(":/images/fileopenas.png"),tr("Save &As"), this);
   saveAsAct->setShortcut(tr("Ctrl+Shift+S"));
   saveAsAct->setStatusTip(tr("Save document after prompting the user for a file name."));
   saveAsAct->setEnabled(false);
   connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-  closeAct = new QAction(QIcon(":/images/close.png"), tr("Cl&ose"), this);
+  closeAct = new QAction(QIcon(":/images/window-close.png"), tr("Cl&ose"), this);
   closeAct->setShortcut(QKeySequence::Close);
   closeAct->setStatusTip(tr("Close the active tab"));
   connect(closeAct, SIGNAL(triggered()), this, SLOT(closeActiveTab()));
@@ -484,30 +485,30 @@ void MainWindow::createActions()
   exitAct->setStatusTip(tr("Exit the application"));
   connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
-  boldAct = new QAction(QIcon(":/images/textbold.png"), tr("&Bold"), this);
+  boldAct = new QAction(QIcon(":/images/text_bold.png"), tr("&Bold"), this);
   boldAct->setShortcut(QKeySequence::Bold);
   boldAct->setCheckable(true);
   connect(boldAct, SIGNAL(triggered(bool)), this, SLOT(bold(bool)));
 
-  italicAct = new QAction(QIcon(":/images/textitalic.png"), tr("&Italic"), this);
+  italicAct = new QAction(QIcon(":/images/text_italic.png"), tr("&Italic"), this);
   italicAct->setShortcut(QKeySequence::Italic);
   italicAct->setCheckable(true);
   connect(italicAct, SIGNAL(triggered(bool)), this, SLOT(italic(bool)));
 
-  underlineAct = new QAction(QIcon(":/images/textunder.png"), tr("&Underine"), this);
+  underlineAct = new QAction(QIcon(":/images/text_under.png"), tr("&Underine"), this);
   underlineAct->setShortcut(QKeySequence::Underline);
   underlineAct->setCheckable(true);
   connect(underlineAct, SIGNAL(triggered(bool)), this, SLOT(underline(bool)));
   
-  zoomOriginalAct = new QAction(QIcon(":/images/zoom_normal.png"), tr("Zoom &1:1"), this);
+  zoomOriginalAct = new QAction(QIcon(":/images/zoom-original.png"), tr("Zoom &1:1"), this);
   zoomOriginalAct->setShortcut(tr("Ctrl+*"));
   connect(zoomOriginalAct, SIGNAL(triggered()), this, SLOT(zoomOriginal()));
   
-  zoomInAct = new QAction(QIcon(":/images/zoomin.png"), tr("Zoom &in"), this);
+  zoomInAct = new QAction(QIcon(":/images/zoom-in.png"), tr("Zoom &in"), this);
   zoomInAct->setShortcut(QKeySequence::ZoomIn);
   connect(zoomInAct, SIGNAL(triggered()), this, SLOT(zoomIn()));
 
-  zoomOutAct = new QAction(QIcon(":/images/zoomout.png"), tr("Zoom &out"), this);
+  zoomOutAct = new QAction(QIcon(":/images/zoom-out.png"), tr("Zoom &out"), this);
   zoomOutAct->setShortcut(QKeySequence::ZoomOut);
   connect(zoomOutAct, SIGNAL(triggered()), this, SLOT(zoomOut()));
 
@@ -543,7 +544,7 @@ void MainWindow::createActions()
   checkForUpdateAct->setStatusTip(tr("Check whether a newer version exits."));
   connect(checkForUpdateAct, SIGNAL(triggered()), this, SLOT(checkForUpdate()));
 
-  aboutAct = new QAction(QIcon(":/images/about.png"), tr("&About"), this);
+  aboutAct = new QAction(QIcon(":/images/help-about.png"), tr("&About"), this);
   aboutAct->setStatusTip(tr("Show the application's About box"));
   connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
   
