@@ -619,21 +619,26 @@ void MainWindow::createMenus()
 void MainWindow::createToolBars()
 {
   fileToolBar = addToolBar(tr("File"));
+  fileToolBar->setObjectName("fileToolBar");
   fileToolBar->addAction(exitAct);
   fileToolBar->addAction(openAct);
   fileToolBar->addAction(saveAct);
   fileToolBar->addAction(closeAct);
 
   viewToolBar = addToolBar(tr("View"));
+  viewToolBar->setObjectName("viewToolBar");
   viewToolBar->addAction(previousAct);
   viewToolBar->addAction(nextAct);
+  viewToolBar->addSeparator();
   viewToolBar->addAction(zoomInAct);
   viewToolBar->addAction(zoomOutAct);
   viewToolBar->addAction(zoomOriginalAct);
+  viewToolBar->addSeparator();
   viewToolBar->addAction(zoomToSelectionAct);
   viewToolBar->addAction(drawBoxesAct);
 
   editToolBar = addToolBar(tr("Edit"));
+  editToolBar->setObjectName("editToolBar");
   editToolBar->addAction(boldAct);
   editToolBar->addAction(italicAct);
   editToolBar->addAction(underlineAct);
@@ -641,18 +646,18 @@ void MainWindow::createToolBars()
 
 void MainWindow::readSettings()
 {
-  //QSettings settings;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
-  QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
-  QSize size = settings.value("size", QSize(400, 400)).toSize();
-  move(pos);
-  resize(size);
+  settings.beginGroup("mainWindow");
+  restoreGeometry(settings.value("geometry").toByteArray());
+  restoreState(settings.value("state").toByteArray());
+  settings.endGroup();
 }
 
 void MainWindow::writeSettings()
 {
-  //QSettings settings;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
-  settings.setValue("pos", pos());
-  settings.setValue("size", size());
+  settings.beginGroup("mainWindow");
+  settings.setValue("geometry", saveGeometry());
+  settings.setValue("state", saveState());
+  settings.endGroup();
 }
