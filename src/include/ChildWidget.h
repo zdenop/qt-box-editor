@@ -78,6 +78,7 @@ public:
   void zoomOriginal();
   void zoomIn();
   void zoomOut();
+  void zoomToSelection();
   void drawBoxes();
   void deleteBoxes(const QList<QGraphicsItem*> &items);
   void splitSymbol();
@@ -105,7 +106,6 @@ protected:
   QGraphicsScene *imageScene;
   QGraphicsView *imageView;
   QGraphicsItem * imageItem;
-  //QGraphicsRectItem *imageBoxes;
   QGraphicsRectItem *imageSelectionRect;
 
   QTableView *table;
@@ -118,6 +118,7 @@ protected:
 
   bool modified;
   bool boxesVisible;
+  bool ToSelection;
   int imageHeight;
 };
 
