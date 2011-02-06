@@ -270,6 +270,14 @@ void MainWindow::zoomOut()
   }
 }
 
+void MainWindow::zoomToFit()
+{
+  if (activeChild()) {
+    activeChild()->zoomToFit();
+    statusBar()->showMessage(tr("Zoomed to fit in image view"), 2000);
+  }
+}
+
 void MainWindow::drawBoxes()
 {
   if (activeChild()) {
@@ -391,6 +399,7 @@ void MainWindow::updateMenus()
   zoomOriginalAct->setEnabled(activeChild() != 0);
   zoomInAct->setEnabled(activeChild() != 0);
   zoomOutAct->setEnabled(activeChild() != 0);
+  zoomToFitAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
 }
 
@@ -453,6 +462,7 @@ void MainWindow::updateViewMenu()
   viewMenu->addAction(zoomInAct);
   viewMenu->addAction(zoomOutAct);
   viewMenu->addAction(zoomOriginalAct);
+  viewMenu->addAction(zoomToFitAct);
   viewMenu->addAction(zoomToSelectionAct);
   viewMenu->addSeparator();
   viewMenu->addAction(drawBoxesAct);
@@ -521,6 +531,10 @@ void MainWindow::createActions()
   zoomOriginalAct = new QAction(QIcon(":/images/zoom-original.png"), tr("Zoom &1:1"), this);
   zoomOriginalAct->setShortcut(tr("Ctrl+*"));
   connect(zoomOriginalAct, SIGNAL(triggered()), this, SLOT(zoomOriginal()));
+
+  zoomToFitAct = new QAction(QIcon(":/images/zoom-fit.png"), tr("Zoom to fit"), this);
+  zoomToFitAct->setShortcut(tr("Ctrl+."));
+  connect(zoomToFitAct, SIGNAL(triggered()), this, SLOT(zoomToFit()));
 
   zoomToSelectionAct = new QAction(QIcon(":/images/zoom-selection.png"), tr("Zoom to selection"), this);
   zoomToSelectionAct->setCheckable(true);
@@ -633,6 +647,7 @@ void MainWindow::createToolBars()
   viewToolBar->addAction(zoomInAct);
   viewToolBar->addAction(zoomOutAct);
   viewToolBar->addAction(zoomOriginalAct);
+  viewToolBar->addAction(zoomToFitAct);
   viewToolBar->addSeparator();
   viewToolBar->addAction(zoomToSelectionAct);
   viewToolBar->addAction(drawBoxesAct);

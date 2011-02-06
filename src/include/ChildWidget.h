@@ -74,11 +74,12 @@ public:
   void setBolded(bool v);
   void setItalic(bool v);
   void setUnderline(bool v);
-  void setZoom(int zoom);
+  void setZoom(float scale);
   void zoomOriginal();
   void zoomIn();
   void zoomOut();
   void zoomToSelection();
+  void zoomToFit();
   void drawBoxes();
   void deleteBoxes(const QList<QGraphicsItem*> &items);
   void splitSymbol();
@@ -120,6 +121,7 @@ protected:
   bool boxesVisible;
   bool ToSelection;
   int imageHeight;
+  int imageWidth;
 };
 
 #endif /* CHILDWIDGET_H_ */

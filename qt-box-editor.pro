@@ -10,7 +10,7 @@ INCLUDEPATH += ./ \
     src/include \
     src
 
-QT += network
+QT += network testlib
 
 OBJECTS_DIR += temp
 MOC_DIR += temp
