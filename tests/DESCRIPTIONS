@@ -2,8 +2,14 @@
 -----------------------------
 
 8.box/tif               - Polish example files
+
+hiero.sethe.1.box/png   - Hieroglyph sample (thanks to Oduss...@gmail.com)
+(originally posted http://code.google.com/p/tesseract-ocr/issues/detail?sort=-id&id=430)
+
 kan01.box/png           - kannada example box files
                           (thanks to withblessings at gmail.com)
+
 pangrams-stam.box/png   - RTL (Hebrew ) box file example
                           (thanks to enrico.segre at weizmann.ac.il)
+
 slk.example.001.box/bmp - Slovak example files

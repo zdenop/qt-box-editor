@@ -98,6 +98,7 @@ bool ChildWidget::loadImage(const QString &fileName)
     return false;
   }
   imageHeight = image.height();
+  imageWidth = image.width();
 
   if (loadBoxes(boxFileName)) {
     setCurrentImageFile(fileName);
@@ -281,13 +282,12 @@ void ChildWidget::setUnderline(bool v)
   }
 }
 
-void ChildWidget::setZoom(int zoom)
+void ChildWidget::setZoom(float scale)
 {
-    qreal scale = qPow(qreal(2), (zoom - 250) / qreal(50));
     QTransform transform;
     transform.scale(scale, scale);
     imageView->setTransform(transform);
-//    qreal scaleFactor = transform.m11();
+    // qreal scaleFactor = transform.m11();
 }
 
 void ChildWidget::zoomIn()
@@ -302,9 +302,25 @@ void ChildWidget::zoomOut()
   imageView->ensureVisible(imageSelectionRect);
 }
 
+void ChildWidget::zoomToFit()
+{
+    float viewWidth = imageView->viewport()->width();
+    float viewHeight= imageView->viewport()->height();
+    float zoomFactor;
+    float ratio = viewWidth / viewHeight;
+    float aspectRatio = imageWidth / imageHeight;
+    if(ratio > aspectRatio) {
+        zoomFactor = viewHeight/imageHeight;
+    } else {
+        zoomFactor = viewWidth/imageWidth;
+    }
+
+    setZoom(zoomFactor);
+}
+
 void ChildWidget::zoomOriginal()
 {
-  setZoom(250);
+  setZoom(1);
   imageView->ensureVisible(imageSelectionRect);
 }
 

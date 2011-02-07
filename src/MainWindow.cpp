@@ -270,6 +270,14 @@ void MainWindow::zoomOut()
   }
 }
 
+void MainWindow::zoomToFit()
+{
+  if (activeChild()) {
+    activeChild()->zoomToFit();
+    statusBar()->showMessage(tr("Zoomed to fit in image view"), 2000);
+  }
+}
+
 void MainWindow::drawBoxes()
 {
   if (activeChild()) {
@@ -391,6 +399,7 @@ void MainWindow::updateMenus()
   zoomOriginalAct->setEnabled(activeChild() != 0);
   zoomInAct->setEnabled(activeChild() != 0);
   zoomOutAct->setEnabled(activeChild() != 0);
+  zoomToFitAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
 }
 
@@ -453,6 +462,7 @@ void MainWindow::updateViewMenu()
   viewMenu->addAction(zoomInAct);
   viewMenu->addAction(zoomOutAct);
   viewMenu->addAction(zoomOriginalAct);
+  viewMenu->addAction(zoomToFitAct);
   viewMenu->addAction(zoomToSelectionAct);
   viewMenu->addSeparator();
   viewMenu->addAction(drawBoxesAct);
@@ -521,6 +531,10 @@ void MainWindow::createActions()
   zoomOriginalAct = new QAction(QIcon(":/images/zoom-original.png"), tr("Zoom &1:1"), this);
   zoomOriginalAct->setShortcut(tr("Ctrl+*"));
   connect(zoomOriginalAct, SIGNAL(triggered()), this, SLOT(zoomOriginal()));
+
+  zoomToFitAct = new QAction(QIcon(":/images/zoom-fit.png"), tr("Zoom to fit"), this);
+  zoomToFitAct->setShortcut(tr("Ctrl+."));
+  connect(zoomToFitAct, SIGNAL(triggered()), this, SLOT(zoomToFit()));
 
   zoomToSelectionAct = new QAction(QIcon(":/images/zoom-selection.png"), tr("Zoom to selection"), this);
   zoomToSelectionAct->setCheckable(true);
@@ -619,21 +633,27 @@ void MainWindow::createMenus()
 void MainWindow::createToolBars()
 {
   fileToolBar = addToolBar(tr("File"));
+  fileToolBar->setObjectName("fileToolBar");
   fileToolBar->addAction(exitAct);
   fileToolBar->addAction(openAct);
   fileToolBar->addAction(saveAct);
   fileToolBar->addAction(closeAct);
 
   viewToolBar = addToolBar(tr("View"));
+  viewToolBar->setObjectName("viewToolBar");
   viewToolBar->addAction(previousAct);
   viewToolBar->addAction(nextAct);
+  viewToolBar->addSeparator();
   viewToolBar->addAction(zoomInAct);
   viewToolBar->addAction(zoomOutAct);
   viewToolBar->addAction(zoomOriginalAct);
+  viewToolBar->addAction(zoomToFitAct);
+  viewToolBar->addSeparator();
   viewToolBar->addAction(zoomToSelectionAct);
   viewToolBar->addAction(drawBoxesAct);
 
   editToolBar = addToolBar(tr("Edit"));
+  editToolBar->setObjectName("editToolBar");
   editToolBar->addAction(boldAct);
   editToolBar->addAction(italicAct);
   editToolBar->addAction(underlineAct);
@@ -641,18 +661,18 @@ void MainWindow::createToolBars()
 
 void MainWindow::readSettings()
 {
-  //QSettings settings;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
-  QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
-  QSize size = settings.value("size", QSize(400, 400)).toSize();
-  move(pos);
-  resize(size);
+  settings.beginGroup("mainWindow");
+  restoreGeometry(settings.value("geometry").toByteArray());
+  restoreState(settings.value("state").toByteArray());
+  settings.endGroup();
 }
 
 void MainWindow::writeSettings()
 {
-  //QSettings settings;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
-  settings.setValue("pos", pos());
-  settings.setValue("size", size());
+  settings.beginGroup("mainWindow");
+  settings.setValue("geometry", saveGeometry());
+  settings.setValue("state", saveState());
+  settings.endGroup();
 }
