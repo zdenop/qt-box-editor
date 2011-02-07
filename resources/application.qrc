@@ -19,5 +19,7 @@
         <file>images/drawRect.png</file>
         <file>images/zoom-fit.png</file>
         <file>images/zoom-selection.png</file>
+        <file>images/zoom-width.png</file>
+        <file>images/zoom-height.png</file>
     </qresource>
 </RCC>

@@ -80,6 +80,7 @@ ChildWidget::ChildWidget(QWidget * parent) :
   setSelectionRect();
   modified = false;
   boxesVisible = false;
+  ToSelection = false;
 }
 
 bool ChildWidget::loadImage(const QString &fileName)
@@ -318,6 +319,22 @@ void ChildWidget::zoomToFit()
     setZoom(zoomFactor);
 }
 
+void ChildWidget::zoomToHeight()
+{
+    float viewHeight= imageView->viewport()->height();
+    float zoomFactor = viewHeight/imageHeight;
+    setZoom(zoomFactor);
+    imageView->ensureVisible(imageSelectionRect);
+}
+
+void ChildWidget::zoomToWidth()
+{
+    float viewWidth = imageView->viewport()->width();
+    float zoomFactor = viewWidth/imageWidth;
+    setZoom(zoomFactor);
+    imageView->ensureVisible(imageSelectionRect);
+}
+
 void ChildWidget::zoomOriginal()
 {
   setZoom(1);
@@ -478,7 +495,7 @@ void ChildWidget::drawSelectionRects()
   } else {
     imageSelectionRect->setVisible(false);
   }
-  if (ToSelection == true){  //if zoomToSelection is enable, than keep zooming to selection
+  if (ToSelection == true){  //if zoomToSelection is enabled, than keep zooming to selection
       ToSelection = false;
       zoomToSelection();
   }

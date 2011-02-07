@@ -79,6 +79,8 @@ private slots:
     void italic(bool checked);
     void underline(bool checked);
     void zoomToFit();
+    void zoomToHeight();
+    void zoomToWidth();
     void zoomOriginal();
     void zoomToSelection();
     void zoomIn();
@@ -137,6 +139,8 @@ private:
     QAction *zoomOriginalAct;
     QAction *zoomToSelectionAct;
     QAction *zoomToFitAct;
+    QAction *zoomToHeightAct;
+    QAction *zoomToWidthAct;
     QAction *zoomInAct;
     QAction *zoomOutAct;
     QAction *drawBoxesAct;
