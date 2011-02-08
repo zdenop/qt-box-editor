@@ -278,6 +278,22 @@ void MainWindow::zoomToFit()
   }
 }
 
+void MainWindow::zoomToHeight()
+{
+  if (activeChild()) {
+    activeChild()->zoomToHeight();
+    statusBar()->showMessage(tr("Zoomed to fit image height to current view"), 2000);
+  }
+}
+
+void MainWindow::zoomToWidth()
+{
+  if (activeChild()) {
+    activeChild()->zoomToWidth();
+    statusBar()->showMessage(tr("Zoomed to fit image width to current view"), 2000);
+  }
+}
+
 void MainWindow::drawBoxes()
 {
   if (activeChild()) {
@@ -400,6 +416,8 @@ void MainWindow::updateMenus()
   zoomInAct->setEnabled(activeChild() != 0);
   zoomOutAct->setEnabled(activeChild() != 0);
   zoomToFitAct->setEnabled(activeChild() != 0);
+  zoomToHeightAct->setEnabled(activeChild() != 0);
+  zoomToWidthAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
 }
 
@@ -463,6 +481,8 @@ void MainWindow::updateViewMenu()
   viewMenu->addAction(zoomOutAct);
   viewMenu->addAction(zoomOriginalAct);
   viewMenu->addAction(zoomToFitAct);
+  viewMenu->addAction(zoomToHeightAct);
+  viewMenu->addAction(zoomToWidthAct);
   viewMenu->addAction(zoomToSelectionAct);
   viewMenu->addSeparator();
   viewMenu->addAction(drawBoxesAct);
@@ -535,6 +555,14 @@ void MainWindow::createActions()
   zoomToFitAct = new QAction(QIcon(":/images/zoom-fit.png"), tr("Zoom to fit"), this);
   zoomToFitAct->setShortcut(tr("Ctrl+."));
   connect(zoomToFitAct, SIGNAL(triggered()), this, SLOT(zoomToFit()));
+
+  zoomToHeightAct = new QAction(QIcon(":/images/zoom-height.png"), tr("Zoom to height"), this);
+  zoomToHeightAct->setShortcut(tr("Ctrl+>"));
+  connect(zoomToHeightAct, SIGNAL(triggered()), this, SLOT(zoomToHeight()));
+
+  zoomToWidthAct = new QAction(QIcon(":/images/zoom-width.png"), tr("Zoom to width"), this);
+  zoomToWidthAct->setShortcut(tr("Ctrl+<"));
+  connect(zoomToWidthAct, SIGNAL(triggered()), this, SLOT(zoomToWidth()));
 
   zoomToSelectionAct = new QAction(QIcon(":/images/zoom-selection.png"), tr("Zoom to selection"), this);
   zoomToSelectionAct->setCheckable(true);
@@ -648,8 +676,10 @@ void MainWindow::createToolBars()
   viewToolBar->addAction(zoomOutAct);
   viewToolBar->addAction(zoomOriginalAct);
   viewToolBar->addAction(zoomToFitAct);
-  viewToolBar->addSeparator();
+  viewToolBar->addAction(zoomToHeightAct);
+  viewToolBar->addAction(zoomToWidthAct);
   viewToolBar->addAction(zoomToSelectionAct);
+  viewToolBar->addSeparator();
   viewToolBar->addAction(drawBoxesAct);
 
   editToolBar = addToolBar(tr("Edit"));

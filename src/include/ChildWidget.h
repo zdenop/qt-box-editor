@@ -80,6 +80,8 @@ public:
   void zoomOut();
   void zoomToSelection();
   void zoomToFit();
+  void zoomToHeight();
+  void zoomToWidth();
   void drawBoxes();
   void deleteBoxes(const QList<QGraphicsItem*> &items);
   void splitSymbol();
