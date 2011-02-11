@@ -29,8 +29,8 @@
 #define UPDATE_URL "https://github.com/zdenop/qt-box-editor/raw/master/CURRENT_VERSION"
 #define PROJECT_URL "http://github.com/zdenop/qt-box-editor"
 #define PROJECT_URL_NAME "github.com/zdenop/qt-box-editor"
-#define TABLE_FONT "Aegyptus"
-#define TABLE_FONT_SIZE 20
+#define TABLE_FONT "Arial"
+#define TABLE_FONT_SIZE 12
 #define DRAWBOX_COLOR QPen(Qt::green)
 #define SELECTED_BOX_COLOR QPen(Qt::red)
 

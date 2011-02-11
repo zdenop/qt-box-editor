@@ -1,3 +1,9 @@
+1.02
+- replace icons from Faenza Icons set
+- added zoom to box, zoom to fit, fit to width, fit to height
+- added hide/show boxes
+- improved saving/restoring state of application
+
 1.01
 - fixed problem that application did not find box file if there where multiple dots in filename
 - add support for tesseract v3.00 box files

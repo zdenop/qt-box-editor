@@ -53,7 +53,7 @@ MainWindow::MainWindow()
   updateSaveAction();
   readSettings();
   setUnifiedTitleAndToolBarOnMac(true);
-  setWindowIcon(QIcon(":/images/qbe.svg"));
+  setWindowIcon(QIcon(":/images/qbe.png"));
   setWindowTitle(tr("%1 - v%2").arg(SETTING_APPLICATION).arg(VERSION));
 }
 
