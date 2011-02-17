@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.02
+VERSION = 1.03dev
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -11,7 +11,7 @@ INCLUDEPATH += ./ \
     src
 
 QT += network \
-    #testlib
+    testlib
 
 OBJECTS_DIR += temp
 MOC_DIR += temp
@@ -21,11 +21,13 @@ DEFINES += VERSION=\\\"$${VERSION}\\\"
 
 SOURCES += src/main.cpp \
     src/MainWindow.cpp \
-    src/ChildWidget.cpp
+    src/ChildWidget.cpp \
+    src/SettingsDialog.cpp
 
 HEADERS += src/include/MainWindow.h \
     src/include/ChildWidget.h \
-    src/include/Settings.h
+    src/include/Settings.h \
+    src/include/SettingsDialog.h
 
 RESOURCES = resources/application.qrc
 
