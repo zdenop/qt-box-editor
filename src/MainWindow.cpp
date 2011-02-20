@@ -103,7 +103,7 @@ void MainWindow::addChild(const QString &imageFileName)
             }
         }
 
-      ChildWidget *child = new ChildWidget;
+      ChildWidget *child = new ChildWidget(this);
       if (child->loadImage(imageFileName))
         {
           statusBar()->showMessage(tr("File loaded"), 2000);

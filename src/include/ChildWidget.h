@@ -101,13 +101,12 @@ private slots:
 void documentWasModified();
 void emitBoxChanged();
 void drawSelectionRects();
-/*
-   private:
-   QFont tableFont;
+
+private:
    QColor rectColor;
    QColor rectFillColor;
    QColor boxColor;
- */
+ 
 protected:
 void closeEvent(QCloseEvent *event);
 bool maybeSave();

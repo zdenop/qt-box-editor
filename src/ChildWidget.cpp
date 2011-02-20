@@ -61,7 +61,7 @@ ChildWidget::ChildWidget(QWidget * parent) :
 
   // Font for table
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
-  tableFont = settings.value("GUI/Font").value<QFont>();
+  QFont tableFont = settings.value("GUI/Font").value<QFont>();
   if (tableFont.rawName().isEmpty())
     {
       tableFont.setFamily(TABLE_FONT);
