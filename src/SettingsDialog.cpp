@@ -19,7 +19,7 @@
 ** limitations under the License.
 *
 **********************************************************************/
-
+#include <QtGui>
 #include "SettingsDialog.h"
 
 SettingsDialog::SettingsDialog(QWidget *parent)
@@ -38,7 +38,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   fontLabel = new QLabel(tableFont.family().toAscii() + tr(", %1 pt").arg(tableFont.pointSize()), this);
   fontLabel->setFont(tableFont);
   QPushButton *fontButton = new QPushButton(tr("Change..."));
-  fontButton->setMaximumSize(QSize(75, 16777215));
+  fontButton->setMaximumSize(QSize(75, 26));
   connect(fontButton, SIGNAL(clicked()), this, SLOT(on_fontButton_clicked()));
 
   QSpacerItem *horizontalSpacer_1 = new QSpacerItem(158, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
@@ -61,7 +61,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   gridLayout_2->addItem(horizontalSpacer_2, 0, 1, 1, 1);
 
   colorRectButton = new QPushButton(colorsGroupBox);
-  colorRectButton->setMaximumSize(QSize(75, 16777215));
+  colorRectButton->setMaximumSize(QSize(75, 26));
   connect(colorRectButton, SIGNAL(clicked()), this, SLOT(on_colorRectButton_clicked()));
   updateColorButton(colorRectButton, rectColor);
   gridLayout_2->addWidget(colorRectButton, 0, 2, 1, 1);
@@ -73,22 +73,34 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   gridLayout_2->addItem(horizontalSpacer_3, 2, 1, 1, 1);
 
   rectFillColorButton = new QPushButton(colorsGroupBox);
-  rectFillColorButton->setMaximumSize(QSize(75, 16777215));
+  rectFillColorButton->setMaximumSize(QSize(75, 26));
   connect(rectFillColorButton, SIGNAL(clicked()), this, SLOT(on_rectFillColorButton_clicked()));
   updateColorButton(rectFillColorButton, rectFillColor);
   gridLayout_2->addWidget(rectFillColorButton, 2, 2, 1, 1);
 
-  QLabel *colorBoxLabel_x = new QLabel(tr("Boxes:"), colorsGroupBox);
-  gridLayout_2->addWidget(colorBoxLabel_x, 3, 0, 1, 1);
+  QLabel *colorBoxLabel = new QLabel(tr("Boxes:"), colorsGroupBox);
+  gridLayout_2->addWidget(colorBoxLabel, 3, 0, 1, 1);
 
   QSpacerItem *horizontalSpacer_4 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_4, 3, 1, 1, 1);
 
   colorBoxButton = new QPushButton(colorsGroupBox);
-  colorBoxButton->setMaximumSize(QSize(75, 16777215));
+  colorBoxButton->setMaximumSize(QSize(75, 26));
   connect(colorBoxButton, SIGNAL(clicked()), this, SLOT(on_colorBoxButton_clicked()));
   updateColorButton(colorBoxButton, boxColor);
   gridLayout_2->addWidget(colorBoxButton, 3, 2, 1, 1);
+
+  QLabel *backgroundColorLabel = new QLabel(tr("Background:"), colorsGroupBox);
+  gridLayout_2->addWidget(backgroundColorLabel, 4, 0, 1, 1);
+
+  QSpacerItem *horizontalSpacer_5 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  gridLayout_2->addItem(horizontalSpacer_5, 4, 1, 1, 1);
+
+  backgroundColorButton = new QPushButton(colorsGroupBox);
+  backgroundColorButton->setMaximumSize(QSize(75, 26));
+  connect(backgroundColorButton, SIGNAL(clicked()), this, SLOT(on_backgroundColorButton_clicked()));
+  updateColorButton(backgroundColorButton, backgroundColor);
+  gridLayout_2->addWidget(backgroundColorButton, 4, 2, 1, 1);
 
   QSpacerItem *verticalSpacer = new QSpacerItem(20, 53, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -147,6 +159,12 @@ void SettingsDialog::on_colorBoxButton_clicked()
   chooseColor(colorBoxButton, &boxColor);
 }
 
+void SettingsDialog::on_backgroundColorButton_clicked()
+{
+  chooseColor(backgroundColorButton, &backgroundColor);
+}
+
+
 void SettingsDialog::initSettings()
 {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -188,6 +206,15 @@ void SettingsDialog::initSettings()
     {
       boxColor = Qt::green;
     }
+
+  if (settings.contains("GUI/BackgroundColor"))
+    {
+      backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
+    }
+  else
+    {
+      backgroundColor = (Qt::gray);
+    }
 }
 
 void SettingsDialog::saveSettings()
@@ -198,6 +225,7 @@ void SettingsDialog::saveSettings()
   settings.setValue("GUI/Rectagle", rectColor);
   settings.setValue("GUI/Rectagle_fill", rectFillColor);
   settings.setValue("GUI/Box", boxColor);
+  settings.setValue("GUI/BackgroundColor", backgroundColor);
   //emit setTableFont(tableFont); // TODO: use font for open child windows
   emit accept();
 }
@@ -219,8 +247,11 @@ void SettingsDialog::chooseColor(QPushButton *button, QColor *color)
 void SettingsDialog::updateColorButton(QPushButton *button,
                                        const QColor &color)
 {
-  QString s = "background-color: ";
+  QPixmap pixmap(68, 20);
+  pixmap.fill(color);
+  QIcon icon(pixmap);
+  QSize iconSize(pixmap.width(), pixmap.height());
+  button->setIconSize(iconSize);
+  button->setIcon(icon);
 
-  button->setAutoFillBackground(true);
-  button->setStyleSheet(s + color.name());
 }

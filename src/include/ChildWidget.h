@@ -106,7 +106,8 @@ private:
    QColor rectColor;
    QColor rectFillColor;
    QColor boxColor;
- 
+   QColor backgroundColor;
+
 protected:
 void closeEvent(QCloseEvent *event);
 bool maybeSave();

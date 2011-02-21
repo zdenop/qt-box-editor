@@ -56,27 +56,26 @@ QLabel *fontLabel;
 QPushButton *colorRectButton;
 QPushButton *rectFillColorButton;
 QPushButton *colorBoxButton;
+QPushButton *backgroundColorButton;
 
 void initSettings();
-QFont tableFont;
-QColor rectColor;
-QColor rectFillColor;
-QColor boxColor;
 
 private slots:
-void on_fontButton_clicked();
-void on_colorRectButton_clicked();
-void on_rectFillColorButton_clicked();
-void on_colorBoxButton_clicked();
-void saveSettings();
+    void on_fontButton_clicked();
+    void on_colorRectButton_clicked();
+    void on_rectFillColorButton_clicked();
+    void on_colorBoxButton_clicked();
+    void on_backgroundColorButton_clicked();
+    void saveSettings();
 
 private:
-void chooseColor(QPushButton *button, QColor *color);
-void updateColorButton(QPushButton *button, const QColor &color);
-/*
+    void chooseColor(QPushButton *button, QColor *color);
+    void updateColorButton(QPushButton *button, const QColor &color);
+
     QFont tableFont;
     QColor rectColor;
     QColor rectFillColor;
-    QColor boxColor;*/
+    QColor boxColor;
+    QColor backgroundColor;
 };
 #endif // SETTINGSDIALOG_H

@@ -95,10 +95,21 @@ ChildWidget::ChildWidget(QWidget * parent) :
       boxColor = Qt::green;
     }
 
+  if (settings.contains("GUI/BackgroundColor"))
+    {
+      backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
+    }
+  else
+    {
+      backgroundColor = (Qt::gray);
+    }
+
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
   imageView = new QGraphicsView(imageScene);
   imageView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+  imageView->setAutoFillBackground(true);
+  imageView->setBackgroundBrush(backgroundColor);
 
   // splitter
   addWidget(table);
