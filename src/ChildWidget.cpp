@@ -450,6 +450,35 @@ void ChildWidget::drawBoxes()
     }
 }
 
+void ChildWidget::mousePressEvent(QMouseEvent* event)
+{
+  qreal zoomFactor = imageView->transform().m22();  // zoom should be proportional => m11=m22
+  QPointF mouseCoordinates = imageView->mapToScene(event->pos());
+  int offset = this->sizes().first() + 6;  // 6 is estimated width  of splitter
+  int zoomedOffset = offset / zoomFactor;
+
+  if (event->button() == Qt::LeftButton)
+    {
+      for (int row = 0; row < model->rowCount(); ++row)
+        {
+          QString letter = model->index(row, 0).data().toString();
+          int left = model->index(row, 1).data().toInt();
+          int bottom = model->index(row, 2).data().toInt();
+          int right = model->index(row, 3).data().toInt();
+          int top = model->index(row, 4).data().toInt();
+
+          if ((left <= (mouseCoordinates.x() - zoomedOffset) &&
+               (mouseCoordinates.x() - zoomedOffset) <= right) &&
+              (top <= mouseCoordinates.y()) &&
+              (mouseCoordinates.y() <= bottom))
+            {
+              table->setCurrentIndex(model->index(row, 0));
+            }
+        }
+      drawSelectionRects();
+    }
+}
+
 void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
 {
   foreach(QGraphicsItem * item, items)

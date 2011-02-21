@@ -31,6 +31,7 @@
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QGraphicsRectItem>
+#include <QtGui/QMouseEvent>
 #include <QtGui/QPixmap>
 #include <QFileInfo>
 #include <QDir>
@@ -43,6 +44,7 @@
 #include <QtCore/qmath.h>
 #include <QTransform>
 #include <QSettings>
+
 
 class QGraphicsScene;
 class QGraphicsView;
@@ -109,6 +111,7 @@ class ChildWidget : public QSplitter
     QColor backgroundColor;
 
   protected:
+    virtual void mousePressEvent(QMouseEvent *event);
     void closeEvent(QCloseEvent* event);
     bool maybeSave();
     void setCurrentImageFile(const QString& fileName);
