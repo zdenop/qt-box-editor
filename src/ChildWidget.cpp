@@ -25,7 +25,7 @@
 #include "Settings.h"
 #include "SettingsDialog.h"
 
-ChildWidget::ChildWidget(QWidget * parent) :
+ChildWidget::ChildWidget(QWidget* parent) :
   QSplitter(Qt::Horizontal, parent)
 {
   model = new QStandardItemModel(0, 8, this);
@@ -44,11 +44,11 @@ ChildWidget::ChildWidget(QWidget * parent) :
   selectionModel = new QItemSelectionModel(model);
   connect(
     selectionModel,
-    SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     this, SLOT(emitBoxChanged()));
   connect(
     selectionModel,
-    SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)),
+    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     this, SLOT(drawSelectionRects()));
   table->setSelectionModel(selectionModel);
   table->verticalHeader()->hide();
@@ -123,7 +123,7 @@ ChildWidget::ChildWidget(QWidget * parent) :
   ToSelection = false;
 }
 
-bool ChildWidget::loadImage(const QString &fileName)
+bool ChildWidget::loadImage(const QString& fileName)
 {
   QImage image(fileName);
 
@@ -151,8 +151,8 @@ bool ChildWidget::loadImage(const QString &fileName)
       imageSelectionRect->setParentItem(imageItem);
       modified = false;
       emit modifiedChanged();
-      connect(model, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(emitBoxChanged()));
-      connect(model, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(documentWasModified()));
+      connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(emitBoxChanged()));
+      connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(documentWasModified()));
     }
   else
     return false;
@@ -160,13 +160,13 @@ bool ChildWidget::loadImage(const QString &fileName)
   return true;
 }
 
-bool ChildWidget::loadBoxes(const QString &fileName)
+bool ChildWidget::loadBoxes(const QString& fileName)
 {
   QFile file(fileName);
 
   if (!file.open(QFile::ReadOnly | QFile::Text))
     {
-      QMessageBox::warning(this, tr("MDI"), tr("Cannot read file %1:\n%2.").arg(fileName).arg(
+      QMessageBox::warning(this, SETTING_APPLICATION, tr("Cannot read file %1:\n%2.").arg(fileName).arg(
                              file.errorString()));
       return false;
     }
@@ -216,7 +216,8 @@ bool ChildWidget::loadBoxes(const QString &fileName)
           model->setData(model->index(row, 8, QModelIndex()), underline);
           row++;
         }
-    } while (!line.isEmpty());
+    }
+  while (!line.isEmpty());
   table->resizeColumnsToContents();
   file.close();
   QApplication::restoreOverrideCursor();
@@ -226,7 +227,7 @@ bool ChildWidget::loadBoxes(const QString &fileName)
   return true;
 }
 
-bool ChildWidget::save(const QString &fileName)
+bool ChildWidget::save(const QString& fileName)
 {
   QFile file(fileName);
 
@@ -451,12 +452,12 @@ void ChildWidget::drawBoxes()
 
 void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
 {
-  foreach (QGraphicsItem *item, items)
-    {
-      qint32 type = static_cast<qint32>(item->type());
-      if (type == 3)   // delete only rectagles
-        imageScene->removeItem(item);
-    }
+  foreach(QGraphicsItem * item, items)
+  {
+    qint32 type = static_cast<qint32>(item->type());
+    if (type == 3)   // delete only rectagles
+      imageScene->removeItem(item);
+  }
   setSelectionRect();   //initialize removed selection rectangle
   drawSelectionRects();
 }
@@ -501,31 +502,31 @@ inline T max(T arg1, T arg2)
 void ChildWidget::joinSymbol()
 {
   QModelIndex index = selectionModel->currentIndex(), next = model->index(
-    index.row() + 1,
-    index.column());
+                        index.row() + 1,
+                        index.column());
 
   if (index.isValid() && next.isValid())
     {
       int row = index.row();
       model->setData(model->index(row, 0), model->index(row, 0).data().toString() + model->index(row
-                                                                                                 + 1, 0).data().toString());
+                     + 1, 0).data().toString());
       min(2, 3);
       model->setData(model->index(row, 1), min(model->index(row, 1).data().toInt(), model->index(row
-                                                                                                 + 1, 1).data().toInt()));
+                     + 1, 1).data().toInt()));
       model->setData(model->index(row, 2), max(model->index(row, 2).data().toInt(), model->index(row
-                                                                                                 + 1, 2).data().toInt()));
+                     + 1, 2).data().toInt()));
       model->setData(model->index(row, 3), max(model->index(row, 3).data().toInt(), model->index(row
-                                                                                                 + 1, 3).data().toInt()));
+                     + 1, 3).data().toInt()));
       model->setData(model->index(row, 4), min(model->index(row, 4).data().toInt(), model->index(row
-                                                                                                 + 1, 4).data().toInt()));
+                     + 1, 4).data().toInt()));
       model->setData(model->index(row, 5), min(model->index(row, 5).data().toInt(), model->index(row
-                                                                                                 + 1, 5).data().toInt()));
+                     + 1, 5).data().toInt()));
       model->setData(model->index(row, 6), model->index(row, 6).data().toBool() || model->index(row
-                                                                                                + 1, 6).data().toBool());
+                     + 1, 6).data().toBool());
       model->setData(model->index(row, 7), model->index(row, 7).data().toBool() || model->index(row
-                                                                                                + 1, 7).data().toBool());
+                     + 1, 7).data().toBool());
       model->setData(model->index(row, 8), model->index(row, 8).data().toBool() || model->index(row
-                                                                                                + 1, 8).data().toBool());
+                     + 1, 8).data().toBool());
       model->removeRow(row + 1);
       drawSelectionRects();
     }
@@ -589,7 +590,7 @@ void ChildWidget::drawSelectionRects()
     }
 }
 
-void ChildWidget::closeEvent(QCloseEvent *event)
+void ChildWidget::closeEvent(QCloseEvent* event)
 {
   if (!maybeSave())
     {
@@ -602,8 +603,8 @@ bool ChildWidget::maybeSave()
   if (isModified())
     {
       QMessageBox::StandardButton ret;
-      ret = QMessageBox::warning(this, tr("MDI"), tr("'%1' has been modified.\n"
-                                                     "Do you want to save your changes?").arg(userFriendlyCurrentFile()), QMessageBox::Save
+      ret = QMessageBox::warning(this, SETTING_APPLICATION, tr("'%1' has been modified.\n"
+                                 "Do you want to save your changes?").arg(userFriendlyCurrentFile()), QMessageBox::Save
                                  | QMessageBox::Discard | QMessageBox::Cancel);
       if (ret == QMessageBox::Save)
         return save(boxFile);
@@ -613,17 +614,17 @@ bool ChildWidget::maybeSave()
   return true;
 }
 
-void ChildWidget::setCurrentImageFile(const QString &fileName)
+void ChildWidget::setCurrentImageFile(const QString& fileName)
 {
   imageFile = QFileInfo(fileName).canonicalFilePath();
 }
 
-void ChildWidget::setCurrentBoxFile(const QString &fileName)
+void ChildWidget::setCurrentBoxFile(const QString& fileName)
 {
   boxFile = QFileInfo(fileName).canonicalFilePath();
 }
 
-QString ChildWidget::strippedName(const QString &fullFileName)
+QString ChildWidget::strippedName(const QString& fullFileName)
 {
   return QFileInfo(fullFileName).fileName();
 }

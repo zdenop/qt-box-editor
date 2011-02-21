@@ -55,114 +55,114 @@ class QSignalMapper;
 
 class MainWindow : public QMainWindow
 {
-Q_OBJECT
-QNetworkAccessManager manager;
+    Q_OBJECT
+    QNetworkAccessManager manager;
 
-public:
-MainWindow();
+  public:
+    MainWindow();
 
-void addChild(const QString &imageFileName);
-SettingsDialog *runSettingsDialog;
+    void addChild(const QString& imageFileName);
+    SettingsDialog* runSettingsDialog;
 
-public slots:
-void checkForUpdate();
-void requestFinished(QNetworkReply *);
+  public slots:
+    void checkForUpdate();
+    void requestFinished(QNetworkReply*);
 
-protected:
+  protected:
 
-void closeEvent(QCloseEvent *event);
+    void closeEvent(QCloseEvent* event);
 
-private slots:
-void open();
-void openRecentFile();
-void save();
-void saveAs();
-bool closeActiveTab();
-bool closeAllTabs();
-void nextTab();
-void previousTab();
-void bold(bool checked);
-void italic(bool checked);
-void underline(bool checked);
-void zoomToFit();
-void zoomToHeight();
-void zoomToWidth();
-void zoomOriginal();
-void zoomToSelection();
-void zoomIn();
-void zoomOut();
-void drawBoxes();
-void splitSymbol();
-void joinSymbol();
-void deleteSymbol();
-void slotSettings();
-void about();
-void aboutQt();
-void handleClose(int i);
-void updateMenus();
-void updateViewMenu();
-void updateCommandActions();
-void updateTabTitle();
-void updateSaveAction();
+  private slots:
+    void open();
+    void openRecentFile();
+    void save();
+    void saveAs();
+    bool closeActiveTab();
+    bool closeAllTabs();
+    void nextTab();
+    void previousTab();
+    void bold(bool checked);
+    void italic(bool checked);
+    void underline(bool checked);
+    void zoomToFit();
+    void zoomToHeight();
+    void zoomToWidth();
+    void zoomOriginal();
+    void zoomToSelection();
+    void zoomIn();
+    void zoomOut();
+    void drawBoxes();
+    void splitSymbol();
+    void joinSymbol();
+    void deleteSymbol();
+    void slotSettings();
+    void about();
+    void aboutQt();
+    void handleClose(int i);
+    void updateMenus();
+    void updateViewMenu();
+    void updateCommandActions();
+    void updateTabTitle();
+    void updateSaveAction();
 
-private:
-ChildWidget *activeChild();
-void createActions();
-void createMenus();
-void createToolBars();
-void readSettings();
-void writeSettings();
-void checkVersion(QNetworkReply *);
-void updateRecentFileActions();
+  private:
+    ChildWidget* activeChild();
+    void createActions();
+    void createMenus();
+    void createToolBars();
+    void readSettings();
+    void writeSettings();
+    void checkVersion(QNetworkReply*);
+    void updateRecentFileActions();
 
-QTabWidget *tabWidget;
+    QTabWidget* tabWidget;
 
-QSignalMapper *windowMapper;
+    QSignalMapper* windowMapper;
 
-QMenu *fileMenu;
-QMenu *editMenu;
-QMenu *viewMenu;
-QMenu *helpMenu;
+    QMenu* fileMenu;
+    QMenu* editMenu;
+    QMenu* viewMenu;
+    QMenu* helpMenu;
 
-enum { MaxRecentFiles = 8 };
-QAction *recentFileActs[MaxRecentFiles];
+    enum { MaxRecentFiles = 8 };
+    QAction* recentFileActs[MaxRecentFiles];
 
-QToolBar *fileToolBar;
-QToolBar *editToolBar;
-QToolBar *viewToolBar;
+    QToolBar* fileToolBar;
+    QToolBar* editToolBar;
+    QToolBar* viewToolBar;
 
-QAction *openAct;
-QAction *saveAct;
-QAction *saveAsAct;
-QAction *closeAct;
-QAction *closeAllAct;
-QAction *fSeparatorAct;
-QAction *exitAct;
+    QAction* openAct;
+    QAction* saveAct;
+    QAction* saveAsAct;
+    QAction* closeAct;
+    QAction* closeAllAct;
+    QAction* fSeparatorAct;
+    QAction* exitAct;
 
-QAction *boldAct;
-QAction *italicAct;
-QAction *underlineAct;
+    QAction* boldAct;
+    QAction* italicAct;
+    QAction* underlineAct;
 
-QAction *settingsAct;
+    QAction* settingsAct;
 
-QAction *zoomOriginalAct;
-QAction *zoomToSelectionAct;
-QAction *zoomToFitAct;
-QAction *zoomToHeightAct;
-QAction *zoomToWidthAct;
-QAction *zoomInAct;
-QAction *zoomOutAct;
-QAction *drawBoxesAct;
-QAction *nextAct;
-QAction *previousAct;
-QAction *separatorAct;
+    QAction* zoomOriginalAct;
+    QAction* zoomToSelectionAct;
+    QAction* zoomToFitAct;
+    QAction* zoomToHeightAct;
+    QAction* zoomToWidthAct;
+    QAction* zoomInAct;
+    QAction* zoomOutAct;
+    QAction* drawBoxesAct;
+    QAction* nextAct;
+    QAction* previousAct;
+    QAction* separatorAct;
 
-QAction *splitAct;
-QAction *joinAct;
-QAction *deleteAct;
-QAction *checkForUpdateAct;
-QAction *aboutAct;
-QAction *aboutQtAct;
+    QAction* splitAct;
+    QAction* joinAct;
+    QAction* deleteAct;
+    QAction* checkForUpdateAct;
+    QAction* aboutAct;
+    QAction* aboutQtAct;
 };
 
 #endif /* MAINWINDOW_H_ */

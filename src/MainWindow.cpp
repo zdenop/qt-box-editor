@@ -27,10 +27,10 @@ MainWindow::MainWindow()
 {
   tabWidget = new QTabWidget;
 
-  #if QT_VERSION >= 0x040500
+#if QT_VERSION >= 0x040500
   tabWidget->setTabsClosable(true);
   tabWidget->setMovable(true);
-  #endif
+#endif
 
   connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(handleClose(int)));
   connect(tabWidget, SIGNAL(currentChanged(int)), this, SLOT(updateMenus()));
@@ -54,7 +54,7 @@ MainWindow::MainWindow()
   setWindowTitle(tr("%1 - v%2").arg(SETTING_APPLICATION).arg(VERSION));
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::closeEvent(QCloseEvent* event)
 {
   if (closeAllTabs())
     {
@@ -67,10 +67,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
 }
 
-ChildWidget *MainWindow::activeChild()
+ChildWidget* MainWindow::activeChild()
 {
-  if (QWidget * currentWidget = tabWidget->currentWidget())
-    return qobject_cast<ChildWidget *> (currentWidget);
+  if (QWidget* currentWidget = tabWidget->currentWidget())
+    return qobject_cast<ChildWidget*> (currentWidget);
   return 0;
 }
 
@@ -80,22 +80,22 @@ void MainWindow::open()
   QString last_path = settings.value("last_path").toString();   // try to get path from settings
 
   QString imageFile = QFileDialog::getOpenFileName(
-    this,
-    tr("Select image file..."),
-    last_path,
-    tr("Image files (*.bmp *.png *.jpeg *.jpg *.tif *.tiff);;Tiff files (*.tif *.tiff);;All files (*.*)"));
+                        this,
+                        tr("Select image file..."),
+                        last_path,
+                        tr("Image files (*.bmp *.png *.jpeg *.jpg *.tif *.tiff);;Tiff files (*.tif *.tiff);;All files (*.*)"));
 
   addChild(imageFile);
 }
 
-void MainWindow::addChild(const QString &imageFileName)
+void MainWindow::addChild(const QString& imageFileName)
 {
   if (!imageFileName.isEmpty())
     {
       QString canonicalImageFileName = QFileInfo(imageFileName).canonicalFilePath();
       for (int i = 0; i < tabWidget->count(); ++i)
         {
-          ChildWidget *child = qobject_cast<ChildWidget *> (tabWidget->widget(i));
+          ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
           if (canonicalImageFileName == child->canonicalImageFileName())
             {
               tabWidget->setCurrentIndex(i);
@@ -103,7 +103,7 @@ void MainWindow::addChild(const QString &imageFileName)
             }
         }
 
-      ChildWidget *child = new ChildWidget(this);
+      ChildWidget* child = new ChildWidget(this);
       if (child->loadImage(imageFileName))
         {
           statusBar()->showMessage(tr("File loaded"), 2000);
@@ -125,12 +125,12 @@ void MainWindow::addChild(const QString &imageFileName)
 
           settings.setValue("recentFileList", files);
 
-          foreach (QWidget *widget, QApplication::topLevelWidgets())
-            {
-              MainWindow *mainWin = qobject_cast<MainWindow *>(widget);
-              if (mainWin)
-                mainWin->updateRecentFileActions();
-            }
+          foreach(QWidget * widget, QApplication::topLevelWidgets())
+          {
+            MainWindow* mainWin = qobject_cast<MainWindow*>(widget);
+            if (mainWin)
+              mainWin->updateRecentFileActions();
+          }
         }
       else
         {
@@ -175,9 +175,9 @@ void MainWindow::saveAs()
   // or should be SaveAs image?
   QString currentFileName = activeChild()->currentBoxFile();
   QString fileName = QFileDialog::getSaveFileName(this,
-                                                  tr("Save a copy of box file..."),
-                                                  currentFileName,
-                                                  tr("Tesseract-ocr box files (*.box);;All files (*)"));
+                     tr("Save a copy of box file..."),
+                     currentFileName,
+                     tr("Tesseract-ocr box files (*.box);;All files (*)"));
 
   if (fileName.isEmpty())
     return;
@@ -208,7 +208,7 @@ bool MainWindow::closeAllTabs()
 
 void MainWindow::openRecentFile()
 {
-  QAction *action = qobject_cast<QAction *>(sender());
+  QAction* action = qobject_cast<QAction*>(sender());
 
   if (action)
     addChild(action->data().toString());
@@ -361,15 +361,15 @@ void MainWindow::checkForUpdate()
   statusBar()->showMessage(tr("Checking for new version..."), 2000);
   QNetworkRequest request;
 
-  QNetworkAccessManager *manager = new QNetworkAccessManager();
+  QNetworkAccessManager* manager = new QNetworkAccessManager();
   request.setHeader(QNetworkRequest::ContentTypeHeader, "text/xml");
   request.setUrl(QUrl(UPDATE_URL));
 
-  QNetworkReply *reply = manager->get(request);
+  QNetworkReply* reply = manager->get(request);
 
-  QEventLoop *loop = new QEventLoop;
+  QEventLoop* loop = new QEventLoop;
 
-  QObject::connect(manager, SIGNAL(finished(QNetworkReply *)),
+  QObject::connect(manager, SIGNAL(finished(QNetworkReply*)),
                    loop, SLOT(quit()));
   loop->exec();
 
@@ -377,12 +377,12 @@ void MainWindow::checkForUpdate()
   delete manager;
 }
 
-void MainWindow::requestFinished(QNetworkReply *reply)
+void MainWindow::requestFinished(QNetworkReply* reply)
 {
   checkVersion(reply);
 }
 
-void MainWindow::checkVersion(QNetworkReply *reply)
+void MainWindow::checkVersion(QNetworkReply* reply)
 {
   if (reply->error() == QNetworkReply::NoError)
     {
@@ -498,7 +498,7 @@ void MainWindow::updateViewMenu()
 
   for (int i = 0; i < tabWidget->count(); ++i)
     {
-      ChildWidget *child = qobject_cast<ChildWidget *> (tabWidget->widget(i));
+      ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
 
       QString text;
       if (i < 9)
@@ -509,7 +509,7 @@ void MainWindow::updateViewMenu()
         {
           text = tr("%1 %2").arg(i + 1).arg(child->userFriendlyCurrentFile());
         }
-      QAction *action = viewMenu->addAction(text);
+      QAction* action = viewMenu->addAction(text);
       action->setCheckable(true);
       action->setChecked(child == activeChild());
       connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
@@ -697,9 +697,9 @@ void MainWindow::createMenus()
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
-  #ifndef WINDOWS   // this does not work on Windows: TODO
+#ifndef WINDOWS   // this does not work on Windows: TODO
   helpMenu->addAction(checkForUpdateAct);
-  #endif
+#endif
   helpMenu->addSeparator();
   helpMenu->addAction(aboutAct);
   helpMenu->addAction(aboutQtAct);

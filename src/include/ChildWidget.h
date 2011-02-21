@@ -54,90 +54,90 @@ class QGraphicsRectItem;
 
 class ChildWidget : public QSplitter
 {
-Q_OBJECT
+    Q_OBJECT
 
-public:
-ChildWidget(QWidget * parent = 0);
+  public:
+    ChildWidget(QWidget* parent = 0);
 
-bool isModified()
-{
-  return modified;
-}
-bool isBoxSelected();
-bool isBold();
-bool isItalic();
-bool isUnderLine();
-bool boxesVisible;
+    bool isModified()
+    {
+      return modified;
+    }
+    bool isBoxSelected();
+    bool isBold();
+    bool isItalic();
+    bool isUnderLine();
+    bool boxesVisible;
 
-QString userFriendlyCurrentFile();
-QString currentBoxFile();
-QString canonicalImageFileName()
-{
-  return imageFile;
-}
+    QString userFriendlyCurrentFile();
+    QString currentBoxFile();
+    QString canonicalImageFileName()
+    {
+      return imageFile;
+    }
 
-bool save(const QString &fileName);
-bool loadImage(const QString &fileName);
-bool loadBoxes(const QString &fileName);
-void setSelectionRect();
-void setBolded(bool v);
-void setItalic(bool v);
-void setUnderline(bool v);
-void setZoom(float scale);
-void zoomOriginal();
-void zoomIn();
-void zoomOut();
-void zoomToSelection();
-void zoomToFit();
-void zoomToHeight();
-void zoomToWidth();
-void drawBoxes();
-void deleteBoxes(const QList<QGraphicsItem*> &items);
-void splitSymbol();
-void joinSymbol();
-void deleteSymbol();
+    bool save(const QString& fileName);
+    bool loadImage(const QString& fileName);
+    bool loadBoxes(const QString& fileName);
+    void setSelectionRect();
+    void setBolded(bool v);
+    void setItalic(bool v);
+    void setUnderline(bool v);
+    void setZoom(float scale);
+    void zoomOriginal();
+    void zoomIn();
+    void zoomOut();
+    void zoomToSelection();
+    void zoomToFit();
+    void zoomToHeight();
+    void zoomToWidth();
+    void drawBoxes();
+    void deleteBoxes(const QList<QGraphicsItem*> &items);
+    void splitSymbol();
+    void joinSymbol();
+    void deleteSymbol();
 
-private slots:
-void documentWasModified();
-void emitBoxChanged();
-void drawSelectionRects();
+  private slots:
+    void documentWasModified();
+    void emitBoxChanged();
+    void drawSelectionRects();
 
-private:
-   QColor rectColor;
-   QColor rectFillColor;
-   QColor boxColor;
-   QColor backgroundColor;
+  private:
+    QColor rectColor;
+    QColor rectFillColor;
+    QColor boxColor;
+    QColor backgroundColor;
 
-protected:
-void closeEvent(QCloseEvent *event);
-bool maybeSave();
-void setCurrentImageFile(const QString &fileName);
-void setCurrentBoxFile(const QString &fileName);
+  protected:
+    void closeEvent(QCloseEvent* event);
+    bool maybeSave();
+    void setCurrentImageFile(const QString& fileName);
+    void setCurrentBoxFile(const QString& fileName);
 
-QString strippedName(const QString &fullFileName);
+    QString strippedName(const QString& fullFileName);
 
-signals:
-void boxChanged();
-void modifiedChanged();
+  signals:
+    void boxChanged();
+    void modifiedChanged();
 
-protected:
-QGraphicsScene *imageScene;
-QGraphicsView *imageView;
-QGraphicsItem * imageItem;
-QGraphicsRectItem *imageSelectionRect;
+  protected:
+    QGraphicsScene* imageScene;
+    QGraphicsView* imageView;
+    QGraphicsItem* imageItem;
+    QGraphicsRectItem* imageSelectionRect;
 
-QTableView *table;
+    QTableView* table;
 
-QAbstractItemModel *model;
-QItemSelectionModel *selectionModel;
+    QAbstractItemModel* model;
+    QItemSelectionModel* selectionModel;
 
-QString imageFile;
-QString boxFile;
+    QString imageFile;
+    QString boxFile;
 
-bool modified;
-bool ToSelection;
-int imageHeight;
-int imageWidth;
+    bool modified;
+    bool ToSelection;
+    int imageHeight;
+    int imageWidth;
 };
 
 #endif /* CHILDWIDGET_H_ */

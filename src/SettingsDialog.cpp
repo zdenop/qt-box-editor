@@ -19,10 +19,10 @@
 ** limitations under the License.
 *
 **********************************************************************/
-#include <QtGui>
+
 #include "SettingsDialog.h"
 
-SettingsDialog::SettingsDialog(QWidget *parent)
+SettingsDialog::SettingsDialog(QWidget* parent)
   : QDialog(parent)
 {
   setFixedSize(420, 370);
@@ -30,34 +30,34 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
   initSettings();
 
-  QVBoxLayout *verticalLayout = new QVBoxLayout(this);
+  QVBoxLayout* verticalLayout = new QVBoxLayout(this);
 
   tabSetting = new QTabWidget(this);
   tabSetting->resize(width(), height());
 
   fontLabel = new QLabel(tableFont.family().toAscii() + tr(", %1 pt").arg(tableFont.pointSize()), this);
   fontLabel->setFont(tableFont);
-  QPushButton *fontButton = new QPushButton(tr("Change..."));
+  QPushButton* fontButton = new QPushButton(tr("Change..."));
   fontButton->setMaximumSize(QSize(75, 26));
   connect(fontButton, SIGNAL(clicked()), this, SLOT(on_fontButton_clicked()));
 
-  QSpacerItem *horizontalSpacer_1 = new QSpacerItem(158, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-  QGroupBox *fontGroupBox = new QGroupBox(tr("Font"));
+  QSpacerItem* horizontalSpacer_1 = new QSpacerItem(158, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  QGroupBox* fontGroupBox = new QGroupBox(tr("Font"));
 
-  QGridLayout *gridLayout_1 = new QGridLayout(fontGroupBox);
+  QGridLayout* gridLayout_1 = new QGridLayout(fontGroupBox);
   gridLayout_1->addWidget(fontLabel, 0, 0, 1, 1);
   gridLayout_1->addItem(horizontalSpacer_1, 0, 1, 1, 1);
   gridLayout_1->addWidget(fontButton, 0, 2, 1, 1);
 
   fontGroupBox->setLayout(gridLayout_1);
 
-  QGroupBox *colorsGroupBox = new QGroupBox(tr("Colors"));
-  QGridLayout *gridLayout_2 = new QGridLayout(colorsGroupBox);
+  QGroupBox* colorsGroupBox = new QGroupBox(tr("Colors"));
+  QGridLayout* gridLayout_2 = new QGridLayout(colorsGroupBox);
 
-  QLabel *colorRectLabel = new QLabel(tr("Selection rectangle:"), colorsGroupBox);
+  QLabel* colorRectLabel = new QLabel(tr("Selection rectangle:"), colorsGroupBox);
   gridLayout_2->addWidget(colorRectLabel, 0, 0, 1, 1);
 
-  QSpacerItem *horizontalSpacer_2 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_2 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_2, 0, 1, 1, 1);
 
   colorRectButton = new QPushButton(colorsGroupBox);
@@ -66,10 +66,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   updateColorButton(colorRectButton, rectColor);
   gridLayout_2->addWidget(colorRectButton, 0, 2, 1, 1);
 
-  QLabel *colorFillRectLabel = new QLabel(tr("Selection fill:"), colorsGroupBox);
+  QLabel* colorFillRectLabel = new QLabel(tr("Selection fill:"), colorsGroupBox);
   gridLayout_2->addWidget(colorFillRectLabel, 2, 0, 1, 1);
 
-  QSpacerItem *horizontalSpacer_3 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_3 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_3, 2, 1, 1, 1);
 
   rectFillColorButton = new QPushButton(colorsGroupBox);
@@ -78,10 +78,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   updateColorButton(rectFillColorButton, rectFillColor);
   gridLayout_2->addWidget(rectFillColorButton, 2, 2, 1, 1);
 
-  QLabel *colorBoxLabel = new QLabel(tr("Boxes:"), colorsGroupBox);
+  QLabel* colorBoxLabel = new QLabel(tr("Boxes:"), colorsGroupBox);
   gridLayout_2->addWidget(colorBoxLabel, 3, 0, 1, 1);
 
-  QSpacerItem *horizontalSpacer_4 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_4 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_4, 3, 1, 1, 1);
 
   colorBoxButton = new QPushButton(colorsGroupBox);
@@ -90,10 +90,10 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   updateColorButton(colorBoxButton, boxColor);
   gridLayout_2->addWidget(colorBoxButton, 3, 2, 1, 1);
 
-  QLabel *backgroundColorLabel = new QLabel(tr("Background:"), colorsGroupBox);
+  QLabel* backgroundColorLabel = new QLabel(tr("Background:"), colorsGroupBox);
   gridLayout_2->addWidget(backgroundColorLabel, 4, 0, 1, 1);
 
-  QSpacerItem *horizontalSpacer_5 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_5 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_5, 4, 1, 1, 1);
 
   backgroundColorButton = new QPushButton(colorsGroupBox);
@@ -102,15 +102,15 @@ SettingsDialog::SettingsDialog(QWidget *parent)
   updateColorButton(backgroundColorButton, backgroundColor);
   gridLayout_2->addWidget(backgroundColorButton, 4, 2, 1, 1);
 
-  QSpacerItem *verticalSpacer = new QSpacerItem(20, 53, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  QSpacerItem* verticalSpacer = new QSpacerItem(20, 53, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-  QWidget *layoutWidget1 = new QWidget(tabSetting);
-  QVBoxLayout *fontAndColorsLayout = new QVBoxLayout(layoutWidget1);
+  QWidget* layoutWidget1 = new QWidget(tabSetting);
+  QVBoxLayout* fontAndColorsLayout = new QVBoxLayout(layoutWidget1);
   fontAndColorsLayout->addWidget(fontGroupBox);
   fontAndColorsLayout->addWidget(colorsGroupBox);
   fontAndColorsLayout->addItem(verticalSpacer);
 
-  QWidget *fontAndColorsSett = new QWidget;
+  QWidget* fontAndColorsSett = new QWidget;
   fontAndColorsSett->setLayout(fontAndColorsLayout);
   tabSetting->addTab(fontAndColorsSett, tr("Font && Colors"));   //&amp;
 
@@ -230,7 +230,7 @@ void SettingsDialog::saveSettings()
   emit accept();
 }
 
-void SettingsDialog::chooseColor(QPushButton *button, QColor *color)
+void SettingsDialog::chooseColor(QPushButton* button, QColor* color)
 {
 #if QT_VERSION >= 0x040500
   QColor newColor = QColorDialog::getColor(*color, this, tr("Select color..."), QColorDialog::ShowAlphaChannel);
@@ -244,8 +244,8 @@ void SettingsDialog::chooseColor(QPushButton *button, QColor *color)
     }
 }
 
-void SettingsDialog::updateColorButton(QPushButton *button,
-                                       const QColor &color)
+void SettingsDialog::updateColorButton(QPushButton* button,
+                                       const QColor& color)
 {
   QPixmap pixmap(68, 20);
   pixmap.fill(color);

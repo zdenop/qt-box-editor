@@ -45,22 +45,22 @@
 
 class SettingsDialog : public QDialog
 {
-Q_OBJECT
-public:
-SettingsDialog(QWidget *pard = 0);
-~SettingsDialog();
-QDialogButtonBox *buttonBox;
-QTabWidget *tabSetting;
-QVBoxLayout *fontAndColorsLayout;
-QLabel *fontLabel;
-QPushButton *colorRectButton;
-QPushButton *rectFillColorButton;
-QPushButton *colorBoxButton;
-QPushButton *backgroundColorButton;
+    Q_OBJECT
+  public:
+    SettingsDialog(QWidget* pard = 0);
+    ~SettingsDialog();
+    QDialogButtonBox* buttonBox;
+    QTabWidget* tabSetting;
+    QVBoxLayout* fontAndColorsLayout;
+    QLabel* fontLabel;
+    QPushButton* colorRectButton;
+    QPushButton* rectFillColorButton;
+    QPushButton* colorBoxButton;
+    QPushButton* backgroundColorButton;
 
-void initSettings();
+    void initSettings();
 
-private slots:
+  private slots:
     void on_fontButton_clicked();
     void on_colorRectButton_clicked();
     void on_rectFillColorButton_clicked();
@@ -68,9 +68,9 @@ private slots:
     void on_backgroundColorButton_clicked();
     void saveSettings();
 
-private:
-    void chooseColor(QPushButton *button, QColor *color);
-    void updateColorButton(QPushButton *button, const QColor &color);
+  private:
+    void chooseColor(QPushButton* button, QColor* color);
+    void updateColorButton(QPushButton* button, const QColor& color);
 
     QFont tableFont;
     QColor rectColor;
