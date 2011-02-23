@@ -575,7 +575,7 @@ void MainWindow::createActions()
   italicAct->setCheckable(true);
   connect(italicAct, SIGNAL(triggered(bool)), this, SLOT(italic(bool)));
 
-  underlineAct = new QAction(QIcon(":/images/text_under.png"), tr("&Underine"), this);
+  underlineAct = new QAction(QIcon(":/images/text_under.png"), tr("&Underline"), this);
   underlineAct->setShortcut(QKeySequence::Underline);
   underlineAct->setCheckable(true);
   connect(underlineAct, SIGNAL(triggered(bool)), this, SLOT(underline(bool)));

@@ -28,7 +28,7 @@
 ChildWidget::ChildWidget(QWidget* parent) :
   QSplitter(Qt::Horizontal, parent)
 {
-  model = new QStandardItemModel(0, 8, this);
+  model = new QStandardItemModel(0, 9, this);
   model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
   model->setHeaderData(1, Qt::Horizontal, tr("Left"));
   model->setHeaderData(2, Qt::Horizontal, tr("Bottom"));
@@ -41,6 +41,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
 
   table = new QTableView;
   table->setModel(model);
+  table->setAlternatingRowColors(true);
   selectionModel = new QItemSelectionModel(model);
   connect(
     selectionModel,
@@ -182,22 +183,27 @@ bool ChildWidget::loadBoxes(const QString& fileName)
       if (!line.isEmpty())
         {
           model->insertRow(row);
+          QFont letterFont;
           QStringList pieces = line.split(" ", QString::SkipEmptyParts);
           QString letter = pieces.value(0);
           bool bold = false, italic = false, underline = false;
-          if (letter.at(0) == '@')
+          // formating is present only in case there are more than 2 letters
+          if (letter.at(0) == '@' && letter.size() > 1)
             {
               bold = true;
+              letterFont.setBold(true);
               letter.remove(0, 1);
             }
-          if (letter.at(0) == '$')
+          if (letter.at(0) == '$' && letter.size() > 1)
             {
               italic = true;
+              letterFont.setItalic(true);
               letter.remove(0, 1);
             }
-          if (letter.at(0) == '\'')
+          if (letter.at(0) == '\'' && letter.size() > 1)
             {
               underline = true;
+              letterFont.setUnderline(true);
               letter.remove(0, 1);
             }
           int left = pieces.value(1).toInt();
@@ -205,6 +211,8 @@ bool ChildWidget::loadBoxes(const QString& fileName)
           int right = pieces.value(3).toInt();
           int top = imageHeight - pieces.value(4).toInt();
           int page = pieces.value(5).toInt();
+
+          model->setData(model->index(row, 0, QModelIndex()), letterFont, Qt::FontRole);
           model->setData(model->index(row, 0, QModelIndex()), letter);
           model->setData(model->index(row, 1, QModelIndex()), left);
           model->setData(model->index(row, 2, QModelIndex()), bottom);
@@ -278,7 +286,7 @@ bool ChildWidget::isBoxSelected()
   return selectionModel->hasSelection();
 }
 
-bool ChildWidget::isBold()
+bool ChildWidget::isItalic()
 {
   QModelIndex index = selectionModel->currentIndex();
 
@@ -289,18 +297,7 @@ bool ChildWidget::isBold()
   return false;
 }
 
-bool ChildWidget::isItalic()
-{
-  QModelIndex index = selectionModel->currentIndex();
-
-  if (index.isValid())
-    {
-      return model->index(index.row(), 5).data().toBool();
-    }
-  return false;
-}
-
-bool ChildWidget::isUnderLine()
+bool ChildWidget::isBold()
 {
   QModelIndex index = selectionModel->currentIndex();
 
@@ -311,20 +308,15 @@ bool ChildWidget::isUnderLine()
   return false;
 }
 
-void ChildWidget::setBolded(bool v)
+bool ChildWidget::isUnderLine()
 {
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid())
     {
-      model->setData(model->index(index.row(), 6, QModelIndex()), v);
+      return model->index(index.row(), 8).data().toBool();
     }
-}
-
-void ChildWidget::setSelectionRect()
-{
-  imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(rectColor), rectFillColor);
-  imageSelectionRect->setZValue(1);
+  return false;
 }
 
 void ChildWidget::setItalic(bool v)
@@ -333,7 +325,28 @@ void ChildWidget::setItalic(bool v)
 
   if (index.isValid())
     {
-      model->setData(model->index(index.row(), 5, QModelIndex()), v);
+      QFont letterFont;
+      letterFont.setItalic(v);
+      model->setData(model->index(index.row(), 0, QModelIndex()), letterFont, Qt::FontRole);
+      model->setData(model->index(index.row(), 6, QModelIndex()), v);
+    }
+}
+
+void ChildWidget::setBolded(bool v)
+{
+  QModelIndex index = selectionModel->currentIndex();
+
+  if (index.isValid())
+    {
+      QFont letterFont;
+      /* TODO: switching between italic bold <-> bold/italics is strange
+      if (isItalic() && !isBold())
+        letterFont.setStyle(QFont::StyleOblique);
+      else
+      */
+      letterFont.setBold(v);
+      model->setData(model->index(index.row(), 0, QModelIndex()), letterFont, Qt::FontRole);
+      model->setData(model->index(index.row(), 7, QModelIndex()), v);
     }
 }
 
@@ -343,8 +356,17 @@ void ChildWidget::setUnderline(bool v)
 
   if (index.isValid())
     {
-      model->setData(model->index(index.row(), 7, QModelIndex()), v);
+      QFont letterFont;
+      letterFont.setUnderline(v);
+      model->setData(model->index(index.row(), 0, QModelIndex()), letterFont, Qt::FontRole);
+      model->setData(model->index(index.row(), 8, QModelIndex()), v);
     }
+}
+
+void ChildWidget::setSelectionRect()
+{
+  imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(rectColor), rectFillColor);
+  imageSelectionRect->setZValue(1);
 }
 
 void ChildWidget::setZoom(float scale)
@@ -353,7 +375,6 @@ void ChildWidget::setZoom(float scale)
 
   transform.scale(scale, scale);
   imageView->setTransform(transform);
-  // qreal scaleFactor = transform.m11();
 }
 
 void ChildWidget::zoomIn()
@@ -603,7 +624,6 @@ void ChildWidget::drawSelectionRects()
       int bottom = model->index(index.row(), 2).data().toInt();
       int right = model->index(index.row(), 3).data().toInt();
       int top = model->index(index.row(), 4).data().toInt();
-      //int page = model->index(index.row(), 5).data().toInt(); //not used for the moment
       imageSelectionRect->setRect(QRectF(QPoint(left, top), QPointF(right, bottom)));
       imageSelectionRect->setVisible(true);
       imageView->ensureVisible(imageSelectionRect);
