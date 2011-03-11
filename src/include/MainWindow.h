@@ -92,6 +92,7 @@ class MainWindow : public QMainWindow
     void zoomIn();
     void zoomOut();
     void drawBoxes();
+    void insertSymbol();
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();
@@ -158,6 +159,7 @@ class MainWindow : public QMainWindow
     QAction* separatorAct;
 
     QAction* splitAct;
+    QAction* insertAct;
     QAction* joinAct;
     QAction* deleteAct;
     QAction* checkForUpdateAct;

@@ -323,6 +323,15 @@ void MainWindow::drawBoxes()
     }
 }
 
+void MainWindow::insertSymbol()
+{
+  if (activeChild())
+    {
+      activeChild()->insertSymbol();
+      statusBar()->showMessage(tr("Insert symbol"), 2000);
+    }
+}
+
 void MainWindow::splitSymbol()
 {
   if (activeChild())
@@ -466,6 +475,7 @@ void MainWindow::updateCommandActions()
   italicAct->setChecked((activeChild()) ? activeChild()->isItalic() : false);
   underlineAct->setEnabled(enable);
   underlineAct->setChecked((activeChild()) ? activeChild()->isUnderLine() : false);
+  insertAct->setEnabled(enable);
   splitAct->setEnabled(enable);
   joinAct->setEnabled(enable);
   deleteAct->setEnabled(enable);
@@ -626,6 +636,10 @@ void MainWindow::createActions()
   previousAct->setStatusTip(tr("Move the focus to the previous window"));
   connect(previousAct, SIGNAL(triggered()), this, SLOT(previousTab()));
 
+  insertAct = new QAction(tr("&Insert symbol"), this);
+  insertAct->setShortcut(tr("Ctrl+0"));
+  connect(insertAct, SIGNAL(triggered()), this, SLOT(insertSymbol()));
+
   splitAct = new QAction(tr("&Split symbol"), this);
   splitAct->setShortcut(tr("Ctrl+2"));
   connect(splitAct, SIGNAL(triggered()), this, SLOT(splitSymbol()));
@@ -684,6 +698,7 @@ void MainWindow::createMenus()
   editMenu->addAction(italicAct);
   editMenu->addAction(underlineAct);
   editMenu->addSeparator();
+  editMenu->addAction(insertAct);
   editMenu->addAction(splitAct);
   editMenu->addAction(joinAct);
   editMenu->addAction(deleteAct);

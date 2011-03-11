@@ -5,7 +5,7 @@ Project homepage: [github.com](https://github.com/zdenop/qt-box-editor)
 
 Screenshots: [wiki](https://github.com/zdenop/qt-box-editor/wiki)
 
-[Download](https://github.com/zdenop/qt-box-editor/downloads)
+Download current (devel) source: [tar.gz](https://github.com/zdenop/qt-box-editor/tarball/master) or [zip](https://github.com/zdenop/qt-box-editor/zipball/master)
 
 Licence: [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 

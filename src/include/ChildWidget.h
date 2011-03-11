@@ -95,6 +95,7 @@ class ChildWidget : public QSplitter
     void zoomToWidth();
     void drawBoxes();
     void deleteBoxes(const QList<QGraphicsItem*> &items);
+    void insertSymbol();
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();

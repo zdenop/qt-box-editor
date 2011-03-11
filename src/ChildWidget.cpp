@@ -512,6 +512,33 @@ void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
   drawSelectionRects();
 }
 
+void ChildWidget::insertSymbol()
+{
+  QModelIndex index = selectionModel->currentIndex();
+
+  if (index.isValid())
+    {
+      int leftBorder = model->index(index.row(), 3).data().toInt() + 1;
+      int rightBorder = model->index(index.row() + 1, 1).data().toInt() - 1;
+
+      if (leftBorder > rightBorder)  //end of line or overlapping boxes
+          rightBorder = leftBorder + (left_b - model->index(index.row(), 1).data().toInt());
+      model->insertRow(index.row() + 1);
+      model->setData(model->index(index.row() + 1, 0), "*");
+      model->setData(model->index(index.row() + 1, 1), leftBorder);
+      model->setData(model->index(index.row() + 1, 2), model->index(index.row(), 2).data().toInt());
+      model->setData(model->index(index.row() + 1, 3), rightBorder);
+      model->setData(model->index(index.row() + 1, 4), model->index(index.row(), 4).data().toInt());
+      model->setData(model->index(index.row() + 1, 5), model->index(index.row(), 5).data().toInt());
+      model->setData(model->index(index.row() + 1, 6), model->index(index.row(), 6).data().toBool());
+      model->setData(model->index(index.row() + 1, 7), model->index(index.row(), 7).data().toBool());
+      model->setData(model->index(index.row() + 1, 8), model->index(index.row(), 8).data().toBool());
+
+      table->setCurrentIndex(model->index(index.row() + 1, 0));
+      drawSelectionRects();
+    }
+}
+
 void ChildWidget::splitSymbol()
 {
   QModelIndex index = selectionModel->currentIndex();
@@ -520,7 +547,6 @@ void ChildWidget::splitSymbol()
     {
       QModelIndex left = model->index(index.row(), 1);
       QModelIndex right = model->index(index.row(), 3);
-      QModelIndex page = model->index(index.row(), 5);
       int width = right.data().toInt() - left.data().toInt();
       model->insertRow(index.row() + 1);
       model->setData(model->index(index.row() + 1, 0), "*");
@@ -528,10 +554,10 @@ void ChildWidget::splitSymbol()
       model->setData(model->index(index.row() + 1, 2), model->index(index.row(), 2).data().toInt());
       model->setData(model->index(index.row() + 1, 3), right.data().toInt());
       model->setData(model->index(index.row() + 1, 4), model->index(index.row(), 4).data().toInt());
-      model->setData(model->index(index.row() + 1, 5), page.data().toInt());
-      model->setData(model->index(index.row() + 1, 6), model->index(index.row(), 5).data().toBool());
-      model->setData(model->index(index.row() + 1, 7), model->index(index.row(), 6).data().toBool());
-      model->setData(model->index(index.row() + 1, 8), model->index(index.row(), 7).data().toBool());
+      model->setData(model->index(index.row() + 1, 5), model->index(index.row(), 5).data().toInt());
+      model->setData(model->index(index.row() + 1, 6), model->index(index.row(), 6).data().toBool());
+      model->setData(model->index(index.row() + 1, 7), model->index(index.row(), 7).data().toBool());
+      model->setData(model->index(index.row() + 1, 8), model->index(index.row(), 8).data().toBool());
       model->setData(right, right.data().toInt() - width / 2);
       drawSelectionRects();
     }
