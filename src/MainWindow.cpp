@@ -396,7 +396,7 @@ void MainWindow::checkVersion(QNetworkReply* reply)
   if (reply->error() == QNetworkReply::NoError)
     {
       float current_version = QString(reply->readAll()).toFloat();
-      float app_version = (QString("%1").arg(VERSION)).toFloat();
+      float app_version = (QString("%1").arg(VERSION).replace("dev", "", Qt::CaseInsensitive)).toFloat();
 
       QString messageText;
 
@@ -406,13 +406,13 @@ void MainWindow::checkVersion(QNetworkReply* reply)
         }
       else if (app_version > current_version)
         {
-          messageText = tr("<p>Your version is higher than released stable version.<p>");
+          messageText = tr("<p>Your version ('%1') is higher than released stable version ('%2').<p>").arg(VERSION).arg(current_version);
           messageText += tr("<p>Do you use develepment version? ");
-          messageText += tr("Do not forget to install stable version manually!</p>");
+          messageText += tr("Don't forget to install stable version manually!</p>");
         }
       else
         {
-          messageText = tr("<p>New version is available!<br/>Please with ");
+          messageText = tr("<p>New version '%1' is available!<br/>Please visit ").arg(current_version);
           messageText += tr("<a href=%1/downloads>downloads on project homepage!</a></p>").arg(PROJECT_URL);
         }
 

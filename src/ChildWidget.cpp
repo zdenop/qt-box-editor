@@ -522,7 +522,7 @@ void ChildWidget::insertSymbol()
       int rightBorder = model->index(index.row() + 1, 1).data().toInt() - 1;
 
       if (leftBorder > rightBorder)  //end of line or overlapping boxes
-          rightBorder = leftBorder + (left_b - model->index(index.row(), 1).data().toInt());
+          rightBorder = leftBorder + (leftBorder - model->index(index.row(), 1).data().toInt());
       model->insertRow(index.row() + 1);
       model->setData(model->index(index.row() + 1, 0), "*");
       model->setData(model->index(index.row() + 1, 1), leftBorder);
