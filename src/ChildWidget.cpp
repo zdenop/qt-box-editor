@@ -52,13 +52,14 @@ ChildWidget::ChildWidget(QWidget* parent) :
     SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     this, SLOT(drawSelectionRects()));
   table->setSelectionModel(selectionModel);
-  table->verticalHeader()->hide();
+  //table->verticalHeader()->hide();
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
   table->setSelectionMode(QAbstractItemView::SingleSelection);
   table->hideColumn(5);
   table->hideColumn(6);
   table->hideColumn(7);
   table->hideColumn(8);
+  table->installEventFilter(this); //(this);   // installs event filter
 
   // Font for table
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -500,6 +501,73 @@ void ChildWidget::mousePressEvent(QMouseEvent* event)
     }
 }
 
+bool ChildWidget::eventFilter(QObject* object, QEvent* event)
+{
+  if (event->type() == QEvent::KeyPress)
+    {
+      // transforms QEvent into QKeyEvent
+      QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
+      if (pKeyEvent->modifiers() & Qt::ControlModifier)
+        {
+          switch (pKeyEvent->key())
+            {
+              case Qt::Key_Up:
+                {
+                  moveSymbolRow(-1);
+                  break;
+                }
+
+              case Qt::Key_Down:
+                {
+                  moveSymbolRow(2);
+                  break;
+                }
+
+            }
+          return true;
+        }
+      else
+        {
+          return QWidget::eventFilter(object, event);
+        }
+    }
+  return false;
+}
+
+void ChildWidget::moveSymbolRow(int direction)
+{
+  QModelIndex index = selectionModel->currentIndex();
+  //check where if we are if move is possible top/bottom
+  if (direction < 0 && index.row() == 0)
+    {
+      qDebug() << "You are at the top!";
+      return;
+    }
+  else if (direction > 0 && index.row() == (model->rowCount() - 1))
+    {
+      qDebug() << "You are at the bottom!";
+      return;
+    }
+  else
+    {
+      // add new row
+      model->insertRow(index.row() + direction);
+      int newRow = index.row() + direction;
+      //insertRow change row id!
+      int currentRow = table->currentIndex().row();
+      for (int i = 0; i < (model->columnCount() - 1); ++i)
+        {
+          model->setData(model->index(newRow, i), model->index(currentRow, i).data());
+        }
+
+      // activate new row
+      table->setCurrentIndex(model->index(newRow, 0));
+      //delete original row
+      model->removeRow(currentRow);
+      drawSelectionRects();
+    }
+}
+
 void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
 {
   foreach(QGraphicsItem * item, items)
@@ -522,7 +590,7 @@ void ChildWidget::insertSymbol()
       int rightBorder = model->index(index.row() + 1, 1).data().toInt() - 1;
 
       if (leftBorder > rightBorder)  //end of line or overlapping boxes
-          rightBorder = leftBorder + (leftBorder - model->index(index.row(), 1).data().toInt());
+        rightBorder = leftBorder + (leftBorder - model->index(index.row(), 1).data().toInt());
       model->insertRow(index.row() + 1);
       model->setData(model->index(index.row() + 1, 0), "*");
       model->setData(model->index(index.row() + 1, 1), leftBorder);

@@ -637,7 +637,7 @@ void MainWindow::createActions()
   connect(previousAct, SIGNAL(triggered()), this, SLOT(previousTab()));
 
   insertAct = new QAction(tr("&Insert symbol"), this);
-  insertAct->setShortcut(tr("Ctrl+0"));
+  insertAct->setShortcut(Qt::Key_Insert);
   connect(insertAct, SIGNAL(triggered()), this, SLOT(insertSymbol()));
 
   splitAct = new QAction(tr("&Split symbol"), this);

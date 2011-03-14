@@ -95,6 +95,7 @@ class ChildWidget : public QSplitter
     void zoomToWidth();
     void drawBoxes();
     void deleteBoxes(const QList<QGraphicsItem*> &items);
+    void moveSymbolRow(int direction);
     void insertSymbol();
     void splitSymbol();
     void joinSymbol();
@@ -113,6 +114,7 @@ class ChildWidget : public QSplitter
 
   protected:
     virtual void mousePressEvent(QMouseEvent *event);
+    bool eventFilter(QObject* object, QEvent* event);
     void closeEvent(QCloseEvent* event);
     bool maybeSave();
     void setCurrentImageFile(const QString& fileName);
