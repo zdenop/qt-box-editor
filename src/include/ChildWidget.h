@@ -28,6 +28,7 @@
 #include <QTableView>
 #include <QAbstractItemView>
 #include <QHeaderView>
+#include <QtGui/QClipboard>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QGraphicsRectItem>
@@ -96,6 +97,8 @@ class ChildWidget : public QSplitter
     void drawBoxes();
     void deleteBoxes(const QList<QGraphicsItem*> &items);
     void moveSymbolRow(int direction);
+    void copyFromCell();
+    void pasteToCell();
     void insertSymbol();
     void splitSymbol();
     void joinSymbol();

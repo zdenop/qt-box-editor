@@ -495,6 +495,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event)
               (mouseCoordinates.y() <= bottom))
             {
               table->setCurrentIndex(model->index(row, 0));
+              table->setFocus();
             }
         }
       drawSelectionRects();
@@ -522,7 +523,16 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event)
                   moveSymbolRow(2);
                   break;
                 }
-
+              case Qt::Key_C:
+                {
+                  copyFromCell();
+                  break;
+                }
+              case Qt::Key_V:
+                {
+                  pasteToCell();
+                  break;
+                }
             }
           return true;
         }
@@ -566,6 +576,26 @@ void ChildWidget::moveSymbolRow(int direction)
       model->removeRow(currentRow);
       drawSelectionRects();
     }
+}
+
+void ChildWidget::copyFromCell()
+{
+  QClipboard* clipboard = QApplication::clipboard();
+  clipboard->setText(table->currentIndex().data().toString());
+}
+
+void ChildWidget::pasteToCell()
+{
+  const QClipboard* clipboard = QApplication::clipboard();
+  QModelIndex index = selectionModel->currentIndex();
+
+  // do not paste string to int fields
+  if ((index.column() > 0 && index.column() < 5) && (clipboard->text().toInt() > 0))
+    model->setData(table->currentIndex(), clipboard->text().toInt());
+
+  // paste string only to string field
+  if (index.column() == 0)
+    model->setData(table->currentIndex(), clipboard->text());
 }
 
 void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
