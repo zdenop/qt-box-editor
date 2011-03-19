@@ -29,6 +29,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
   QSplitter(Qt::Horizontal, parent)
 {
   model = new QStandardItemModel(0, 9, this);
+//  model->setHeaderData(-1, Qt::Horizontal, tr("Row"));
   model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
   model->setHeaderData(1, Qt::Horizontal, tr("Left"));
   model->setHeaderData(2, Qt::Horizontal, tr("Bottom"));
@@ -41,6 +42,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
 
   table = new QTableView;
   table->setModel(model);
+  table->resize(1,1);
   table->setAlternatingRowColors(true);
   selectionModel = new QItemSelectionModel(model);
   connect(
@@ -64,7 +66,8 @@ ChildWidget::ChildWidget(QWidget* parent) :
   // Font for table
   QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
   QFont tableFont = settings.value("GUI/Font").value<QFont>();
-  if (tableFont.rawName().isEmpty())
+
+  if (tableFont.family().isEmpty())
     {
       tableFont.setFamily(TABLE_FONT);
       tableFont.setPointSize(TABLE_FONT_SIZE);
@@ -116,10 +119,11 @@ ChildWidget::ChildWidget(QWidget* parent) :
   // splitter
   addWidget(table);
   addWidget(imageView);
-  setStretchFactor(0, 0);
-  setStretchFactor(1, 1);
+  setStretchFactor(indexOf(table), 0);
+  setStretchFactor(indexOf(imageView), 1);
 
   setSelectionRect();
+  widgetWidth = parent->size().width();
   modified = false;
   boxesVisible = false;
   ToSelection = false;
@@ -227,11 +231,32 @@ bool ChildWidget::loadBoxes(const QString& fileName)
         }
     }
   while (!line.isEmpty());
-  table->resizeColumnsToContents();
+
   file.close();
   QApplication::restoreOverrideCursor();
 
   setCurrentBoxFile(fileName);
+
+  table->resizeColumnsToContents();
+  table->horizontalHeader()->setStretchLastSection(true);
+
+  // set size of table
+  int tableVisibleWidth = 2 * table->frameWidth();
+  if (!table->verticalHeader()->isHidden()) {
+    tableVisibleWidth += 35; // TODO: table->verticalHeader()->width() is 0
+  }
+
+  tableVisibleWidth += 15; // scrollbar
+
+  for (int col = 0; col < table->colorCount(); col++)
+    {
+      tableVisibleWidth += table->columnWidth(col);
+    }
+  QList<int> splitterSizes;
+  splitterSizes << tableVisibleWidth;
+  splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
+  table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  setSizes(splitterSizes);
 
   return true;
 }

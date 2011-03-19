@@ -34,13 +34,13 @@
 #include <QtGui/QGraphicsRectItem>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPixmap>
+#include <QtGui/QSplitter>
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
 #include <QtGui/QApplication>
 #include <QDebug>
 #include <QCloseEvent>
-#include <QSplitter>
 #include <QMessageBox>
 #include <QtCore/qmath.h>
 #include <QTransform>
@@ -147,6 +147,7 @@ class ChildWidget : public QSplitter
     bool ToSelection;
     int imageHeight;
     int imageWidth;
+    int widgetWidth;
 };
 
 #endif /* CHILDWIDGET_H_ */
