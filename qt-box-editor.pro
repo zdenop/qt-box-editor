@@ -7,6 +7,7 @@ DEPENDPATH += ./ \
     resource
 
 INCLUDEPATH += ./ \
+    dialogs \
     src/include \
     src
 
@@ -19,15 +20,20 @@ UI_DIR += temp
 RCC_DIR += temp
 DEFINES += VERSION=\\\"$${VERSION}\\\"
 
+FORMS += \
+    dialogs/ShortCutDialog.ui
+
 SOURCES += src/main.cpp \
     src/MainWindow.cpp \
     src/ChildWidget.cpp \
-    src/SettingsDialog.cpp
+    src/SettingsDialog.cpp \
+    dialogs/ShortCutsDialog.cpp
 
 HEADERS += src/include/MainWindow.h \
     src/include/ChildWidget.h \
     src/include/Settings.h \
-    src/include/SettingsDialog.h
+    src/include/SettingsDialog.h \
+    dialogs/ShortCutsDialog.h
 
 RESOURCES = resources/application.qrc
 

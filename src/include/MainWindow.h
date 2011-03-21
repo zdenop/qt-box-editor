@@ -52,6 +52,7 @@ class QAction;
 class QMenu;
 class QTabWidget;
 class QSignalMapper;
+class ShortCutsDialog;
 
 class MainWindow : public QMainWindow
 {
@@ -97,6 +98,7 @@ class MainWindow : public QMainWindow
     void joinSymbol();
     void deleteSymbol();
     void slotSettings();
+    void shortCutList();
     void about();
     void aboutQt();
     void handleClose(int i);
@@ -107,6 +109,7 @@ class MainWindow : public QMainWindow
     void updateSaveAction();
 
   private:
+    ShortCutsDialog *shortCutsDialog;
     ChildWidget* activeChild();
     void createActions();
     void createMenus();
@@ -163,6 +166,7 @@ class MainWindow : public QMainWindow
     QAction* joinAct;
     QAction* deleteAct;
     QAction* checkForUpdateAct;
+    QAction* shortCutListAct;
     QAction* aboutAct;
     QAction* aboutQtAct;
 };

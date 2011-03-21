@@ -22,6 +22,7 @@
 **********************************************************************/
 
 #include "MainWindow.h"
+#include "ShortCutsDialog.h"
 
 MainWindow::MainWindow()
 {
@@ -42,6 +43,7 @@ MainWindow::MainWindow()
   windowMapper = new QSignalMapper(this);
   connect(windowMapper, SIGNAL(mapped(int)), tabWidget, SLOT(setCurrentIndex(int)));
 
+  shortCutsDialog = 0;
   createActions();
   createMenus();
   createToolBars();
@@ -424,6 +426,13 @@ void MainWindow::checkVersion(QNetworkReply* reply)
     }
 }
 
+void MainWindow::shortCutList()
+{
+    if (!shortCutsDialog)
+       shortCutsDialog = new ShortCutsDialog(this);
+    shortCutsDialog -> show();
+}
+
 void MainWindow::about()
 {
   QString abouttext = tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(VERSION);
@@ -667,6 +676,10 @@ void MainWindow::createActions()
 
   aboutQtAct = new QAction(tr("About &Qt"), this);
   connect(aboutQtAct, SIGNAL(triggered()), this, SLOT(aboutQt()));
+
+  shortCutListAct = new QAction(tr("&Shortcut List"), this);
+  shortCutListAct -> setShortcut(tr("F1"));
+  connect(shortCutListAct, SIGNAL(triggered()), this, SLOT(shortCutList()));
 }
 
 void MainWindow::createMenus()
@@ -716,6 +729,7 @@ void MainWindow::createMenus()
   helpMenu->addAction(checkForUpdateAct);
 #endif
   helpMenu->addSeparator();
+  helpMenu->addAction(shortCutListAct);
   helpMenu->addAction(aboutAct);
   helpMenu->addAction(aboutQtAct);
 }
