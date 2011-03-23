@@ -428,9 +428,9 @@ void MainWindow::checkVersion(QNetworkReply* reply)
 
 void MainWindow::shortCutList()
 {
-    if (!shortCutsDialog)
-       shortCutsDialog = new ShortCutsDialog(this);
-    shortCutsDialog -> show();
+  if (!shortCutsDialog)
+    shortCutsDialog = new ShortCutsDialog(this);
+  shortCutsDialog -> show();
 }
 
 void MainWindow::about()

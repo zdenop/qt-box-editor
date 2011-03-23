@@ -29,7 +29,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
   QSplitter(Qt::Horizontal, parent)
 {
   model = new QStandardItemModel(0, 9, this);
-//  model->setHeaderData(-1, Qt::Horizontal, tr("Row"));
+  //  model->setHeaderData(-1, Qt::Horizontal, tr("Row"));
   model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
   model->setHeaderData(1, Qt::Horizontal, tr("Left"));
   model->setHeaderData(2, Qt::Horizontal, tr("Bottom"));
@@ -42,7 +42,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
 
   table = new QTableView;
   table->setModel(model);
-  table->resize(1,1);
+  table->resize(1, 1);
   table->setAlternatingRowColors(true);
   selectionModel = new QItemSelectionModel(model);
   connect(
@@ -242,9 +242,10 @@ bool ChildWidget::loadBoxes(const QString& fileName)
 
   // set size of table
   int tableVisibleWidth = 2 * table->frameWidth();
-  if (!table->verticalHeader()->isHidden()) {
-    tableVisibleWidth += 35; // TODO: table->verticalHeader()->width() is 0
-  }
+  if (!table->verticalHeader()->isHidden())
+    {
+      tableVisibleWidth += 35; // TODO: table->verticalHeader()->width() is 0
+    }
 
   tableVisibleWidth += 15; // scrollbar
 
