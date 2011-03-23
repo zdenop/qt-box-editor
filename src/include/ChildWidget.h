@@ -116,7 +116,7 @@ class ChildWidget : public QSplitter
     QColor backgroundColor;
 
   protected:
-    virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mousePressEvent(QMouseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
     void closeEvent(QCloseEvent* event);
     bool maybeSave();

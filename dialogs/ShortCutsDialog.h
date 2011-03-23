@@ -28,10 +28,10 @@
 
 class ShortCutsDialog : public QDialog, public Ui::ShortCutDialog
 {
-   Q_OBJECT
+    Q_OBJECT
 
-   public:
-      ShortCutsDialog(QWidget* = 0);
+  public:
+    ShortCutsDialog(QWidget* = 0);
 };
 
 #endif // SHORTCUTSDIALOG_H

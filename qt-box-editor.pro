@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.03dev
+VERSION = 1.03
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -11,8 +11,7 @@ INCLUDEPATH += ./ \
     src/include \
     src
 
-QT += network \
-    testlib
+QT += network
 
 OBJECTS_DIR += temp
 MOC_DIR += temp

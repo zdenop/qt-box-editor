@@ -1,3 +1,10 @@
+1.03
+- setting dialog
+- option to select font for table, colors for boxes
+- shortcuts help/dialog
+- added fuction to insert box
+- added funtion to move box within table/model
+
 1.02
 - replace icons from Faenza Icons set
 - added zoom to box, zoom to fit, fit to width, fit to height

@@ -109,7 +109,7 @@ class MainWindow : public QMainWindow
     void updateSaveAction();
 
   private:
-    ShortCutsDialog *shortCutsDialog;
+    ShortCutsDialog* shortCutsDialog;
     ChildWidget* activeChild();
     void createActions();
     void createMenus();
