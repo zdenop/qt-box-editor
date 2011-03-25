@@ -70,6 +70,7 @@ class ChildWidget : public QSplitter
     bool isBold();
     bool isItalic();
     bool isUnderLine();
+    bool isDrawBoxes();
     bool boxesVisible;
 
     QString userFriendlyCurrentFile();
@@ -144,7 +145,6 @@ class ChildWidget : public QSplitter
     QString boxFile;
 
     bool modified;
-    bool ToSelection;
     int imageHeight;
     int imageWidth;
     int widgetWidth;

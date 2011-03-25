@@ -126,7 +126,6 @@ ChildWidget::ChildWidget(QWidget* parent) :
   widgetWidth = parent->size().width();
   modified = false;
   boxesVisible = false;
-  ToSelection = false;
 }
 
 bool ChildWidget::loadImage(const QString& fileName)
@@ -346,6 +345,11 @@ bool ChildWidget::isUnderLine()
   return false;
 }
 
+bool ChildWidget::isDrawBoxes()
+{
+  return boxesVisible;
+}
+
 void ChildWidget::setItalic(bool v)
 {
   QModelIndex index = selectionModel->currentIndex();
@@ -462,19 +466,10 @@ void ChildWidget::zoomOriginal()
 
 void ChildWidget::zoomToSelection()
 {
-  if (ToSelection == false)
-    {
-      imageView->fitInView(imageSelectionRect, Qt::KeepAspectRatio);
-      imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
-      imageView->ensureVisible(imageSelectionRect);
-      imageView->centerOn(imageSelectionRect);
-      ToSelection = true;
-    }
-  else
-    {
-      // Lets keep zoom factor
-      ToSelection = false;
-    }
+  imageView->fitInView(imageSelectionRect, Qt::KeepAspectRatio);
+  imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
+  imageView->ensureVisible(imageSelectionRect);
+  imageView->centerOn(imageSelectionRect);
 }
 
 void ChildWidget::drawBoxes()
@@ -622,6 +617,7 @@ void ChildWidget::pasteToCell()
   // paste string only to string field
   if (index.column() == 0)
     model->setData(table->currentIndex(), clipboard->text());
+  drawSelectionRects();
 }
 
 void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
@@ -781,11 +777,6 @@ void ChildWidget::drawSelectionRects()
   else
     {
       imageSelectionRect->setVisible(false);
-    }
-  if (ToSelection == true)   //if zoomToSelection is enabled, than keep zooming to selection
-    {
-      ToSelection = false;
-      zoomToSelection();
     }
 }
 

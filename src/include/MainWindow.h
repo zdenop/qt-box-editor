@@ -38,9 +38,9 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
 #include <QUrl>
 
 #include "ChildWidget.h"
