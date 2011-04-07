@@ -126,6 +126,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
   widgetWidth = parent->size().width();
   modified = false;
   boxesVisible = false;
+  symbolShown = true;
 }
 
 bool ChildWidget::loadImage(const QString& fileName)
@@ -246,7 +247,7 @@ bool ChildWidget::loadBoxes(const QString& fileName)
       tableVisibleWidth += 35; // TODO: table->verticalHeader()->width() is 0
     }
 
-  tableVisibleWidth += 15; // scrollbar
+  tableVisibleWidth += 25; // scrollbar
 
   for (int col = 0; col < table->colorCount(); col++)
     {
@@ -345,6 +346,11 @@ bool ChildWidget::isUnderLine()
   return false;
 }
 
+bool ChildWidget::isShowSymbol()
+{
+  return symbolShown;
+}
+
 bool ChildWidget::isDrawBoxes()
 {
   return boxesVisible;
@@ -396,8 +402,24 @@ void ChildWidget::setUnderline(bool v)
 
 void ChildWidget::setSelectionRect()
 {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+  QFont tableFont = settings.value("GUI/Font").value<QFont>();
+
+  if (tableFont.family().isEmpty())
+    {
+      tableFont.setFamily(TABLE_FONT);
+      tableFont.setPointSize(TABLE_FONT_SIZE);
+    }
+
+  tableFont.setPointSize((tableFont.pointSize() * 2));
+
+  text2 = imageScene->addText(QString(""), tableFont);
+  text2->setDefaultTextColor(Qt::red);
+  text2->setZValue(1);
+  text2->setPos(QPoint(0, 0));
+
   imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(rectColor), rectFillColor);
-  imageSelectionRect->setZValue(1);
+  imageSelectionRect->setZValue(1); 
 }
 
 void ChildWidget::setZoom(float scale)
@@ -470,6 +492,15 @@ void ChildWidget::zoomToSelection()
   imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
   imageView->ensureVisible(imageSelectionRect);
   imageView->centerOn(imageSelectionRect);
+}
+
+void ChildWidget::showSymbol()
+{
+  if (symbolShown == false)
+    symbolShown = true;
+  else
+    symbolShown = false;
+  drawSelectionRects();
 }
 
 void ChildWidget::drawBoxes()
@@ -724,6 +755,8 @@ void ChildWidget::joinSymbol()
       model->setData(model->index(row, 8), model->index(row, 8).data().toBool() || model->index(row
                      + 1, 8).data().toBool());
       model->removeRow(row + 1);
+      table->setCurrentIndex(model->index(row, 0));
+      table->setFocus();
       drawSelectionRects();
     }
 }
@@ -766,6 +799,7 @@ void ChildWidget::drawSelectionRects()
   if (!selectedIndexes.empty())
     {
       QModelIndex index = selectedIndexes.first();
+      QString letter = model->index(index.row(), 0).data().toString();
       int left = model->index(index.row(), 1).data().toInt();
       int bottom = model->index(index.row(), 2).data().toInt();
       int right = model->index(index.row(), 3).data().toInt();
@@ -773,10 +807,24 @@ void ChildWidget::drawSelectionRects()
       imageSelectionRect->setRect(QRectF(QPoint(left, top), QPointF(right, bottom)));
       imageSelectionRect->setVisible(true);
       imageView->ensureVisible(imageSelectionRect);
+
+      if (symbolShown == true)
+        {
+          text2->setPlainText(letter);
+          // TODO: get font metrics and calculate better placement
+          // (e.g. visible in case of narrow margin)
+          text2->setPos(QPoint(left, top - 16 * 2 - 15));
+          text2->setVisible(true);
+        }
+      else
+        {
+          text2->setVisible(false);
+        }
     }
   else
     {
       imageSelectionRect->setVisible(false);
+      text2->setVisible(false);
     }
 }
 

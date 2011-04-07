@@ -92,6 +92,7 @@ class MainWindow : public QMainWindow
     void zoomToSelection();
     void zoomIn();
     void zoomOut();
+    void showSymbol();
     void drawBoxes();
     void insertSymbol();
     void splitSymbol();
@@ -156,6 +157,7 @@ class MainWindow : public QMainWindow
     QAction* zoomToWidthAct;
     QAction* zoomInAct;
     QAction* zoomOutAct;
+    QAction* showSymbolAct;
     QAction* drawBoxesAct;
     QAction* nextAct;
     QAction* previousAct;
