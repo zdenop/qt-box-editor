@@ -317,6 +317,14 @@ void MainWindow::zoomToWidth()
     }
 }
 
+void MainWindow::showSymbol()
+{
+  if (activeChild())
+    {
+      activeChild()->showSymbol();
+    }
+}
+
 void MainWindow::drawBoxes()
 {
   if (activeChild())
@@ -370,12 +378,13 @@ void MainWindow::slotSettings()
 void MainWindow::checkForUpdate()
 {
   statusBar()->showMessage(tr("Checking for new version..."), 2000);
-  QNetworkRequest request;
 
-  QNetworkAccessManager* manager = new QNetworkAccessManager();
+  QNetworkRequest request;
   request.setHeader(QNetworkRequest::ContentTypeHeader, "text/xml");
   request.setUrl(QUrl(UPDATE_URL));
 
+  // TODO: test for proxy, ask auth.
+  QNetworkAccessManager* manager = new QNetworkAccessManager();
   QNetworkReply* reply = manager->get(request);
 
   QEventLoop* loop = new QEventLoop;
@@ -470,6 +479,8 @@ void MainWindow::updateMenus()
   zoomToFitAct->setEnabled(activeChild() != 0);
   zoomToHeightAct->setEnabled(activeChild() != 0);
   zoomToWidthAct->setEnabled(activeChild() != 0);
+  zoomToSelectionAct->setEnabled(activeChild() != 0);
+  showSymbolAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
 }
 
@@ -477,13 +488,14 @@ void MainWindow::updateCommandActions()
 {
   bool enable = (activeChild()) ? activeChild()->isBoxSelected() : false;
 
-  zoomToSelectionAct->setEnabled(enable);
   boldAct->setEnabled(enable);
   boldAct->setChecked((activeChild()) ? activeChild()->isBold() : false);
   italicAct->setEnabled(enable);
   italicAct->setChecked((activeChild()) ? activeChild()->isItalic() : false);
   underlineAct->setEnabled(enable);
   underlineAct->setChecked((activeChild()) ? activeChild()->isUnderLine() : false);
+  showSymbolAct->setChecked((activeChild()) ? activeChild()->isShowSymbol() : false);
+  drawBoxesAct->setChecked((activeChild()) ? activeChild()->isDrawBoxes() : false);
   insertAct->setEnabled(enable);
   splitAct->setEnabled(enable);
   joinAct->setEnabled(enable);
@@ -544,6 +556,7 @@ void MainWindow::updateViewMenu()
   viewMenu->addAction(zoomToWidthAct);
   viewMenu->addAction(zoomToSelectionAct);
   viewMenu->addSeparator();
+  viewMenu->addAction(showSymbolAct);
   viewMenu->addAction(drawBoxesAct);
 }
 
@@ -624,10 +637,15 @@ void MainWindow::createActions()
   connect(zoomToWidthAct, SIGNAL(triggered()), this, SLOT(zoomToWidth()));
 
   zoomToSelectionAct = new QAction(QIcon(":/images/zoom-selection.png"), tr("Zoom to selection"), this);
-  zoomToSelectionAct->setCheckable(true);
   zoomToSelectionAct->setShortcut(tr("Ctrl+/"));
   zoomToSelectionAct->setStatusTip(tr("Zoom to selected box"));
   connect(zoomToSelectionAct, SIGNAL(triggered()), this, SLOT(zoomToSelection()));
+
+  showSymbolAct = new QAction(QIcon(":/images/showSymbol.png"), tr("S&how symbol"), this);
+  showSymbolAct->setCheckable(true);
+  showSymbolAct->setShortcut(tr("Ctrl+L"));
+  showSymbolAct->setStatusTip(tr("Show/hide symbol over selection rectangle"));
+  connect(showSymbolAct, SIGNAL(triggered()), this, SLOT(showSymbol()));
 
   drawBoxesAct = new QAction(QIcon(":/images/drawRect.png"), tr("S&how boxes"), this);
   drawBoxesAct->setCheckable(true);
@@ -725,9 +743,9 @@ void MainWindow::createMenus()
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
-#ifndef WINDOWS   // this does not work on Windows: TODO
+  //#ifndef WINDOWS   // this function need openssl library on Windows - TODO
   helpMenu->addAction(checkForUpdateAct);
-#endif
+  //#endif
   helpMenu->addSeparator();
   helpMenu->addAction(shortCutListAct);
   helpMenu->addAction(aboutAct);
@@ -756,6 +774,7 @@ void MainWindow::createToolBars()
   viewToolBar->addAction(zoomToWidthAct);
   viewToolBar->addAction(zoomToSelectionAct);
   viewToolBar->addSeparator();
+  viewToolBar->addAction(showSymbolAct);
   viewToolBar->addAction(drawBoxesAct);
 
   editToolBar = addToolBar(tr("Edit"));

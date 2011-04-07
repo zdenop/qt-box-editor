@@ -21,5 +21,6 @@
         <file>images/zoom-selection.png</file>
         <file>images/zoom-width.png</file>
         <file>images/zoom-height.png</file>
+        <file>images/showSymbol.png</file>
     </qresource>
 </RCC>

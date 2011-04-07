@@ -38,9 +38,9 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QMainWindow>
-#include <QNetworkAccessManager>
-#include <QNetworkRequest>
-#include <QNetworkReply>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkRequest>
+#include <QtNetwork/QNetworkReply>
 #include <QUrl>
 
 #include "ChildWidget.h"
@@ -92,6 +92,7 @@ class MainWindow : public QMainWindow
     void zoomToSelection();
     void zoomIn();
     void zoomOut();
+    void showSymbol();
     void drawBoxes();
     void insertSymbol();
     void splitSymbol();
@@ -156,6 +157,7 @@ class MainWindow : public QMainWindow
     QAction* zoomToWidthAct;
     QAction* zoomInAct;
     QAction* zoomOutAct;
+    QAction* showSymbolAct;
     QAction* drawBoxesAct;
     QAction* nextAct;
     QAction* previousAct;

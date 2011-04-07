@@ -70,6 +70,9 @@ class ChildWidget : public QSplitter
     bool isBold();
     bool isItalic();
     bool isUnderLine();
+    bool isShowSymbol();
+    bool isDrawBoxes();
+    bool symbolShown;
     bool boxesVisible;
 
     QString userFriendlyCurrentFile();
@@ -94,6 +97,7 @@ class ChildWidget : public QSplitter
     void zoomToFit();
     void zoomToHeight();
     void zoomToWidth();
+    void showSymbol();
     void drawBoxes();
     void deleteBoxes(const QList<QGraphicsItem*> &items);
     void moveSymbolRow(int direction);
@@ -114,6 +118,7 @@ class ChildWidget : public QSplitter
     QColor rectFillColor;
     QColor boxColor;
     QColor backgroundColor;
+    QGraphicsItem* m_message;
 
   protected:
     virtual void mousePressEvent(QMouseEvent* event);
@@ -134,6 +139,7 @@ class ChildWidget : public QSplitter
     QGraphicsView* imageView;
     QGraphicsItem* imageItem;
     QGraphicsRectItem* imageSelectionRect;
+    QGraphicsTextItem* text2;
 
     QTableView* table;
 
@@ -144,7 +150,6 @@ class ChildWidget : public QSplitter
     QString boxFile;
 
     bool modified;
-    bool ToSelection;
     int imageHeight;
     int imageWidth;
     int widgetWidth;
