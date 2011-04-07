@@ -182,12 +182,12 @@ bool ChildWidget::loadBoxes(const QString& fileName)
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QString line;
   int row = 0;
+  int firstPage = -1;
   do
     {
       line = in.readLine();
       if (!line.isEmpty())
         {
-          model->insertRow(row);
           QFont letterFont;
           QStringList pieces = line.split(" ", QString::SkipEmptyParts);
           QString letter = pieces.value(0);
@@ -217,17 +217,24 @@ bool ChildWidget::loadBoxes(const QString& fileName)
           int top = imageHeight - pieces.value(4).toInt();
           int page = pieces.value(5).toInt();
 
-          model->setData(model->index(row, 0, QModelIndex()), letterFont, Qt::FontRole);
-          model->setData(model->index(row, 0, QModelIndex()), letter);
-          model->setData(model->index(row, 1, QModelIndex()), left);
-          model->setData(model->index(row, 2, QModelIndex()), bottom);
-          model->setData(model->index(row, 3, QModelIndex()), right);
-          model->setData(model->index(row, 4, QModelIndex()), top);
-          model->setData(model->index(row, 5, QModelIndex()), page);
-          model->setData(model->index(row, 6, QModelIndex()), italic);
-          model->setData(model->index(row, 7, QModelIndex()), bold);
-          model->setData(model->index(row, 8, QModelIndex()), underline);
-          row++;
+          // TODO: implement support for multipage tif
+          if (firstPage < 0)
+            firstPage = page;  // first page can have number 5 ;-)
+          if (firstPage == page)   // ignore other pages than first page
+            {
+              model->insertRow(row);
+              model->setData(model->index(row, 0, QModelIndex()), letterFont, Qt::FontRole);
+              model->setData(model->index(row, 0, QModelIndex()), letter);
+              model->setData(model->index(row, 1, QModelIndex()), left);
+              model->setData(model->index(row, 2, QModelIndex()), bottom);
+              model->setData(model->index(row, 3, QModelIndex()), right);
+              model->setData(model->index(row, 4, QModelIndex()), top);
+              model->setData(model->index(row, 5, QModelIndex()), page);
+              model->setData(model->index(row, 6, QModelIndex()), italic);
+              model->setData(model->index(row, 7, QModelIndex()), bold);
+              model->setData(model->index(row, 8, QModelIndex()), underline);
+              row++;
+            }
         }
     }
   while (!line.isEmpty());
@@ -419,7 +426,7 @@ void ChildWidget::setSelectionRect()
   text2->setPos(QPoint(0, 0));
 
   imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(rectColor), rectFillColor);
-  imageSelectionRect->setZValue(1); 
+  imageSelectionRect->setZValue(1);
 }
 
 void ChildWidget::setZoom(float scale)
