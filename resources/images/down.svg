@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64px"
+   height="64px"
+   id="svg12643"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="down.svg">
+  <title
+     id="title3111">Down</title>
+  <defs
+     id="defs12645" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.5351563"
+     inkscape:cx="-56.763508"
+     inkscape:cy="26.396988"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="993"
+     inkscape:window-height="871"
+     inkscape:window-x="206"
+     inkscape:window-y="114"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid13181" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata12648">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Down</dc:title>
+        <cc:license
+           rdf:resource="http://www.apache.org/licenses/LICENSE-2.0" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>zdenop</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       style="fill:#f3f3f3;fill-opacity:1;stroke:#262626;stroke-width:5.71232653;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="m 29.151821,54.287673 c 9.664262,-11.34577 11.182571,-12.850109 19.067864,-22.06483 l -8.964172,0 L 39.179663,5.191038 19.124211,5 l 0.227781,27.031805 -9.419984,0 c 7.603876,9.050132 9.718471,11.408505 19.219685,22.255868 z"
+       id="path12638"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc" />
+  </g>
+</svg>

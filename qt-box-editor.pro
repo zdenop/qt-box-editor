@@ -11,7 +11,7 @@ INCLUDEPATH += ./ \
     src/include \
     src
 
-QT += network \
+QT += network svg \
     testlib
 
 OBJECTS_DIR += temp
@@ -41,8 +41,9 @@ win32: {
     DESTDIR = ./win32
     DIR_SEPARATOR = \
     CONFIG += static release embed_manifest_exe
+    QTPLUGIN += qsvg # image formats
     TMAKE_CXXFLAGS += -DQT_NODLL 
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
-    DEFINES += WINDOWS
+    DEFINES += WINDOWS _COMPOSE_STATIC_
     RC_FILE = resources/win.rc
 }

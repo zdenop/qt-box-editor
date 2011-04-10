@@ -116,8 +116,69 @@ ChildWidget::ChildWidget(QWidget* parent) :
   imageView->setAutoFillBackground(true);
   imageView->setBackgroundBrush(backgroundColor);
 
+  // Table toolbar
+  QPushButton* upButton = new QPushButton();
+  upButton->setIcon(QIcon(":/images/up.svg"));
+  upButton->setToolTip(tr("Move row up"));
+  upButton->setMaximumSize(QSize(24, 24));
+  connect(upButton, SIGNAL(clicked()), this, SLOT(moveUp()));
+
+  QPushButton* downButton = new QPushButton();
+  downButton->setIcon(QIcon(":/images/down.svg"));
+  downButton->setToolTip(tr("Move row down"));
+  downButton->setMaximumSize(QSize(24, 24));
+  connect(downButton, SIGNAL(clicked()), this, SLOT(moveDown()));
+
+  QPushButton* insertButton = new QPushButton();
+  insertButton->setIcon(QIcon(":/images/insertRow.svg"));
+  insertButton->setToolTip(tr("Insert row"));
+  insertButton->setMaximumSize(QSize(24, 24));
+  connect(insertButton, SIGNAL(clicked()), this, SLOT(insertSymbol()));
+
+  QPushButton* joinButton = new QPushButton();
+  joinButton->setIcon(QIcon(":/images/joinRow.svg"));
+  joinButton->setToolTip(tr("Join rows"));
+  joinButton->setMaximumSize(QSize(24, 24));
+  connect(joinButton, SIGNAL(clicked()), this, SLOT(joinSymbol()));
+
+  QPushButton* splitButton = new QPushButton();
+  splitButton->setIcon(QIcon(":/images/splitRow.svg"));
+  splitButton->setToolTip(tr("Split row"));
+  splitButton->setMaximumSize(QSize(24, 24));
+  connect(splitButton, SIGNAL(clicked()), this, SLOT(splitSymbol()));
+
+  QPushButton* removeButton = new QPushButton();
+  removeButton->setIcon(QIcon(":/images/deleteRow.png"));
+  removeButton->setToolTip(tr("Remove row"));
+  removeButton->setMaximumSize(QSize(24, 24));
+  connect(removeButton, SIGNAL(clicked()), this, SLOT(deleteSymbol()));
+
+  QHBoxLayout* movementLayout = new QHBoxLayout();
+  movementLayout->addWidget(upButton);
+  movementLayout->addWidget(downButton);
+
+  QHBoxLayout* actionLayout = new QHBoxLayout();
+  actionLayout->addWidget(insertButton);
+  actionLayout->addWidget(joinButton);
+  actionLayout->addWidget(splitButton);
+  actionLayout->addWidget(removeButton);
+
+  QSpacerItem* horizontalSpacer = new QSpacerItem(73, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+  QGridLayout* gridLayout = new QGridLayout();
+  gridLayout->setContentsMargins(3, 3, 30, 3);
+  gridLayout->addLayout(movementLayout, 0, 0, 1, 1);
+  gridLayout->addItem(horizontalSpacer, 0, 1, 1, 1);
+  gridLayout->addLayout(actionLayout, 0, 2, 1, 1);
+
+  QWidget* tableWidget = new QWidget(this);
+  QVBoxLayout* verticalLayout = new QVBoxLayout(tableWidget);
+  verticalLayout->setContentsMargins(0, 0, 0, 0);
+  verticalLayout->addWidget(table);
+  verticalLayout->addLayout(gridLayout);
+
   // splitter
-  addWidget(table);
+  addWidget(tableWidget);
   addWidget(imageView);
   setStretchFactor(indexOf(table), 0);
   setStretchFactor(indexOf(imageView), 1);
@@ -606,15 +667,18 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event)
 void ChildWidget::moveSymbolRow(int direction)
 {
   QModelIndex index = selectionModel->currentIndex();
+
+  // check if any row is selected
+  if (index.row() < 0)
+    return;
+
   //check where if we are if move is possible top/bottom
   if (direction < 0 && index.row() == 0)
     {
-      qDebug() << "You are at the top!";
       return;
     }
   else if (direction > 0 && index.row() == (model->rowCount() - 1))
     {
-      qDebug() << "You are at the bottom!";
       return;
     }
   else
@@ -776,6 +840,16 @@ void ChildWidget::deleteSymbol()
     {
       model->removeRow(index.row());
     }
+}
+
+void ChildWidget::moveUp()
+{
+  moveSymbolRow(-1);
+}
+
+void ChildWidget::moveDown()
+{
+  moveSymbolRow(2);
 }
 
 QString ChildWidget::userFriendlyCurrentFile()
