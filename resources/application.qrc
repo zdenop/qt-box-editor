@@ -22,5 +22,11 @@
         <file>images/zoom-width.png</file>
         <file>images/zoom-height.png</file>
         <file>images/showSymbol.png</file>
+        <file>images/splitRow.svg</file>
+        <file>images/joinRow.svg</file>
+        <file>images/up.svg</file>
+        <file>images/down.svg</file>
+        <file>images/insertRow.svg</file>
+        <file>images/deleteRow.png</file>
     </qresource>
 </RCC>

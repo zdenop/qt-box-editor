@@ -103,6 +103,8 @@ class ChildWidget : public QSplitter
     void moveSymbolRow(int direction);
     void copyFromCell();
     void pasteToCell();
+
+  public slots:
     void insertSymbol();
     void splitSymbol();
     void joinSymbol();
@@ -112,6 +114,9 @@ class ChildWidget : public QSplitter
     void documentWasModified();
     void emitBoxChanged();
     void drawSelectionRects();
+
+    void moveUp();
+    void moveDown();
 
   private:
     QColor rectColor;

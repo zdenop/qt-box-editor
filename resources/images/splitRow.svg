@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="103.25286"
+   height="104.92257"
+   id="svg4863"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="splitRow.svg">
+  <title
+     id="title2998">splitRow</title>
+  <defs
+     id="defs4865">
+    <filter
+       inkscape:collect="always"
+       id="filter3927">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.43278284"
+         id="feGaussianBlur3929" />
+    </filter>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="3.8992188"
+     inkscape:cx="86.326497"
+     inkscape:cy="33.754779"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1465"
+     inkscape:window-height="900"
+     inkscape:window-x="90"
+     inkscape:window-y="49"
+     inkscape:window-maximized="0"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata4868">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>splitRow</dc:title>
+        <dc:date>2011-04-09</dc:date>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>lmproulx</dc:title>
+          </cc:Agent>
+        </dc:creator>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:description>adapted icon Divergent http://www.openclipart.org/detail/divergent-by-lmproulx</dc:description>
+        <dc:publisher>
+          <cc:Agent>
+            <dc:title>zdenop</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:contributor>
+          <cc:Agent>
+            <dc:title>zdenop</dc:title>
+          </cc:Agent>
+        </dc:contributor>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-312.54908,-466.46071)">
+    <g
+       id="g4846"
+       transform="matrix(0,0.98896798,-0.98316121,0,1022.6192,-481.50145)" />
+    <g
+       style="fill:#ffffff;fill-opacity:1;stroke:#b4b4b4;stroke-width:6;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;filter:url(#filter3927)"
+       id="g3915"
+       transform="matrix(0,1.0089097,-0.98131646,0,1020.298,-503.25162)">
+      <path
+         style="fill:#ffffff;fill-opacity:1;stroke:#b4b4b4;stroke-width:6;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:3.00300009000000000"
+         d="m 1001.4292,716.88644 25.6092,-0.57435 c -2.8181,-38.99388 2.8947,-53.61952 22.2139,-72.06915 l 11.5115,8.83869 3.1033,-33.81064 -35.0526,7.69657 7.8013,7.59531 c -14.2709,13.93935 -19.1468,25.17754 -21.8234,35.65711 -5.0418,-15.58245 -15.3317,-26.70074 -25.57828,-34.31456 l 9.14981,-8.99469 -32.5689,-8.43336 0.12983,4.90191 0.87533,33.0499 11.09366,-10.56016 c 27.28565,25.00695 22.37955,36.01598 23.53535,71.01742 z"
+         id="path3917"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="ccccccccccccccc" />
+    </g>
+    <g
+       transform="matrix(0,1.0089097,-0.99524802,0,1028.2853,-505.25162)"
+       id="g3911"
+       style="fill:#ffffff;fill-opacity:1;stroke:#262626;stroke-width:6;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none">
+      <path
+         sodipodi:nodetypes="ccccccccccccccc"
+         inkscape:connector-curvature="0"
+         id="path3913"
+         d="m 1001.4292,716.88644 25.6092,-0.57435 c -2.8181,-38.99388 2.8947,-53.61952 22.2139,-72.06915 l 11.5115,8.83869 3.1033,-33.81064 -35.0526,7.69657 7.8013,7.59531 c -14.2709,13.93935 -19.401,27.7544 -23.0944,45.1915 -2.754,-17.38626 -14.0607,-36.23513 -24.30728,-43.84895 l 9.14981,-8.99469 -32.5689,-8.43336 0.12983,4.90191 0.87533,33.0499 11.09366,-10.56016 c 27.28565,25.00695 22.37955,36.01598 23.53535,71.01742 z"
+         style="fill:#ffffff;fill-opacity:1;stroke:#262626;stroke-width:6;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:3.00300009000000000" />
+    </g>
+  </g>
+</svg>

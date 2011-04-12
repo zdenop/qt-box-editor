@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64px"
+   height="64px"
+   id="svg13190"
+   version="1.1"
+   inkscape:version="0.48.0 r9654"
+   sodipodi:docname="insertRow.svg">
+  <title
+     id="title3077">InsertRow</title>
+  <defs
+     id="defs13192" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.375"
+     inkscape:cx="-82.95456"
+     inkscape:cy="63.241922"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="960"
+     inkscape:window-height="646"
+     inkscape:window-x="730"
+     inkscape:window-y="132"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata13195">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://www.apache.org/licenses/LICENSE-2.0" />
+        <dc:title>InsertRow</dc:title>
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>zdenop</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       style="fill:none;stroke:#6a6a6a;stroke-width:4.77786446;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 36.982462,64.723218 0,-14.719163 -36.91404551,0"
+       id="path13224-7"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#f3f3f3;fill-opacity:1;stroke:#6a6a6a;stroke-width:5.24435377;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       d="m 37.367794,-2.1021534 0,16.8294264 -38.8974972,0"
+       id="path13224"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:#f3f3f3;fill-opacity:1;stroke:#262626;stroke-width:6.04100000000000040;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="M 9.3561637,31.990778 C 20.701934,42.800703 22.206273,44.499002 31.420994,53.319069 l 0,-10.026843 27.031805,-0.08484 0.191038,-22.432953 -27.031805,0.254783 0,-10.536689 C 22.5619,18.997813 20.203527,21.363086 9.3561637,31.990635 z"
+       id="path12638"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc" />
+  </g>
+</svg>

@@ -27,6 +27,11 @@
 #include "MainWindow.h"
 #include "Settings.h"
 
+#if defined _COMPOSE_STATIC_
+#include <QtPlugin>
+Q_IMPORT_PLUGIN(qsvg)
+#endif
+
 int main(int argc, char* argv[])
 {
   Q_INIT_RESOURCE(application);
