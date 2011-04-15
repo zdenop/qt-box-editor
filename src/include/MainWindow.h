@@ -38,6 +38,8 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QMainWindow>
+#include <QtGui/QStyle>
+#include <QtGui/QStyleFactory>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
@@ -98,6 +100,9 @@ class MainWindow : public QMainWindow
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();
+    void moveUp();
+    void moveDown();
+    void goToRow();
     void slotSettings();
     void shortCutList();
     void about();
@@ -167,6 +172,9 @@ class MainWindow : public QMainWindow
     QAction* insertAct;
     QAction* joinAct;
     QAction* deleteAct;
+    QAction* moveUpAct;
+    QAction* moveDownAct;
+    QAction* goToRowAct;
     QAction* checkForUpdateAct;
     QAction* shortCutListAct;
     QAction* aboutAct;

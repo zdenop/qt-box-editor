@@ -22,6 +22,7 @@
 **********************************************************************/
 
 #include "ChildWidget.h"
+#include "GetRowIDDialog.h"
 #include "Settings.h"
 #include "SettingsDialog.h"
 
@@ -120,14 +121,23 @@ ChildWidget::ChildWidget(QWidget* parent) :
   QPushButton* upButton = new QPushButton();
   upButton->setIcon(QIcon(":/images/up.svg"));
   upButton->setToolTip(tr("Move row up"));
+  upButton->setMinimumSize(QSize(24, 24));
   upButton->setMaximumSize(QSize(24, 24));
   connect(upButton, SIGNAL(clicked()), this, SLOT(moveUp()));
 
   QPushButton* downButton = new QPushButton();
   downButton->setIcon(QIcon(":/images/down.svg"));
   downButton->setToolTip(tr("Move row down"));
+  downButton->setMinimumSize(QSize(24, 24));
   downButton->setMaximumSize(QSize(24, 24));
   connect(downButton, SIGNAL(clicked()), this, SLOT(moveDown()));
+
+  QPushButton* goToButton = new QPushButton();
+  goToButton->setIcon(QIcon(":/images/gtk-jump-to-ltr.png"));
+  goToButton->setToolTip(tr("Go to row…"));
+  goToButton->setMinimumSize(QSize(24, 24));
+  goToButton->setMaximumSize(QSize(24, 24));
+  connect(goToButton, SIGNAL(clicked()), this, SLOT(goToRow()));
 
   QPushButton* insertButton = new QPushButton();
   insertButton->setIcon(QIcon(":/images/insertRow.svg"));
@@ -154,10 +164,13 @@ ChildWidget::ChildWidget(QWidget* parent) :
   connect(removeButton, SIGNAL(clicked()), this, SLOT(deleteSymbol()));
 
   QHBoxLayout* movementLayout = new QHBoxLayout();
+  movementLayout->setSpacing(2);
   movementLayout->addWidget(upButton);
   movementLayout->addWidget(downButton);
+  movementLayout->addWidget(goToButton);
 
   QHBoxLayout* actionLayout = new QHBoxLayout();
+  actionLayout->setSpacing(2);
   actionLayout->addWidget(insertButton);
   actionLayout->addWidget(joinButton);
   actionLayout->addWidget(splitButton);
@@ -306,6 +319,9 @@ bool ChildWidget::loadBoxes(const QString& fileName)
   setCurrentBoxFile(fileName);
 
   table->resizeColumnsToContents();
+  table->resizeRowsToContents();
+  table->setCornerButtonEnabled(true);
+  table->setWordWrap(true);
   table->horizontalHeader()->setStretchLastSection(true);
 
   // set size of table
@@ -850,6 +866,22 @@ void ChildWidget::moveUp()
 void ChildWidget::moveDown()
 {
   moveSymbolRow(2);
+}
+
+void ChildWidget::goToRow()
+{
+  GetRowIDDialog dialog(this);
+  int row;
+  if (dialog.exec())
+    {
+      QString string = dialog.lineEdit->text();
+      row = string.toInt() - 1;
+      if (row > model->rowCount())
+        row = model->rowCount() - 1;
+      table->setCurrentIndex(model->index(row, 0));
+      table->setFocus();
+      drawSelectionRects();
+    }
 }
 
 QString ChildWidget::userFriendlyCurrentFile()

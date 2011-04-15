@@ -33,22 +33,22 @@ ShortCutsDialog::ShortCutsDialog(QWidget* parent)
                         "<b>Del</b> — delete current symbol<br/>"
                         "<b>CTRL + 1</b> — join current symbol with next symbol<br/>"
                         "<b>CTRL + 2</b> — split current symbol to 2 symbols<br/>"
-
+                        "<br/>"
                         "<b>CTRL + B</b> — set symbol as <b>bold</b><br/>"
                         "<b>CTRL + I</b> — set symbol as <i>italic</i><br/>"
                         "<b>CTRL + U</b> — set symbol as <u>undelined</u><br/>"
-
+                        "<br/>"
                         "<b>CTRL + H</b> — display all symbols on image<br/>"
-
+                        "<br/>"
                         "<b>CTRL + +/-</b> — zoom image<br/>"
                         "<b>CTRL + *</b> — zoom image to original scale<br/>"
                         "<b>CTRL + .</b> — zoom image to fit whole image in current view<br/>"
                         "<b>CTRL + &gt;</b> — zoom image to fit height of image in current view<br/>"
                         "<b>CTRL + &lt;</b> — zoom image to fit width of image in current view<br/>"
                         "<b>CTRL + /</b> — zoom current box to fit in current view<br/>"
-
+                        "<br/>"
                         "<b>CTRL + arrows up/down</b> — move symbol up/down in table<br/>"
+                        "<b>CTRL + G</b> — go to row id…<br/>"
                         "<b>CTRL + T</b> — setting dialog<br/>"
-
                         "</p>"));
 }

@@ -369,6 +369,29 @@ void MainWindow::deleteSymbol()
     }
 }
 
+void MainWindow::moveUp()
+{
+  if (activeChild())
+    {
+      activeChild()->moveUp();
+    }
+}
+
+void MainWindow::moveDown()
+{
+  if (activeChild())
+    {
+      activeChild()->moveDown();
+    }
+}
+
+void MainWindow::goToRow()
+{
+  if (activeChild())
+    {
+      activeChild()->goToRow();
+    }
+}
 void MainWindow::slotSettings()
 {
   runSettingsDialog = new SettingsDialog(this);
@@ -481,6 +504,7 @@ void MainWindow::updateMenus()
   zoomToWidthAct->setEnabled(activeChild() != 0);
   zoomToSelectionAct->setEnabled(activeChild() != 0);
   showSymbolAct->setEnabled(activeChild() != 0);
+  goToRowAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
 }
 
@@ -496,6 +520,8 @@ void MainWindow::updateCommandActions()
   underlineAct->setChecked((activeChild()) ? activeChild()->isUnderLine() : false);
   showSymbolAct->setChecked((activeChild()) ? activeChild()->isShowSymbol() : false);
   drawBoxesAct->setChecked((activeChild()) ? activeChild()->isDrawBoxes() : false);
+  moveUpAct->setEnabled(enable);
+  moveDownAct->setEnabled(enable);
   insertAct->setEnabled(enable);
   splitAct->setEnabled(enable);
   joinAct->setEnabled(enable);
@@ -663,21 +689,33 @@ void MainWindow::createActions()
   previousAct->setStatusTip(tr("Move the focus to the previous window"));
   connect(previousAct, SIGNAL(triggered()), this, SLOT(previousTab()));
 
-  insertAct = new QAction(tr("&Insert symbol"), this);
+  insertAct = new QAction(QIcon(":/images/insertRow.svg"), tr("&Insert symbol"), this);
   insertAct->setShortcut(Qt::Key_Insert);
   connect(insertAct, SIGNAL(triggered()), this, SLOT(insertSymbol()));
 
-  splitAct = new QAction(tr("&Split symbol"), this);
+  splitAct = new QAction(QIcon(":/images/splitRow.svg"), tr("&Split symbol"), this);
   splitAct->setShortcut(tr("Ctrl+2"));
   connect(splitAct, SIGNAL(triggered()), this, SLOT(splitSymbol()));
 
-  joinAct = new QAction(tr("&Join with Next Symbol"), this);
+  joinAct = new QAction(QIcon(":/images/joinRow.svg"), tr("&Join with Next Symbol"), this);
   joinAct->setShortcut(tr("Ctrl+1"));
   connect(joinAct, SIGNAL(triggered()), this, SLOT(joinSymbol()));
 
-  deleteAct = new QAction(tr("&Delete symbol"), this);
+  deleteAct = new QAction(QIcon(":/images/deleteRow.png"), tr("&Delete symbol"), this);
   deleteAct->setShortcut(QKeySequence::Delete);
   connect(deleteAct, SIGNAL(triggered()), this, SLOT(deleteSymbol()));
+
+  moveUpAct = new QAction(QIcon(":/images/up.svg"), tr("Move row &up"), this);
+  moveUpAct->setShortcut(Qt::CTRL | Qt::Key_Up);
+  connect(moveUpAct, SIGNAL(triggered()), this, SLOT(moveUp()));
+
+  moveDownAct = new QAction(QIcon(":/images/down.svg"), tr("Move row &down"), this);
+  moveDownAct->setShortcut(Qt::CTRL | Qt::Key_Down);
+  connect(moveDownAct, SIGNAL(triggered()), this, SLOT(moveDown()));
+
+  goToRowAct = new QAction(QIcon(":/images/gtk-jump-to-ltr.png"), tr("&Go to row…"), this);
+  goToRowAct->setShortcut(tr("Ctrl+G"));
+  connect(goToRowAct, SIGNAL(triggered()), this, SLOT(goToRow()));
 
   settingsAct = new QAction(tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
@@ -733,6 +771,10 @@ void MainWindow::createMenus()
   editMenu->addAction(splitAct);
   editMenu->addAction(joinAct);
   editMenu->addAction(deleteAct);
+  editMenu->addSeparator();
+  editMenu->addAction(moveUpAct);
+  editMenu->addAction(moveDownAct);
+  editMenu->addAction(goToRowAct);
   editMenu->addSeparator();
   editMenu->addAction(settingsAct);
 
