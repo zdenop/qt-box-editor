@@ -328,12 +328,12 @@ bool ChildWidget::loadBoxes(const QString& fileName)
   int tableVisibleWidth = 2 * table->frameWidth();
   if (!table->verticalHeader()->isHidden())
     {
-      tableVisibleWidth += 35; // TODO: table->verticalHeader()->width() is 0
+      tableVisibleWidth += 35; // TODO: table->verticalHeader()/horizontalHeader()->width() is 0
     }
 
   tableVisibleWidth += 25; // scrollbar
 
-  for (int col = 0; col < table->colorCount(); col++)
+  for (int col = 0; col < table->horizontalHeader()->count(); col++)
     {
       tableVisibleWidth += table->columnWidth(col);
     }
