@@ -46,7 +46,6 @@
 #include <QTransform>
 #include <QSettings>
 
-
 class QGraphicsScene;
 class QGraphicsView;
 class QAbstractItemModel;
@@ -110,13 +109,14 @@ class ChildWidget : public QSplitter
     void joinSymbol();
     void deleteSymbol();
 
+    void moveUp();
+    void moveDown();
+    void goToRow();
+
   private slots:
     void documentWasModified();
     void emitBoxChanged();
     void drawSelectionRects();
-
-    void moveUp();
-    void moveDown();
 
   private:
     QColor rectColor;
