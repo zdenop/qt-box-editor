@@ -201,7 +201,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
   modified = false;
   boxesVisible = false;
   symbolShown = true;
-  directTypingMode = true;
+  directTypingMode = false;
 }
 
 bool ChildWidget::loadImage(const QString& fileName)
@@ -443,10 +443,7 @@ bool ChildWidget::isDirectTypingMode()
 
 void ChildWidget::setDirectTypingMode(bool v)
 {
-  if (directTypingMode)
-    directTypingMode = false;
-  else
-    directTypingMode = true;
+  directTypingMode = v;
 }
 
 bool ChildWidget::isDrawBoxes()
@@ -765,7 +762,7 @@ void ChildWidget::directType(QKeyEvent* event)
     {
       if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return))
         {
-            // enter/return just move to next row
+          // enter/return just move to next row
           table->setCurrentIndex(model->index(index.row() + 1, 0));
         }
       else
