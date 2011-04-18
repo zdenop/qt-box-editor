@@ -325,6 +325,14 @@ void MainWindow::showSymbol()
     }
 }
 
+void MainWindow::directTypingMode(bool checked)
+{
+  if (activeChild())
+    {
+      activeChild()->setDirectTypingMode(checked);
+    }
+}
+
 void MainWindow::drawBoxes()
 {
   if (activeChild())
@@ -520,6 +528,7 @@ void MainWindow::updateCommandActions()
   underlineAct->setChecked((activeChild()) ? activeChild()->isUnderLine() : false);
   showSymbolAct->setChecked((activeChild()) ? activeChild()->isShowSymbol() : false);
   drawBoxesAct->setChecked((activeChild()) ? activeChild()->isDrawBoxes() : false);
+  DirectTypingAct->setChecked((activeChild()) ? activeChild()->isDirectTypingMode() : false);
   moveUpAct->setEnabled(enable);
   moveDownAct->setEnabled(enable);
   insertAct->setEnabled(enable);
@@ -673,6 +682,11 @@ void MainWindow::createActions()
   showSymbolAct->setStatusTip(tr("Show/hide symbol over selection rectangle"));
   connect(showSymbolAct, SIGNAL(triggered()), this, SLOT(showSymbol()));
 
+  DirectTypingAct = new QAction(QIcon(":/images/key_bindings.svg"), tr("&Direct type mode"), this);
+  DirectTypingAct->setCheckable(true);
+  DirectTypingAct->setShortcut(tr("Ctrl+D"));
+  connect(DirectTypingAct, SIGNAL(triggered(bool)), this, SLOT(directTypingMode(bool)));
+
   drawBoxesAct = new QAction(QIcon(":/images/drawRect.png"), tr("S&how boxes"), this);
   drawBoxesAct->setCheckable(true);
   drawBoxesAct->setShortcut(tr("Ctrl+H"));
@@ -818,6 +832,7 @@ void MainWindow::createToolBars()
   viewToolBar->addSeparator();
   viewToolBar->addAction(showSymbolAct);
   viewToolBar->addAction(drawBoxesAct);
+  viewToolBar->addAction(DirectTypingAct);
 
   editToolBar = addToolBar(tr("Edit"));
   editToolBar->setObjectName("editToolBar");

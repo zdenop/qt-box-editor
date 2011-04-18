@@ -201,6 +201,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
   modified = false;
   boxesVisible = false;
   symbolShown = true;
+  directTypingMode = true;
 }
 
 bool ChildWidget::loadImage(const QString& fileName)
@@ -435,6 +436,19 @@ bool ChildWidget::isShowSymbol()
   return symbolShown;
 }
 
+bool ChildWidget::isDirectTypingMode()
+{
+  return directTypingMode;
+}
+
+void ChildWidget::setDirectTypingMode(bool v)
+{
+  if (directTypingMode)
+    directTypingMode = false;
+  else
+    directTypingMode = true;
+}
+
 bool ChildWidget::isDrawBoxes()
 {
   return boxesVisible;
@@ -640,7 +654,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event)
 
 bool ChildWidget::eventFilter(QObject* object, QEvent* event)
 {
-  if (event->type() == QEvent::KeyPress)
+  if (event->type() == QEvent::KeyRelease)
     {
       // transforms QEvent into QKeyEvent
       QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
@@ -653,7 +667,6 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event)
                   moveSymbolRow(-1);
                   break;
                 }
-
               case Qt::Key_Down:
                 {
                   moveSymbolRow(2);
@@ -670,11 +683,16 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event)
                   break;
                 }
             }
+          pKeyEvent->accept();
           return true;
+        }
+      else if (directTypingMode)
+        {
+          directType(pKeyEvent);
         }
       else
         {
-          return QWidget::eventFilter(object, event);
+          return QWidget::eventFilter(object, pKeyEvent);
         }
     }
   return false;
@@ -735,6 +753,28 @@ void ChildWidget::pasteToCell()
   // paste string only to string field
   if (index.column() == 0)
     model->setData(table->currentIndex(), clipboard->text());
+  drawSelectionRects();
+}
+
+void ChildWidget::directType(QKeyEvent* event)
+{
+  QModelIndex index = selectionModel->currentIndex();
+
+  if (!event->text().isNull())
+    // enter only text
+    {
+      if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return))
+        {
+            // enter/return just move to next row
+          table->setCurrentIndex(model->index(index.row() + 1, 0));
+        }
+      else
+        {
+          model->setData(model->index(index.row(), 0, QModelIndex()), event->text());
+          table->setCurrentIndex(model->index(index.row() + 1, 0));
+        }
+    }
+  event->accept();
   drawSelectionRects();
 }
 

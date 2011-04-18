@@ -29,5 +29,6 @@
         <file>images/insertRow.svg</file>
         <file>images/deleteRow.png</file>
         <file>images/gtk-jump-to-ltr.png</file>
+        <file>images/key_bindings.svg</file>
     </qresource>
 </RCC>

@@ -70,9 +70,11 @@ class ChildWidget : public QSplitter
     bool isItalic();
     bool isUnderLine();
     bool isShowSymbol();
+    bool isDirectTypingMode();
     bool isDrawBoxes();
     bool symbolShown;
     bool boxesVisible;
+    bool directTypingMode;
 
     QString userFriendlyCurrentFile();
     QString currentBoxFile();
@@ -89,6 +91,7 @@ class ChildWidget : public QSplitter
     void setItalic(bool v);
     void setUnderline(bool v);
     void setZoom(float scale);
+    void setDirectTypingMode(bool v);
     void zoomOriginal();
     void zoomIn();
     void zoomOut();
@@ -126,6 +129,7 @@ class ChildWidget : public QSplitter
     QGraphicsItem* m_message;
 
   protected:
+    void directType(QKeyEvent* event);
     virtual void mousePressEvent(QMouseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
     void closeEvent(QCloseEvent* event);

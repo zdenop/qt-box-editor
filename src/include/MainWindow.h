@@ -87,6 +87,7 @@ class MainWindow : public QMainWindow
     void bold(bool checked);
     void italic(bool checked);
     void underline(bool checked);
+    void directTypingMode(bool checked);
     void zoomToFit();
     void zoomToHeight();
     void zoomToWidth();
@@ -164,6 +165,7 @@ class MainWindow : public QMainWindow
     QAction* zoomOutAct;
     QAction* showSymbolAct;
     QAction* drawBoxesAct;
+    QAction* DirectTypingAct;
     QAction* nextAct;
     QAction* previousAct;
     QAction* separatorAct;
