@@ -750,6 +750,8 @@ void ChildWidget::pasteToCell()
   // paste string only to string field
   if (index.column() == 0)
     model->setData(table->currentIndex(), clipboard->text());
+  if (directTypingMode)
+    table->setCurrentIndex(model->index(index.row() + 1, 0));
   drawSelectionRects();
 }
 
@@ -757,12 +759,12 @@ void ChildWidget::directType(QKeyEvent* event)
 {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (!event->text().isNull())
-    // enter only text
+  if (event->text() != "")
     {
+    // enter only text
       if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return))
         {
-          // enter/return just move to next row
+          // enter/return move to next row
           table->setCurrentIndex(model->index(index.row() + 1, 0));
         }
       else
