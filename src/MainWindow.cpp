@@ -393,6 +393,14 @@ void MainWindow::moveDown()
     }
 }
 
+void MainWindow::moveTo()
+{
+  if (activeChild())
+    {
+      activeChild()->moveTo();
+    }
+}
+
 void MainWindow::goToRow()
 {
   if (activeChild())
@@ -531,6 +539,7 @@ void MainWindow::updateCommandActions()
   DirectTypingAct->setChecked((activeChild()) ? activeChild()->isDirectTypingMode() : false);
   moveUpAct->setEnabled(enable);
   moveDownAct->setEnabled(enable);
+  moveToAct->setEnabled(enable);
   insertAct->setEnabled(enable);
   splitAct->setEnabled(enable);
   joinAct->setEnabled(enable);
@@ -727,6 +736,10 @@ void MainWindow::createActions()
   moveDownAct->setShortcut(Qt::CTRL | Qt::Key_Down);
   connect(moveDownAct, SIGNAL(triggered()), this, SLOT(moveDown()));
 
+  moveToAct = new QAction(QIcon(":/images/moveTo.svg"), tr("&Move row to…"), this);
+  moveToAct->setShortcut(Qt::CTRL | Qt::Key_M);
+  connect(moveToAct, SIGNAL(triggered()), this, SLOT(moveTo()));
+
   goToRowAct = new QAction(QIcon(":/images/gtk-jump-to-ltr.png"), tr("&Go to row…"), this);
   goToRowAct->setShortcut(tr("Ctrl+G"));
   connect(goToRowAct, SIGNAL(triggered()), this, SLOT(goToRow()));
@@ -788,6 +801,7 @@ void MainWindow::createMenus()
   editMenu->addSeparator();
   editMenu->addAction(moveUpAct);
   editMenu->addAction(moveDownAct);
+  editMenu->addAction(moveToAct);
   editMenu->addAction(goToRowAct);
   editMenu->addSeparator();
   editMenu->addAction(settingsAct);

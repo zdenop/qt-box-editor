@@ -132,6 +132,13 @@ ChildWidget::ChildWidget(QWidget* parent) :
   downButton->setMaximumSize(QSize(24, 24));
   connect(downButton, SIGNAL(clicked()), this, SLOT(moveDown()));
 
+  QPushButton* moveToButton = new QPushButton();
+  moveToButton->setIcon(QIcon(":/images/moveTo.svg"));
+  moveToButton->setToolTip(tr("Move row to position…"));
+  moveToButton->setMinimumSize(QSize(24, 24));
+  moveToButton->setMaximumSize(QSize(24, 24));
+  connect(moveToButton, SIGNAL(clicked()), this, SLOT(moveTo()));
+
   QPushButton* goToButton = new QPushButton();
   goToButton->setIcon(QIcon(":/images/gtk-jump-to-ltr.png"));
   goToButton->setToolTip(tr("Go to row…"));
@@ -167,6 +174,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
   movementLayout->setSpacing(2);
   movementLayout->addWidget(upButton);
   movementLayout->addWidget(downButton);
+  movementLayout->addWidget(moveToButton);
   movementLayout->addWidget(goToButton);
 
   QHBoxLayout* actionLayout = new QHBoxLayout();
@@ -179,7 +187,7 @@ ChildWidget::ChildWidget(QWidget* parent) :
   QSpacerItem* horizontalSpacer = new QSpacerItem(73, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
   QGridLayout* gridLayout = new QGridLayout();
-  gridLayout->setContentsMargins(3, 3, 30, 3);
+  gridLayout->setContentsMargins(3, 3, 3, 3);
   gridLayout->addLayout(movementLayout, 0, 0, 1, 1);
   gridLayout->addItem(horizontalSpacer, 0, 1, 1, 1);
   gridLayout->addLayout(actionLayout, 0, 2, 1, 1);
@@ -907,6 +915,36 @@ void ChildWidget::moveDown()
   moveSymbolRow(2);
 }
 
+void ChildWidget::moveTo()
+{
+  if (table->currentIndex().row() < 0)
+    return;
+
+  int sourceRow = table->currentIndex().row();
+  int destRow;
+  GetRowIDDialog dialog(this);
+
+  if (dialog.exec())
+    {
+      QString string = dialog.lineEdit->text();
+
+      if (string.toInt() == 0)
+        destRow = string.toInt();
+      else
+        destRow = string.toInt() - 1;
+
+      if (destRow > model->rowCount())
+        destRow = model->rowCount() - 1;
+    }
+
+  if ( (destRow - sourceRow) > 0)
+      moveSymbolRow(destRow - sourceRow + 1);
+  else
+      moveSymbolRow(destRow - sourceRow);
+
+  table->resizeRowToContents(destRow);
+}
+
 void ChildWidget::goToRow()
 {
   GetRowIDDialog dialog(this);
@@ -914,9 +952,15 @@ void ChildWidget::goToRow()
   if (dialog.exec())
     {
       QString string = dialog.lineEdit->text();
-      row = string.toInt() - 1;
+
+      if (string.toInt() == 0)
+        row = string.toInt();
+      else
+        row = string.toInt() - 1;
+
       if (row > model->rowCount())
         row = model->rowCount() - 1;
+
       table->setCurrentIndex(model->index(row, 0));
       table->setFocus();
       drawSelectionRects();

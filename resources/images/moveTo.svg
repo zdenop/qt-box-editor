@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64px"
+   height="64px"
+   id="svg12643"
+   version="1.1"
+   inkscape:version="0.48.1 r9760"
+   sodipodi:docname="moveTo.svg">
+  <title
+     id="title3111">Down</title>
+  <defs
+     id="defs12645">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 32 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="64 : 32 : 1"
+       inkscape:persp3d-origin="32 : 21.333333 : 1"
+       id="perspective2985" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.9765625"
+     inkscape:cx="-14.190673"
+     inkscape:cy="78.964927"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="993"
+     inkscape:window-height="871"
+     inkscape:window-x="514"
+     inkscape:window-y="14"
+     inkscape:window-maximized="0">
+    <inkscape:grid
+       type="xygrid"
+       id="grid13181" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata12648">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title>Down</dc:title>
+        <cc:license
+           rdf:resource="http://www.apache.org/licenses/LICENSE-2.0" />
+        <dc:creator>
+          <cc:Agent>
+            <dc:title>zdenop</dc:title>
+          </cc:Agent>
+        </dc:creator>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <path
+       style="fill:#f3f3f3;fill-opacity:1;stroke:#262626;stroke-width:5.712;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;display:inline"
+       d="M 47.74658,15.5422 C 32.890244,16.731204 30.752909,16.721326 18.661374,17.661374 L 25,24 5.9392617,43.168007 19.985524,57.484437 38.938831,38.208999 45.599765,44.869934 C 46.622423,33.093772 46.7948,29.930906 47.746671,15.542289 z"
+       id="path12638"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccc" />
+    <rect
+       style="fill:#f3f3f3;fill-opacity:1;stroke:#262626;stroke-width:2.85094047;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="rect3003"
+       width="5"
+       height="5"
+       x="55"
+       y="4" />
+  </g>
+</svg>

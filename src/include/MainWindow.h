@@ -103,6 +103,7 @@ class MainWindow : public QMainWindow
     void deleteSymbol();
     void moveUp();
     void moveDown();
+    void moveTo();
     void goToRow();
     void slotSettings();
     void shortCutList();
@@ -175,6 +176,7 @@ class MainWindow : public QMainWindow
     QAction* joinAct;
     QAction* deleteAct;
     QAction* moveUpAct;
+    QAction* moveToAct;
     QAction* moveDownAct;
     QAction* goToRowAct;
     QAction* checkForUpdateAct;

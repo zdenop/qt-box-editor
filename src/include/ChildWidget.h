@@ -35,6 +35,7 @@
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QSplitter>
+#include <QtGui/QTableWidgetItem>
 #include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
@@ -102,7 +103,7 @@ class ChildWidget : public QSplitter
     void showSymbol();
     void drawBoxes();
     void deleteBoxes(const QList<QGraphicsItem*> &items);
-    void moveSymbolRow(int direction);
+ //   void moveSymbolRow(int direction);
     void copyFromCell();
     void pasteToCell();
 
@@ -114,6 +115,7 @@ class ChildWidget : public QSplitter
 
     void moveUp();
     void moveDown();
+    void moveTo();
     void goToRow();
 
   private slots:
@@ -127,6 +129,10 @@ class ChildWidget : public QSplitter
     QColor boxColor;
     QColor backgroundColor;
     QGraphicsItem* m_message;
+
+    void moveSymbolRow(int direction);
+    QList<QTableWidgetItem*> takeRow(int row);
+    void setRow(int row, const QList<QTableWidgetItem*>& rowItems);
 
   protected:
     void directType(QKeyEvent* event);
