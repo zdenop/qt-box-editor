@@ -35,6 +35,7 @@ These icons are Faenza Icons:
     exit.png
     filesave.png
     fileopen.png
+    gtk-jump-to-ltr.png
     help-about.png
     next.png
     previous.png

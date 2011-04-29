@@ -1,3 +1,12 @@
+1.04
+- direct typing mode (automatic moving to next symbol cell after key release event)
+- improved copy&paste in symbol table
+- new functions: "Go to", "Move to" for symbol table
+- toolbar for symbol table operations
+- fixed loading multipage box file (at the moment there is support only for first page, so other pages must be ignored)
+- fixed check of new version on Windows build (proxy is still not supported)
+- used plastic theme
+
 1.03
 - setting dialog
 - option to select font for table, colors for boxes
