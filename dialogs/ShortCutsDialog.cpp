@@ -47,8 +47,11 @@ ShortCutsDialog::ShortCutsDialog(QWidget* parent)
                         "<b>CTRL + &lt;</b> — zoom image to fit width of image in current view<br/>"
                         "<b>CTRL + /</b> — zoom current box to fit in current view<br/>"
                         "<br/>"
+                        "<b>CTRL + D</b> — direct type mode<br/>"
+                        "<br/>"
                         "<b>CTRL + arrows up/down</b> — move symbol up/down in table<br/>"
                         "<b>CTRL + G</b> — go to row id…<br/>"
+                        "<b>CTRL + M</b> — Move row to row id…<br/>"
                         "<b>CTRL + T</b> — setting dialog<br/>"
                         "</p>"));
 }

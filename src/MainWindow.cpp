@@ -522,6 +522,7 @@ void MainWindow::updateMenus()
   showSymbolAct->setEnabled(activeChild() != 0);
   goToRowAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
+  DirectTypingAct->setEnabled(activeChild() != 0);
 }
 
 void MainWindow::updateCommandActions()
@@ -536,7 +537,6 @@ void MainWindow::updateCommandActions()
   underlineAct->setChecked((activeChild()) ? activeChild()->isUnderLine() : false);
   showSymbolAct->setChecked((activeChild()) ? activeChild()->isShowSymbol() : false);
   drawBoxesAct->setChecked((activeChild()) ? activeChild()->isDrawBoxes() : false);
-  DirectTypingAct->setChecked((activeChild()) ? activeChild()->isDirectTypingMode() : false);
   moveUpAct->setEnabled(enable);
   moveDownAct->setEnabled(enable);
   moveToAct->setEnabled(enable);
@@ -804,6 +804,8 @@ void MainWindow::createMenus()
   editMenu->addAction(moveToAct);
   editMenu->addAction(goToRowAct);
   editMenu->addSeparator();
+  editMenu->addAction(DirectTypingAct);
+  editMenu->addSeparator();
   editMenu->addAction(settingsAct);
 
   viewMenu = menuBar()->addMenu(tr("&View"));
@@ -829,7 +831,6 @@ void MainWindow::createToolBars()
   fileToolBar->addAction(exitAct);
   fileToolBar->addAction(openAct);
   fileToolBar->addAction(saveAct);
-  fileToolBar->addAction(closeAct);
 
   viewToolBar = addToolBar(tr("View"));
   viewToolBar->setObjectName("viewToolBar");

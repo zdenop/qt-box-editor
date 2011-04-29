@@ -103,7 +103,6 @@ class ChildWidget : public QSplitter
     void showSymbol();
     void drawBoxes();
     void deleteBoxes(const QList<QGraphicsItem*> &items);
- //   void moveSymbolRow(int direction);
     void copyFromCell();
     void pasteToCell();
 

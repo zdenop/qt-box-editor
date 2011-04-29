@@ -769,7 +769,7 @@ void ChildWidget::directType(QKeyEvent* event)
 
   if (event->text() != "")
     {
-    // enter only text
+      // enter only text
       if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return))
         {
           // enter/return move to next row
@@ -937,10 +937,10 @@ void ChildWidget::moveTo()
         destRow = model->rowCount() - 1;
     }
 
-  if ( (destRow - sourceRow) > 0)
-      moveSymbolRow(destRow - sourceRow + 1);
+  if ((destRow - sourceRow) > 0)
+    moveSymbolRow(destRow - sourceRow + 1);
   else
-      moveSymbolRow(destRow - sourceRow);
+    moveSymbolRow(destRow - sourceRow);
 
   table->resizeRowToContents(destRow);
 }
