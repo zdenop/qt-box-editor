@@ -122,6 +122,7 @@ class MainWindow : public QMainWindow
     void createActions();
     void createMenus();
     void createToolBars();
+    void createStatusBar();
     void readSettings();
     void writeSettings();
     void checkVersion(QNetworkReply*);
@@ -183,6 +184,7 @@ class MainWindow : public QMainWindow
     QAction* shortCutListAct;
     QAction* aboutAct;
     QAction* aboutQtAct;
+    QLabel* _utfCodeLabel;
 };
 
 #endif /* MAINWINDOW_H_ */

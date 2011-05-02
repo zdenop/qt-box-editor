@@ -921,7 +921,7 @@ void ChildWidget::moveTo()
     return;
 
   int sourceRow = table->currentIndex().row();
-  int destRow;
+  int destRow = 0;
   GetRowIDDialog dialog(this);
 
   if (dialog.exec())
@@ -970,6 +970,25 @@ void ChildWidget::goToRow()
 QString ChildWidget::userFriendlyCurrentFile()
 {
   return strippedName(boxFile);
+}
+
+/* Get symbol string and convert it to hexadecimal codes */
+QString ChildWidget::getSymbolHexCode()
+{
+  QModelIndex index = selectionModel->currentIndex();
+
+  if (index.isValid())
+    {
+      QString symbol = model->index(index.row(), 0).data().toString();
+      QString result = "";
+      for (int i = 0; i < symbol.size(); ++i)
+        {
+          QString str2 = QString::number(symbol[i].unicode(), 16).toUpper().rightJustified(4, '0');
+          result.append("0x" + str2 + " ");
+        }
+      return result;
+    }
+  return QString::null;
 }
 
 QString ChildWidget::currentBoxFile()
