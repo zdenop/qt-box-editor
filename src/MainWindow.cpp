@@ -47,6 +47,7 @@ MainWindow::MainWindow()
   createActions();
   createMenus();
   createToolBars();
+  createStatusBar();
   updateMenus();
   updateCommandActions();
   updateSaveAction();
@@ -544,6 +545,11 @@ void MainWindow::updateCommandActions()
   splitAct->setEnabled(enable);
   joinAct->setEnabled(enable);
   deleteAct->setEnabled(enable);
+
+  if (activeChild())
+    {
+      _utfCodeLabel->setText(activeChild()->getSymbolHexCode());
+    }
 }
 
 void MainWindow::updateSaveAction()
@@ -815,9 +821,7 @@ void MainWindow::createMenus()
   menuBar()->addSeparator();
 
   helpMenu = menuBar()->addMenu(tr("&Help"));
-  //#ifndef WINDOWS   // this function need openssl library on Windows - TODO
   helpMenu->addAction(checkForUpdateAct);
-  //#endif
   helpMenu->addSeparator();
   helpMenu->addAction(shortCutListAct);
   helpMenu->addAction(aboutAct);
@@ -854,6 +858,15 @@ void MainWindow::createToolBars()
   editToolBar->addAction(boldAct);
   editToolBar->addAction(italicAct);
   editToolBar->addAction(underlineAct);
+}
+void MainWindow::createStatusBar()
+{
+  _utfCodeLabel = new QLabel();
+  _utfCodeLabel->setToolTip(QString("UTF-8 codes of symbols"));
+  _utfCodeLabel->setText("");
+  _utfCodeLabel->setIndent(5);
+  statusBar()->addWidget(_utfCodeLabel, 1);
+  statusBar()->showMessage(tr("Ready"), 2000);
 }
 
 void MainWindow::readSettings()
