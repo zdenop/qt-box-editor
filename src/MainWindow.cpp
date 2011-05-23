@@ -260,7 +260,6 @@ void MainWindow::zoomOriginal()
   if (activeChild())
     {
       activeChild()->zoomOriginal();
-      statusBar()->showMessage(tr("Zoomed to original size"), 2000);
     }
 }
 
@@ -269,7 +268,6 @@ void MainWindow::zoomToSelection()
   if (activeChild())
     {
       activeChild()->zoomToSelection();
-      statusBar()->showMessage(tr("Zoomed to fit in view"), 2000);
     }
 }
 
@@ -278,7 +276,6 @@ void MainWindow::zoomIn()
   if (activeChild())
     {
       activeChild()->zoomIn();
-      statusBar()->showMessage(tr("Zoomed in"), 2000);
     }
 }
 
@@ -287,7 +284,6 @@ void MainWindow::zoomOut()
   if (activeChild())
     {
       activeChild()->zoomOut();
-      statusBar()->showMessage(tr("Zoomed out"), 2000);
     }
 }
 
@@ -296,7 +292,6 @@ void MainWindow::zoomToFit()
   if (activeChild())
     {
       activeChild()->zoomToFit();
-      statusBar()->showMessage(tr("Zoomed to fit in image view"), 2000);
     }
 }
 
@@ -305,7 +300,6 @@ void MainWindow::zoomToHeight()
   if (activeChild())
     {
       activeChild()->zoomToHeight();
-      statusBar()->showMessage(tr("Zoomed to fit image height to current view"), 2000);
     }
 }
 
@@ -314,7 +308,6 @@ void MainWindow::zoomToWidth()
   if (activeChild())
     {
       activeChild()->zoomToWidth();
-      statusBar()->showMessage(tr("Zoomed to fit image width to current view"), 2000);
     }
 }
 
@@ -347,7 +340,6 @@ void MainWindow::insertSymbol()
   if (activeChild())
     {
       activeChild()->insertSymbol();
-      statusBar()->showMessage(tr("Insert symbol"), 2000);
     }
 }
 
@@ -356,7 +348,6 @@ void MainWindow::splitSymbol()
   if (activeChild())
     {
       activeChild()->splitSymbol();
-      statusBar()->showMessage(tr("Split symbol"), 2000);
     }
 }
 
@@ -365,7 +356,6 @@ void MainWindow::joinSymbol()
   if (activeChild())
     {
       activeChild()->joinSymbol();
-      statusBar()->showMessage(tr("Join symbol"), 2000);
     }
 }
 
@@ -374,7 +364,6 @@ void MainWindow::deleteSymbol()
   if (activeChild())
     {
       activeChild()->deleteSymbol();
-      statusBar()->showMessage(tr("Delete symbol"), 2000);
     }
 }
 
@@ -503,6 +492,13 @@ void MainWindow::handleClose(int i)
 {
   if (tabWidget->widget(i) && tabWidget->widget(i)->close())
     tabWidget->removeTab(i);
+
+  if (!activeChild())
+  {
+  _utfCodeLabel->setText("");
+  _boxsize->setText("");
+  _zoom->setText("");
+  }
 }
 
 void MainWindow::updateMenus()
@@ -549,6 +545,8 @@ void MainWindow::updateCommandActions()
   if (activeChild())
     {
       _utfCodeLabel->setText(activeChild()->getSymbolHexCode());
+      _boxsize->setText(activeChild()->getBoxSize());
+      _zoom->setText(activeChild()->getZoom());
     }
 }
 
@@ -865,8 +863,22 @@ void MainWindow::createStatusBar()
   _utfCodeLabel->setToolTip(QString("UTF-8 codes of symbols"));
   _utfCodeLabel->setText("");
   _utfCodeLabel->setIndent(5);
-  statusBar()->addWidget(_utfCodeLabel, 1);
-  statusBar()->showMessage(tr("Ready"), 2000);
+
+  _boxsize = new QLabel();
+  _boxsize->setToolTip(QString("Width&Height of box"));
+  _boxsize->setFrameStyle(QFrame::Sunken);
+  _boxsize->setAlignment(Qt::AlignHCenter);
+  _boxsize->setMaximumWidth(60);
+
+  _zoom = new QLabel();
+  _zoom->setToolTip(QString("Zoom factor"));
+  _zoom->setFrameStyle(QFrame::Sunken);
+  _zoom->setAlignment(Qt::AlignHCenter);
+  _zoom->setMaximumWidth(50);
+
+  statusBar()->addWidget(_utfCodeLabel, 3);
+  statusBar()->addWidget(_boxsize, 1);
+  statusBar()->addWidget(_zoom, 1);
 }
 
 void MainWindow::readSettings()

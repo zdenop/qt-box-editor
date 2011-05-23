@@ -525,6 +525,15 @@ void ChildWidget::setSelectionRect()
   imageSelectionRect->setZValue(1);
 }
 
+/* Get zoom factor */
+QString ChildWidget::getZoom()
+{
+  QString result;
+  result.sprintf(" %2.0f", imageView->transform().m11() * 100);
+  result.append("% ");
+  return result;
+}
+
 void ChildWidget::setZoom(float scale)
 {
   QTransform transform;
@@ -991,6 +1000,24 @@ QString ChildWidget::getSymbolHexCode()
   return QString::null;
 }
 
+/* Get size of box */
+QString ChildWidget::getBoxSize()
+{
+  QModelIndex index = selectionModel->currentIndex();
+
+  if (index.isValid())
+    {
+      int left = model->index(index.row(), 1).data().toInt();
+      int bottom = model->index(index.row(), 2).data().toInt();
+      int right = model->index(index.row(), 3).data().toInt();
+      int top = model->index(index.row(), 4).data().toInt();
+      QString result;
+      result = QString("%1x%2").arg(right - left).arg(bottom - top);
+      return result;
+    }
+  return QString::null;
+}
+
 QString ChildWidget::currentBoxFile()
 {
   return QFileInfo(boxFile).canonicalFilePath();
@@ -1049,6 +1076,7 @@ void ChildWidget::closeEvent(QCloseEvent* event)
     {
       event->ignore();
     }
+
 }
 
 bool ChildWidget::maybeSave()

@@ -185,6 +185,8 @@ class MainWindow : public QMainWindow
     QAction* aboutAct;
     QAction* aboutQtAct;
     QLabel* _utfCodeLabel;
+    QLabel* _boxsize;
+    QLabel* _zoom;
 };
 
 #endif /* MAINWINDOW_H_ */
