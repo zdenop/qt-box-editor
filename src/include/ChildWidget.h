@@ -78,7 +78,9 @@ class ChildWidget : public QSplitter
     bool directTypingMode;
 
     QString userFriendlyCurrentFile();
+    QString getZoom();
     QString getSymbolHexCode();
+    QString getBoxSize();
     QString currentBoxFile();
     QString canonicalImageFileName()
     {
