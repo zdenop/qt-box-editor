@@ -60,14 +60,14 @@ MainWindow::MainWindow()
 void MainWindow::closeEvent(QCloseEvent* event)
 {
   if (closeAllTabs())
-    {
-      writeSettings();
-      event->accept();
-    }
+  {
+    writeSettings();
+    event->accept();
+  }
   else
-    {
-      event->ignore();
-    }
+  {
+    event->ignore();
+  }
 }
 
 ChildWidget* MainWindow::activeChild()
@@ -94,52 +94,52 @@ void MainWindow::open()
 void MainWindow::addChild(const QString& imageFileName)
 {
   if (!imageFileName.isEmpty())
+  {
+    QString canonicalImageFileName = QFileInfo(imageFileName).canonicalFilePath();
+    for (int i = 0; i < tabWidget->count(); ++i)
     {
-      QString canonicalImageFileName = QFileInfo(imageFileName).canonicalFilePath();
-      for (int i = 0; i < tabWidget->count(); ++i)
-        {
-          ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
-          if (canonicalImageFileName == child->canonicalImageFileName())
-            {
-              tabWidget->setCurrentIndex(i);
-              return;
-            }
-        }
-
-      ChildWidget* child = new ChildWidget(this);
-      if (child->loadImage(imageFileName))
-        {
-          statusBar()->showMessage(tr("File loaded"), 2000);
-          tabWidget->setCurrentIndex(tabWidget->addTab(child, child->userFriendlyCurrentFile()));
-          connect(child, SIGNAL(boxChanged()), this, SLOT(updateCommandActions()));
-          connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateTabTitle()));
-          connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
-
-          // save path of open image file
-          QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
-          QString filePath = QFileInfo(imageFileName).absolutePath();
-          settings.setValue("last_path", filePath);
-
-          QStringList files = settings.value("recentFileList").toStringList();
-          files.removeAll(imageFileName);
-          files.prepend(imageFileName);
-          while (files.size() > MaxRecentFiles)
-            files.removeLast();
-
-          settings.setValue("recentFileList", files);
-
-          foreach(QWidget * widget, QApplication::topLevelWidgets())
-          {
-            MainWindow* mainWin = qobject_cast<MainWindow*>(widget);
-            if (mainWin)
-              mainWin->updateRecentFileActions();
-          }
-        }
-      else
-        {
-          child->close();
-        }
+      ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
+      if (canonicalImageFileName == child->canonicalImageFileName())
+      {
+        tabWidget->setCurrentIndex(i);
+        return;
+      }
     }
+
+    ChildWidget* child = new ChildWidget(this);
+    if (child->loadImage(imageFileName))
+    {
+      statusBar()->showMessage(tr("File loaded"), 2000);
+      tabWidget->setCurrentIndex(tabWidget->addTab(child, child->userFriendlyCurrentFile()));
+      connect(child, SIGNAL(boxChanged()), this, SLOT(updateCommandActions()));
+      connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateTabTitle()));
+      connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
+
+      // save path of open image file
+      QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+      QString filePath = QFileInfo(imageFileName).absolutePath();
+      settings.setValue("last_path", filePath);
+
+      QStringList files = settings.value("recentFileList").toStringList();
+      files.removeAll(imageFileName);
+      files.prepend(imageFileName);
+      while (files.size() > MaxRecentFiles)
+        files.removeLast();
+
+      settings.setValue("recentFileList", files);
+
+      foreach(QWidget * widget, QApplication::topLevelWidgets())
+      {
+        MainWindow* mainWin = qobject_cast<MainWindow*>(widget);
+        if (mainWin)
+          mainWin->updateRecentFileActions();
+      }
+    }
+    else
+    {
+      child->close();
+    }
+  }
 }
 
 void MainWindow::updateRecentFileActions()
@@ -150,13 +150,13 @@ void MainWindow::updateRecentFileActions()
   int numRecentFiles = qMin(files.size(), (int)MaxRecentFiles);
 
   for (int i = 0; i < numRecentFiles; ++i)
-    {
-      QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
+  {
+    QString text = tr("&%1 %2").arg(i + 1).arg(QFileInfo(files[i]).fileName());
 
-      recentFileActs[i]->setText(text);
-      recentFileActs[i]->setData(files[i]);
-      recentFileActs[i]->setVisible(true);
-    }
+    recentFileActs[i]->setText(text);
+    recentFileActs[i]->setData(files[i]);
+    recentFileActs[i]->setVisible(true);
+  }
   for (int j = numRecentFiles; j < MaxRecentFiles; ++j)
     recentFileActs[j]->setVisible(false);
 
@@ -189,23 +189,40 @@ void MainWindow::saveAs()
     statusBar()->showMessage(tr("File saved"), 2000);
 }
 
+void MainWindow::importSym()
+{
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+  QString last_path = settings.value("last_path").toString();   // try to get path from settings
+
+  QString textFile = QFileDialog::getOpenFileName(
+                       this,
+                       tr("Select text file..."),
+                       last_path,
+                       tr("Text files (*.txt);;All files (*.*)"));
+  if (textFile.isEmpty())
+    return;
+
+  if (activeChild() && activeChild()->importToChild(textFile))
+    statusBar()->showMessage(tr("File saved"), 2000);
+}
+
 bool MainWindow::closeActiveTab()
 {
   if (tabWidget->currentWidget() && tabWidget->currentWidget()->close())
-    {
-      tabWidget->removeTab(tabWidget->currentIndex());
-      return true;
-    }
+  {
+    tabWidget->removeTab(tabWidget->currentIndex());
+    return true;
+  }
   return false;
 }
 
 bool MainWindow::closeAllTabs()
 {
   while (tabWidget->currentWidget())
-    {
-      if (!closeActiveTab())
-        return false;
-    }
+  {
+    if (!closeActiveTab())
+      return false;
+  }
   return true;
 }
 
@@ -226,177 +243,177 @@ void MainWindow::nextTab()
 void MainWindow::previousTab()
 {
   if (tabWidget->count() > 0)
-    {
-      tabWidget->setCurrentIndex((tabWidget->currentIndex() + tabWidget->count() - 1) % tabWidget->count());
-    }
+  {
+    tabWidget->setCurrentIndex((tabWidget->currentIndex() + tabWidget->count() - 1) % tabWidget->count());
+  }
 }
 
 void MainWindow::bold(bool checked)
 {
   if (activeChild())
-    {
-      activeChild()->setBolded(checked);
-    }
+  {
+    activeChild()->setBolded(checked);
+  }
 }
 
 void MainWindow::italic(bool checked)
 {
   if (activeChild())
-    {
-      activeChild()->setItalic(checked);
-    }
+  {
+    activeChild()->setItalic(checked);
+  }
 }
 
 void MainWindow::underline(bool checked)
 {
   if (activeChild())
-    {
-      activeChild()->setUnderline(checked);
-    }
+  {
+    activeChild()->setUnderline(checked);
+  }
 }
 
 void MainWindow::zoomOriginal()
 {
   if (activeChild())
-    {
-      activeChild()->zoomOriginal();
-    }
+  {
+    activeChild()->zoomOriginal();
+  }
 }
 
 void MainWindow::zoomToSelection()
 {
   if (activeChild())
-    {
-      activeChild()->zoomToSelection();
-    }
+  {
+    activeChild()->zoomToSelection();
+  }
 }
 
 void MainWindow::zoomIn()
 {
   if (activeChild())
-    {
-      activeChild()->zoomIn();
-    }
+  {
+    activeChild()->zoomIn();
+  }
 }
 
 void MainWindow::zoomOut()
 {
   if (activeChild())
-    {
-      activeChild()->zoomOut();
-    }
+  {
+    activeChild()->zoomOut();
+  }
 }
 
 void MainWindow::zoomToFit()
 {
   if (activeChild())
-    {
-      activeChild()->zoomToFit();
-    }
+  {
+    activeChild()->zoomToFit();
+  }
 }
 
 void MainWindow::zoomToHeight()
 {
   if (activeChild())
-    {
-      activeChild()->zoomToHeight();
-    }
+  {
+    activeChild()->zoomToHeight();
+  }
 }
 
 void MainWindow::zoomToWidth()
 {
   if (activeChild())
-    {
-      activeChild()->zoomToWidth();
-    }
+  {
+    activeChild()->zoomToWidth();
+  }
 }
 
 void MainWindow::showSymbol()
 {
   if (activeChild())
-    {
-      activeChild()->showSymbol();
-    }
+  {
+    activeChild()->showSymbol();
+  }
 }
 
 void MainWindow::directTypingMode(bool checked)
 {
   if (activeChild())
-    {
-      activeChild()->setDirectTypingMode(checked);
-    }
+  {
+    activeChild()->setDirectTypingMode(checked);
+  }
 }
 
 void MainWindow::drawBoxes()
 {
   if (activeChild())
-    {
-      activeChild()->drawBoxes();
-    }
+  {
+    activeChild()->drawBoxes();
+  }
 }
 
 void MainWindow::insertSymbol()
 {
   if (activeChild())
-    {
-      activeChild()->insertSymbol();
-    }
+  {
+    activeChild()->insertSymbol();
+  }
 }
 
 void MainWindow::splitSymbol()
 {
   if (activeChild())
-    {
-      activeChild()->splitSymbol();
-    }
+  {
+    activeChild()->splitSymbol();
+  }
 }
 
 void MainWindow::joinSymbol()
 {
   if (activeChild())
-    {
-      activeChild()->joinSymbol();
-    }
+  {
+    activeChild()->joinSymbol();
+  }
 }
 
 void MainWindow::deleteSymbol()
 {
   if (activeChild())
-    {
-      activeChild()->deleteSymbol();
-    }
+  {
+    activeChild()->deleteSymbol();
+  }
 }
 
 void MainWindow::moveUp()
 {
   if (activeChild())
-    {
-      activeChild()->moveUp();
-    }
+  {
+    activeChild()->moveUp();
+  }
 }
 
 void MainWindow::moveDown()
 {
   if (activeChild())
-    {
-      activeChild()->moveDown();
-    }
+  {
+    activeChild()->moveDown();
+  }
 }
 
 void MainWindow::moveTo()
 {
   if (activeChild())
-    {
-      activeChild()->moveTo();
-    }
+  {
+    activeChild()->moveTo();
+  }
 }
 
 void MainWindow::goToRow()
 {
   if (activeChild())
-    {
-      activeChild()->goToRow();
-    }
+  {
+    activeChild()->goToRow();
+  }
 }
 void MainWindow::slotSettings()
 {
@@ -434,34 +451,34 @@ void MainWindow::requestFinished(QNetworkReply* reply)
 void MainWindow::checkVersion(QNetworkReply* reply)
 {
   if (reply->error() == QNetworkReply::NoError)
+  {
+    float current_version = QString(reply->readAll()).toFloat();
+    float app_version = (QString("%1").arg(VERSION).replace("dev", "", Qt::CaseInsensitive)).toFloat();
+
+    QString messageText;
+
+    if (app_version == current_version)
     {
-      float current_version = QString(reply->readAll()).toFloat();
-      float app_version = (QString("%1").arg(VERSION).replace("dev", "", Qt::CaseInsensitive)).toFloat();
-
-      QString messageText;
-
-      if (app_version == current_version)
-        {
-          messageText = tr("<p>No newer version is available.</p>");
-        }
-      else if (app_version > current_version)
-        {
-          messageText = tr("<p>Your version ('%1') is higher than released stable version ('%2').<p>").arg(VERSION).arg(current_version);
-          messageText += tr("<p>Do you use develepment version? ");
-          messageText += tr("Don't forget to install stable version manually!</p>");
-        }
-      else
-        {
-          messageText = tr("<p>New version '%1' is available!<br/>Please visit ").arg(current_version);
-          messageText += tr("<a href=%1/downloads>downloads on project homepage!</a></p>").arg(PROJECT_URL);
-        }
-
-      QMessageBox::information(this, tr("Version info"), messageText);
+      messageText = tr("<p>No newer version is available.</p>");
     }
+    else if (app_version > current_version)
+    {
+      messageText = tr("<p>Your version ('%1') is higher than released stable version ('%2').<p>").arg(VERSION).arg(current_version);
+      messageText += tr("<p>Do you use develepment version? ");
+      messageText += tr("Don't forget to install stable version manually!</p>");
+    }
+    else
+    {
+      messageText = tr("<p>New version '%1' is available!<br/>Please visit ").arg(current_version);
+      messageText += tr("<a href=%1/downloads>downloads on project homepage!</a></p>").arg(PROJECT_URL);
+    }
+
+    QMessageBox::information(this, tr("Version info"), messageText);
+  }
   else
-    {
-      QMessageBox::critical(this, tr("Network"), tr("ERROR: %1").arg(reply->errorString()));
-    }
+  {
+    QMessageBox::critical(this, tr("Network"), tr("ERROR: %1").arg(reply->errorString()));
+  }
 }
 
 void MainWindow::shortCutList()
@@ -495,15 +512,16 @@ void MainWindow::handleClose(int i)
 
   if (!activeChild())
   {
-  _utfCodeLabel->setText("");
-  _boxsize->setText("");
-  _zoom->setText("");
+    _utfCodeLabel->setText("");
+    _boxsize->setText("");
+    _zoom->setText("");
   }
 }
 
 void MainWindow::updateMenus()
 {
   saveAsAct->setEnabled((activeChild()) != 0);
+  importSymAct->setEnabled((activeChild()) != 0);
   closeAct->setEnabled(activeChild() != 0);
   closeAllAct->setEnabled(activeChild() != 0);
   nextAct->setEnabled(activeChild() != 0);
@@ -543,11 +561,11 @@ void MainWindow::updateCommandActions()
   deleteAct->setEnabled(enable);
 
   if (activeChild())
-    {
-      _utfCodeLabel->setText(activeChild()->getSymbolHexCode());
-      _boxsize->setText(activeChild()->getBoxSize());
-      _zoom->setText(activeChild()->getZoom());
-    }
+  {
+    _utfCodeLabel->setText(activeChild()->getSymbolHexCode());
+    _boxsize->setText(activeChild()->getBoxSize());
+    _zoom->setText(activeChild()->getZoom());
+  }
 }
 
 void MainWindow::updateSaveAction()
@@ -558,12 +576,12 @@ void MainWindow::updateSaveAction()
 void MainWindow::updateTabTitle()
 {
   if (activeChild())
-    {
-      QString title = activeChild()->userFriendlyCurrentFile();
-      if (activeChild()->isModified())
-        title += " *";
-      tabWidget->setTabText(tabWidget->currentIndex(), title);
-    }
+  {
+    QString title = activeChild()->userFriendlyCurrentFile();
+    if (activeChild()->isModified())
+      title += " *";
+    tabWidget->setTabText(tabWidget->currentIndex(), title);
+  }
 }
 
 void MainWindow::updateViewMenu()
@@ -576,24 +594,24 @@ void MainWindow::updateViewMenu()
   separatorAct->setVisible(tabWidget->count() > 0);
 
   for (int i = 0; i < tabWidget->count(); ++i)
-    {
-      ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
+  {
+    ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
 
-      QString text;
-      if (i < 9)
-        {
-          text = tr("&%1 %2").arg(i + 1).arg(child->userFriendlyCurrentFile());
-        }
-      else
-        {
-          text = tr("%1 %2").arg(i + 1).arg(child->userFriendlyCurrentFile());
-        }
-      QAction* action = viewMenu->addAction(text);
-      action->setCheckable(true);
-      action->setChecked(child == activeChild());
-      connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
-      windowMapper->setMapping(action, i);
+    QString text;
+    if (i < 9)
+    {
+      text = tr("&%1 %2").arg(i + 1).arg(child->userFriendlyCurrentFile());
     }
+    else
+    {
+      text = tr("%1 %2").arg(i + 1).arg(child->userFriendlyCurrentFile());
+    }
+    QAction* action = viewMenu->addAction(text);
+    action->setCheckable(true);
+    action->setChecked(child == activeChild());
+    connect(action, SIGNAL(triggered()), windowMapper, SLOT(map()));
+    windowMapper->setMapping(action, i);
+  }
 
   viewMenu->addSeparator();
   viewMenu->addAction(zoomInAct);
@@ -626,6 +644,12 @@ void MainWindow::createActions()
   saveAsAct->setStatusTip(tr("Save document after prompting the user for a file name."));
   saveAsAct->setEnabled(false);
   connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+  importSymAct = new QAction(QIcon(":/images/import.svg"), tr("I&mport symbols..."), this);
+  //importSymAct->setShortcuts(QKeySequence::Save);
+  importSymAct->setStatusTip(tr("Import symbols from text document"));
+  importSymAct->setEnabled(false);
+  connect(importSymAct, SIGNAL(triggered()), this, SLOT(importSym()));
 
   closeAct = new QAction(QIcon(":/images/window-close.png"), tr("Cl&ose"), this);
   closeAct->setShortcut(QKeySequence::Close);
@@ -772,17 +796,19 @@ void MainWindow::createActions()
 void MainWindow::createMenus()
 {
   for (int i = 0; i < MaxRecentFiles; ++i)
-    {
-      recentFileActs[i] = new QAction(this);
-      recentFileActs[i]->setVisible(false);
-      connect(recentFileActs[i], SIGNAL(triggered()),
-              this, SLOT(openRecentFile()));
-    }
+  {
+    recentFileActs[i] = new QAction(this);
+    recentFileActs[i]->setVisible(false);
+    connect(recentFileActs[i], SIGNAL(triggered()),
+            this, SLOT(openRecentFile()));
+  }
 
   fileMenu = menuBar()->addMenu(tr("&File"));
   fileMenu->addAction(openAct);
   fileMenu->addAction(saveAct);
   fileMenu->addAction(saveAsAct);
+  fileMenu->addSeparator();
+  fileMenu->addAction(importSymAct);
   fileMenu->addSeparator();
   fileMenu->addAction(closeAct);
   fileMenu->addAction(closeAllAct);
@@ -833,6 +859,7 @@ void MainWindow::createToolBars()
   fileToolBar->addAction(exitAct);
   fileToolBar->addAction(openAct);
   fileToolBar->addAction(saveAct);
+  fileToolBar->addAction(importSymAct);
 
   viewToolBar = addToolBar(tr("View"));
   viewToolBar->setObjectName("viewToolBar");

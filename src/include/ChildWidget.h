@@ -88,6 +88,7 @@ class ChildWidget : public QSplitter
     }
 
     bool save(const QString& fileName);
+    bool importToChild(const QString& fileName);
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);
     void setSelectionRect();
