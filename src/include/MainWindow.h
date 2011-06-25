@@ -80,6 +80,7 @@ class MainWindow : public QMainWindow
     void openRecentFile();
     void save();
     void saveAs();
+    void importSym();
     bool closeActiveTab();
     bool closeAllTabs();
     void nextTab();
@@ -147,6 +148,7 @@ class MainWindow : public QMainWindow
     QAction* openAct;
     QAction* saveAct;
     QAction* saveAsAct;
+    QAction* importSymAct;
     QAction* closeAct;
     QAction* closeAllAct;
     QAction* fSeparatorAct;

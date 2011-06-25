@@ -27,9 +27,10 @@
         <file>images/up.svg</file>
         <file>images/down.svg</file>
         <file>images/moveTo.svg</file>
-        <file>images/gtk-jump-to-ltr.png</file>        
+        <file>images/gtk-jump-to-ltr.png</file>
         <file>images/insertRow.svg</file>
         <file>images/deleteRow.png</file>
         <file>images/key_bindings.svg</file>
+        <file>images/import.svg</file>
     </qresource>
 </RCC>
