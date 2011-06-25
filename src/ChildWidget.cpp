@@ -21,14 +21,16 @@
 *
 **********************************************************************/
 
-#include "ChildWidget.h"
-#include "GetRowIDDialog.h"
-#include "Settings.h"
-#include "SettingsDialog.h"
+#include <string>
+#include <algorithm>
 
-ChildWidget::ChildWidget(QWidget* parent) :
-  QSplitter(Qt::Horizontal, parent)
-{
+#include "include/ChildWidget.h"
+#include "include/Settings.h"
+#include "include/SettingsDialog.h"
+#include "dialogs/GetRowIDDialog.h"
+
+ChildWidget::ChildWidget(QWidget* parent)
+  : QSplitter(Qt::Horizontal, parent) {
   model = new QStandardItemModel(0, 9, this);
   //  model->setHeaderData(-1, Qt::Horizontal, tr("Row"));
   model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
@@ -55,65 +57,56 @@ ChildWidget::ChildWidget(QWidget* parent) :
     SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     this, SLOT(drawSelectionRects()));
   table->setSelectionModel(selectionModel);
-  //table->verticalHeader()->hide();
+  // table->verticalHeader()->hide();
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
   table->setSelectionMode(QAbstractItemView::SingleSelection);
   table->hideColumn(5);
   table->hideColumn(6);
   table->hideColumn(7);
   table->hideColumn(8);
-  table->installEventFilter(this); //(this);   // installs event filter
+  table->installEventFilter(this);  // installs event filter
 
   // Font for table
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
   QFont tableFont = settings.value("GUI/Font").value<QFont>();
 
-  if (tableFont.family().isEmpty())
-  {
+  if (tableFont.family().isEmpty()) {
     tableFont.setFamily(TABLE_FONT);
     tableFont.setPointSize(TABLE_FONT_SIZE);
   }
   table->setFont(tableFont);
 
-  if (settings.contains("GUI/Rectagle"))
-  {
+  if (settings.contains("GUI/Rectagle")) {
     rectColor = settings.value("GUI/Rectagle").value<QColor>();
-  }
-  else
-  {
+  } else {
     rectColor = Qt::red;
   }
 
-  if (settings.contains("GUI/Rectagle_fill"))
+  if (settings.contains("GUI/Rectagle_fill")) {
     rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
-  else
-  {
+  } else {
     rectFillColor = Qt::red;
     rectFillColor.setAlpha(127);
   }
 
-  if (settings.contains("GUI/Box"))
-  {
+  if (settings.contains("GUI/Box")) {
     boxColor = settings.value("GUI/Box").value<QColor>();
-  }
-  else
-  {
+  } else {
     boxColor = Qt::green;
   }
 
-  if (settings.contains("GUI/BackgroundColor"))
-  {
+  if (settings.contains("GUI/BackgroundColor")) {
     backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
-  }
-  else
-  {
+  } else {
     backgroundColor = (Qt::gray);
   }
 
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
   imageView = new QGraphicsView(imageScene);
-  imageView->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+  imageView->setRenderHints(QPainter::Antialiasing |
+                            QPainter::SmoothPixmapTransform);
   imageView->setAutoFillBackground(true);
   imageView->setBackgroundBrush(backgroundColor);
 
@@ -184,7 +177,9 @@ ChildWidget::ChildWidget(QWidget* parent) :
   actionLayout->addWidget(splitButton);
   actionLayout->addWidget(removeButton);
 
-  QSpacerItem* horizontalSpacer = new QSpacerItem(73, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer = new QSpacerItem(73, 20,
+      QSizePolicy::Expanding,
+      QSizePolicy::Minimum);
 
   QGridLayout* gridLayout = new QGridLayout();
   gridLayout->setContentsMargins(3, 3, 3, 3);
@@ -212,50 +207,47 @@ ChildWidget::ChildWidget(QWidget* parent) :
   directTypingMode = false;
 }
 
-bool ChildWidget::loadImage(const QString& fileName)
-{
+bool ChildWidget::loadImage(const QString& fileName) {
   QImage image(fileName);
 
-  if (image.isNull())
-  {
-    QMessageBox::information(this, tr("Wrong file"), tr("Cannot load %1.").arg(fileName));
+  if (image.isNull()) {
+    QMessageBox::information(this, tr("Wrong file"),
+                             tr("Cannot load %1.").arg(fileName));
     return false;
   }
   QString boxFileName = QFileInfo(fileName).path() + QDir::separator()
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
-  if (!QFile::exists(boxFileName))
-  {
-    QMessageBox::warning(this, tr("Missing file"), tr(
-                           "Cannot load image, because there is no corresponding box file"));
+  if (!QFile::exists(boxFileName)) {
+    QMessageBox::warning(this, tr("Missing file"),
+                         tr("Cannot load image, because there is no corresponding box file"));
     return false;
   }
   imageHeight = image.height();
   imageWidth = image.width();
 
-  if (loadBoxes(boxFileName))
-  {
+  if (loadBoxes(boxFileName)) {
     setCurrentImageFile(fileName);
     imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
     imageSelectionRect->setParentItem(imageItem);
     modified = false;
     emit modifiedChanged();
-    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(emitBoxChanged()));
-    connect(model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(documentWasModified()));
-  }
-  else
+    connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
+            SLOT(emitBoxChanged()));
+    connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
+            SLOT(documentWasModified()));
+  } else {
     return false;
-
+  }
   return true;
 }
 
-bool ChildWidget::loadBoxes(const QString& fileName)
-{
+bool ChildWidget::loadBoxes(const QString& fileName) {
   QFile file(fileName);
 
-  if (!file.open(QFile::ReadOnly | QFile::Text))
-  {
-    QMessageBox::warning(this, SETTING_APPLICATION, tr("Cannot read file %1:\n%2.").arg(fileName).arg(
+  if (!file.open(QFile::ReadOnly | QFile::Text)) {
+    QMessageBox::warning(this, SETTING_APPLICATION,
+                         tr("Cannot read file %1:\n%2.").arg(fileName).arg(
                            file.errorString()));
     return false;
   }
@@ -266,30 +258,25 @@ bool ChildWidget::loadBoxes(const QString& fileName)
   QString line;
   int row = 0;
   int firstPage = -1;
-  do
-  {
+  do {
     line = in.readLine();
-    if (!line.isEmpty())
-    {
+    if (!line.isEmpty()) {
       QFont letterFont;
       QStringList pieces = line.split(" ", QString::SkipEmptyParts);
       QString letter = pieces.value(0);
       bool bold = false, italic = false, underline = false;
       // formating is present only in case there are more than 2 letters
-      if (letter.at(0) == '@' && letter.size() > 1)
-      {
+      if (letter.at(0) == '@' && letter.size() > 1) {
         bold = true;
         letterFont.setBold(true);
         letter.remove(0, 1);
       }
-      if (letter.at(0) == '$' && letter.size() > 1)
-      {
+      if (letter.at(0) == '$' && letter.size() > 1) {
         italic = true;
         letterFont.setItalic(true);
         letter.remove(0, 1);
       }
-      if (letter.at(0) == '\'' && letter.size() > 1)
-      {
+      if (letter.at(0) == '\'' && letter.size() > 1) {
         underline = true;
         letterFont.setUnderline(true);
         letter.remove(0, 1);
@@ -300,13 +287,13 @@ bool ChildWidget::loadBoxes(const QString& fileName)
       int top = imageHeight - pieces.value(4).toInt();
       int page = pieces.value(5).toInt();
 
-      // TODO: implement support for multipage tif
+      // TODO(zdenop): implement support for multipage tif
       if (firstPage < 0)
         firstPage = page;  // first page can have number 5 ;-)
-      if (firstPage == page)   // ignore other pages than first page
-      {
+      if (firstPage == page) {  // ignore other pages than first page
         model->insertRow(row);
-        model->setData(model->index(row, 0, QModelIndex()), letterFont, Qt::FontRole);
+        model->setData(model->index(row, 0, QModelIndex()), letterFont,
+                       Qt::FontRole);
         model->setData(model->index(row, 0, QModelIndex()), letter);
         model->setData(model->index(row, 1, QModelIndex()), left);
         model->setData(model->index(row, 2, QModelIndex()), bottom);
@@ -319,8 +306,7 @@ bool ChildWidget::loadBoxes(const QString& fileName)
         row++;
       }
     }
-  }
-  while (!line.isEmpty());
+  } while (!line.isEmpty());
 
   file.close();
   QApplication::restoreOverrideCursor();
@@ -335,15 +321,14 @@ bool ChildWidget::loadBoxes(const QString& fileName)
 
   // set size of table
   int tableVisibleWidth = 2 * table->frameWidth();
-  if (!table->verticalHeader()->isHidden())
-  {
-    tableVisibleWidth += 35; // TODO: table->verticalHeader()/horizontalHeader()->width() is 0
+  if (!table->verticalHeader()->isHidden()) {
+    tableVisibleWidth += 35;
+    // TODO(zdeno): table->verticalHeader()/horizontalHeader()->width() is 0
   }
 
-  tableVisibleWidth += 25; // scrollbar
+  tableVisibleWidth += 25;  // scrollbar
 
-  for (int col = 0; col < table->horizontalHeader()->count(); col++)
-  {
+  for (int col = 0; col < table->horizontalHeader()->count(); col++) {
     tableVisibleWidth += table->columnWidth(col);
   }
   QList<int> splitterSizes;
@@ -355,12 +340,10 @@ bool ChildWidget::loadBoxes(const QString& fileName)
   return true;
 }
 
-bool ChildWidget::save(const QString& fileName)
-{
+bool ChildWidget::save(const QString& fileName) {
   QFile file(fileName);
 
-  if (!file.open(QFile::WriteOnly | QFile::Text))
-  {
+  if (!file.open(QFile::WriteOnly | QFile::Text)) {
     QMessageBox::warning(
       this,
       SETTING_APPLICATION,
@@ -372,8 +355,7 @@ bool ChildWidget::save(const QString& fileName)
   out.setCodec("UTF-8");
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  for (int row = 0; row < model->rowCount(); ++row)
-  {
+  for (int row = 0; row < model->rowCount(); ++row) {
     QString letter = model->index(row, 0).data().toString();
     int left = model->index(row, 1).data().toInt();
     int bottom = model->index(row, 2).data().toInt();
@@ -389,8 +371,8 @@ bool ChildWidget::save(const QString& fileName)
       out << "$";
     if (underline)
       out << "\'";
-    out << letter << " " << left << " " << imageHeight - bottom << " " << right << " "
-        << imageHeight - top << " " << page << "\n";
+    out << letter << " " << left << " " << imageHeight - bottom << " "
+        << right << " " << imageHeight - top << " " << page << "\n";
   }
 
   QApplication::restoreOverrideCursor();
@@ -401,34 +383,32 @@ bool ChildWidget::save(const QString& fileName)
   return true;
 }
 
-bool ChildWidget::importToChild(const QString& fileName)
-{
+bool ChildWidget::importToChild(const QString& fileName) {
   QFile file(fileName);
 
-  if (!file.open(QFile::ReadOnly | QFile::Text))
-  {
-    QMessageBox::warning(this, SETTING_APPLICATION, tr("Cannot read file %1:\n%2.").arg(fileName).arg(
+  if (!file.open(QFile::ReadOnly | QFile::Text)) {
+    QMessageBox::warning(this, SETTING_APPLICATION,
+                         tr("Cannot read file %1:\n%2.").arg(fileName).arg(
                            file.errorString()));
     return false;
   }
 
   QTextStream in(&file);
   in.setCodec("UTF-8");
-  // TODO: ask for format of imput file
+  // TODO(zdenop): ask for format of imput file
   // format_1: 1 line = 1 symbol
   // format_2: 1 letter = 1 symbol
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
   QString line;
   int row = 0;
-  do
-  {
+  do {
     line = in.readLine();
-    if (!line.isEmpty())
-    {
-      if (row > model->rowCount())
-      {
-        QMessageBox::warning(this, SETTING_APPLICATION, tr("There are more symbols in import file than boxes! Rest of symbols are ignored").arg(fileName).arg(
+    if (!line.isEmpty()) {
+      if (row > model->rowCount()) {
+        QMessageBox::warning(this, SETTING_APPLICATION,
+                             tr("There are more symbols in import file than boxes!"
+                                " Rest of symbols are ignored").arg(fileName).arg(
                                file.errorString()));
         file.close();
         QApplication::restoreOverrideCursor();
@@ -437,13 +417,12 @@ bool ChildWidget::importToChild(const QString& fileName)
       model->setData(model->index(row, 0, QModelIndex()), line);
       row++;
     }
-  }
-  while (!line.isEmpty());
+  } while (!line.isEmpty());
 
-  if (row < model->rowCount())
-  {
-    QMessageBox::warning(this, SETTING_APPLICATION, tr("There are less symbols in import file than boxes!").arg(fileName).arg(
-                           file.errorString()));
+  if (row < model->rowCount()) {
+    QMessageBox::warning(this, SETTING_APPLICATION,
+                         tr("There are less symbols in import file than boxes!").arg(
+                           fileName).arg(file.errorString()));
   }
 
   file.close();
@@ -453,83 +432,69 @@ bool ChildWidget::importToChild(const QString& fileName)
 }
 
 
-bool ChildWidget::isBoxSelected()
-{
+bool ChildWidget::isBoxSelected() {
   return selectionModel->hasSelection();
 }
 
-bool ChildWidget::isItalic()
-{
+bool ChildWidget::isItalic() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     return model->index(index.row(), 6).data().toBool();
   }
   return false;
 }
 
-bool ChildWidget::isBold()
-{
+bool ChildWidget::isBold() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     return model->index(index.row(), 7).data().toBool();
   }
   return false;
 }
 
-bool ChildWidget::isUnderLine()
-{
+bool ChildWidget::isUnderLine() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     return model->index(index.row(), 8).data().toBool();
   }
   return false;
 }
 
-bool ChildWidget::isShowSymbol()
-{
+bool ChildWidget::isShowSymbol() {
   return symbolShown;
 }
 
-bool ChildWidget::isDirectTypingMode()
-{
+bool ChildWidget::isDirectTypingMode() {
   return directTypingMode;
 }
 
-void ChildWidget::setDirectTypingMode(bool v)
-{
+void ChildWidget::setDirectTypingMode(bool v) {
   directTypingMode = v;
 }
 
-bool ChildWidget::isDrawBoxes()
-{
+bool ChildWidget::isDrawBoxes() {
   return boxesVisible;
 }
 
-void ChildWidget::setItalic(bool v)
-{
+void ChildWidget::setItalic(bool v) {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     QFont letterFont;
     letterFont.setItalic(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont, Qt::FontRole);
+    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                   Qt::FontRole);
     model->setData(model->index(index.row(), 6, QModelIndex()), v);
   }
 }
 
-void ChildWidget::setBolded(bool v)
-{
+void ChildWidget::setBolded(bool v) {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     QFont letterFont;
     /* TODO: switching between italic bold <-> bold/italics is strange
     if (isItalic() && !isBold())
@@ -537,31 +502,30 @@ void ChildWidget::setBolded(bool v)
     else
     */
     letterFont.setBold(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont, Qt::FontRole);
+    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                   Qt::FontRole);
     model->setData(model->index(index.row(), 7, QModelIndex()), v);
   }
 }
 
-void ChildWidget::setUnderline(bool v)
-{
+void ChildWidget::setUnderline(bool v) {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     QFont letterFont;
     letterFont.setUnderline(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont, Qt::FontRole);
+    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                   Qt::FontRole);
     model->setData(model->index(index.row(), 8, QModelIndex()), v);
   }
 }
 
-void ChildWidget::setSelectionRect()
-{
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+void ChildWidget::setSelectionRect() {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
   QFont tableFont = settings.value("GUI/Font").value<QFont>();
 
-  if (tableFont.family().isEmpty())
-  {
+  if (tableFont.family().isEmpty()) {
     tableFont.setFamily(TABLE_FONT);
     tableFont.setPointSize(TABLE_FONT_SIZE);
   }
@@ -573,61 +537,53 @@ void ChildWidget::setSelectionRect()
   text2->setZValue(1);
   text2->setPos(QPoint(0, 0));
 
-  imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(rectColor), rectFillColor);
+  imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(rectColor),
+                       rectFillColor);
   imageSelectionRect->setZValue(1);
 }
 
 /* Get zoom factor */
-QString ChildWidget::getZoom()
-{
+QString ChildWidget::getZoom() {
   QString result;
   result.sprintf(" %2.0f", imageView->transform().m11() * 100);
   result.append("% ");
   return result;
 }
 
-void ChildWidget::setZoom(float scale)
-{
+void ChildWidget::setZoom(float scale) {
   QTransform transform;
 
   transform.scale(scale, scale);
   imageView->setTransform(transform);
 }
 
-void ChildWidget::zoomIn()
-{
+void ChildWidget::zoomIn() {
   imageView->scale(1.2, 1.2);
   imageView->ensureVisible(imageSelectionRect);
 }
 
-void ChildWidget::zoomOut()
-{
+void ChildWidget::zoomOut() {
   imageView->scale(1 / 1.2, 1 / 1.2);
   imageView->ensureVisible(imageSelectionRect);
 }
 
-void ChildWidget::zoomToFit()
-{
+void ChildWidget::zoomToFit() {
   float viewWidth = imageView->viewport()->width();
   float viewHeight = imageView->viewport()->height();
   float zoomFactor;
   float ratio = viewWidth / viewHeight;
   float aspectRatio = imageWidth / imageHeight;
 
-  if (ratio > aspectRatio)
-  {
+  if (ratio > aspectRatio) {
     zoomFactor = viewHeight / imageHeight;
-  }
-  else
-  {
+  } else {
     zoomFactor = viewWidth / imageWidth;
   }
 
   setZoom(zoomFactor);
 }
 
-void ChildWidget::zoomToHeight()
-{
+void ChildWidget::zoomToHeight() {
   float viewHeight = imageView->viewport()->height();
   float zoomFactor = viewHeight / imageHeight;
 
@@ -635,8 +591,7 @@ void ChildWidget::zoomToHeight()
   imageView->ensureVisible(imageSelectionRect);
 }
 
-void ChildWidget::zoomToWidth()
-{
+void ChildWidget::zoomToWidth() {
   float viewWidth = imageView->viewport()->width();
   float zoomFactor = viewWidth / imageWidth;
 
@@ -644,22 +599,19 @@ void ChildWidget::zoomToWidth()
   imageView->ensureVisible(imageSelectionRect);
 }
 
-void ChildWidget::zoomOriginal()
-{
+void ChildWidget::zoomOriginal() {
   setZoom(1);
   imageView->ensureVisible(imageSelectionRect);
 }
 
-void ChildWidget::zoomToSelection()
-{
+void ChildWidget::zoomToSelection() {
   imageView->fitInView(imageSelectionRect, Qt::KeepAspectRatio);
   imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
   imageView->ensureVisible(imageSelectionRect);
   imageView->centerOn(imageSelectionRect);
 }
 
-void ChildWidget::showSymbol()
-{
+void ChildWidget::showSymbol() {
   if (symbolShown == false)
     symbolShown = true;
   else
@@ -667,12 +619,9 @@ void ChildWidget::showSymbol()
   drawSelectionRects();
 }
 
-void ChildWidget::drawBoxes()
-{
-  if (boxesVisible == false)
-  {
-    for (int row = 0; row < model->rowCount(); ++row)
-    {
+void ChildWidget::drawBoxes() {
+  if (boxesVisible == false) {
+    for (int row = 0; row < model->rowCount(); ++row) {
       int left = model->index(row, 1).data().toInt();
       int top = model->index(row, 4).data().toInt();
       int width = model->index(row, 3).data().toInt() - left;
@@ -680,25 +629,21 @@ void ChildWidget::drawBoxes()
       imageScene->addRect(left, top, width, height, QPen(boxColor));
       boxesVisible = true;
     }
-  }
-  else
-  {
+  } else {
     deleteBoxes(imageScene->items());
     boxesVisible = false;
   }
 }
 
-void ChildWidget::mousePressEvent(QMouseEvent* event)
-{
-  qreal zoomFactor = imageView->transform().m22();  // zoom should be proportional => m11=m22
+void ChildWidget::mousePressEvent(QMouseEvent* event) {
+  // zoom should be proportional => m11=m22
+  qreal zoomFactor = imageView->transform().m22();
   QPointF mouseCoordinates = imageView->mapToScene(event->pos());
   int offset = this->sizes().first() + 6;  // 6 is estimated width  of splitter
   int zoomedOffset = offset / zoomFactor;
 
-  if (event->button() == Qt::LeftButton)
-  {
-    for (int row = 0; row < model->rowCount(); ++row)
-    {
+  if (event->button() == Qt::LeftButton) {
+    for (int row = 0; row < model->rowCount(); ++row) {
       QString letter = model->index(row, 0).data().toString();
       int left = model->index(row, 1).data().toInt();
       int bottom = model->index(row, 2).data().toInt();
@@ -708,8 +653,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event)
       if ((left <= (mouseCoordinates.x() - zoomedOffset) &&
            (mouseCoordinates.x() - zoomedOffset) <= right) &&
           (top <= mouseCoordinates.y()) &&
-          (mouseCoordinates.y() <= bottom))
-      {
+          (mouseCoordinates.y() <= bottom)) {
         table->setCurrentIndex(model->index(row, 0));
         table->setFocus();
       }
@@ -718,102 +662,83 @@ void ChildWidget::mousePressEvent(QMouseEvent* event)
   }
 }
 
-bool ChildWidget::eventFilter(QObject* object, QEvent* event)
-{
-  if (event->type() == QEvent::KeyRelease)
-  {
+bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
+  if (event->type() == QEvent::KeyRelease) {
     // transforms QEvent into QKeyEvent
     QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
-    if (pKeyEvent->modifiers() & Qt::ControlModifier)
-    {
-      switch (pKeyEvent->key())
-      {
-      case Qt::Key_Up:
-      {
+    if (pKeyEvent->modifiers() & Qt::ControlModifier) {
+      switch (pKeyEvent->key()) {
+      case Qt::Key_Up: {
         moveSymbolRow(-1);
         break;
       }
-      case Qt::Key_Down:
-      {
+      case Qt::Key_Down: {
         moveSymbolRow(2);
         break;
       }
-      case Qt::Key_C:
-      {
+      case Qt::Key_C: {
         copyFromCell();
         break;
       }
-      case Qt::Key_V:
-      {
+      case Qt::Key_V: {
         pasteToCell();
         break;
       }
       }
       pKeyEvent->accept();
       return true;
-    }
-    else if (directTypingMode)
-    {
+    } else if (directTypingMode) {
       directType(pKeyEvent);
-    }
-    else
-    {
+    } else {
       return QWidget::eventFilter(object, pKeyEvent);
     }
   }
   return false;
 }
 
-void ChildWidget::moveSymbolRow(int direction)
-{
+void ChildWidget::moveSymbolRow(int direction) {
   QModelIndex index = selectionModel->currentIndex();
 
   // check if any row is selected
   if (index.row() < 0)
     return;
 
-  //check where if we are if move is possible top/bottom
-  if (direction < 0 && index.row() == 0)
-  {
+  // check where if we are if move is possible top/bottom
+  if (direction < 0 && index.row() == 0) {
     return;
-  }
-  else if (direction > 0 && index.row() == (model->rowCount() - 1))
-  {
+  } else if (direction > 0 && index.row() == (model->rowCount() - 1)) {
     return;
-  }
-  else
-  {
+  } else {
     // add new row
     model->insertRow(index.row() + direction);
     int newRow = index.row() + direction;
-    //insertRow change row id!
+    // insertRow change row id!
     int currentRow = table->currentIndex().row();
-    for (int i = 0; i < (model->columnCount() - 1); ++i)
-    {
-      model->setData(model->index(newRow, i), model->index(currentRow, i).data());
+    for (int i = 0; i < (model->columnCount() - 1); ++i) {
+      model->setData(model->index(newRow, i),
+                     model->index(currentRow, i).data());
     }
 
     // activate new row
     table->setCurrentIndex(model->index(newRow, 0));
-    //delete original row
+    // delete original row
     model->removeRow(currentRow);
     drawSelectionRects();
   }
 }
 
-void ChildWidget::copyFromCell()
-{
+void ChildWidget::copyFromCell() {
   QClipboard* clipboard = QApplication::clipboard();
   clipboard->setText(table->currentIndex().data().toString());
 }
 
-void ChildWidget::pasteToCell()
-{
+void ChildWidget::pasteToCell() {
   const QClipboard* clipboard = QApplication::clipboard();
   QModelIndex index = selectionModel->currentIndex();
 
   // do not paste string to int fields
-  if ((index.column() > 0 && index.column() < 5) && (clipboard->text().toInt() > 0))
+  if ((index.column() > 0 && index.column() < 5) &&
+      (clipboard->text().toInt() > 0))
     model->setData(table->currentIndex(), clipboard->text().toInt());
 
   // paste string only to string field
@@ -824,21 +749,17 @@ void ChildWidget::pasteToCell()
   drawSelectionRects();
 }
 
-void ChildWidget::directType(QKeyEvent* event)
-{
+void ChildWidget::directType(QKeyEvent* event) {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (event->text() != "")
-  {
+  if (event->text() != "") {
     // enter only text
-    if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return))
-    {
+    if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
       // enter/return move to next row
       table->setCurrentIndex(model->index(index.row() + 1, 0));
-    }
-    else
-    {
-      model->setData(model->index(index.row(), 0, QModelIndex()), event->text());
+    } else {
+      model->setData(model->index(index.row(), 0, QModelIndex()),
+                     event->text());
       table->setCurrentIndex(model->index(index.row() + 1, 0));
     }
   }
@@ -846,109 +767,122 @@ void ChildWidget::directType(QKeyEvent* event)
   drawSelectionRects();
 }
 
-void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items)
-{
-  foreach(QGraphicsItem * item, items)
-  {
+void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items) {
+  foreach(QGraphicsItem * item, items) {
     qint32 type = static_cast<qint32>(item->type());
     if (type == 3)   // delete only rectagles
       imageScene->removeItem(item);
   }
-  setSelectionRect();   //initialize removed selection rectangle
+  setSelectionRect();   // initialize removed selection rectangle
   drawSelectionRects();
 }
 
-void ChildWidget::insertSymbol()
-{
+void ChildWidget::insertSymbol() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     int leftBorder = model->index(index.row(), 3).data().toInt() + 1;
     int rightBorder = model->index(index.row() + 1, 1).data().toInt() - 1;
 
-    if (leftBorder > rightBorder)  //end of line or overlapping boxes
-      rightBorder = leftBorder + (leftBorder - model->index(index.row(), 1).data().toInt());
+    if (leftBorder > rightBorder)  // end of line or overlapping boxes
+      rightBorder = leftBorder +
+                    (leftBorder - model->index(index.row(), 1).data().toInt());
     model->insertRow(index.row() + 1);
     model->setData(model->index(index.row() + 1, 0), "*");
     model->setData(model->index(index.row() + 1, 1), leftBorder);
-    model->setData(model->index(index.row() + 1, 2), model->index(index.row(), 2).data().toInt());
+    model->setData(model->index(index.row() + 1, 2),
+                   model->index(index.row(), 2).data().toInt());
     model->setData(model->index(index.row() + 1, 3), rightBorder);
-    model->setData(model->index(index.row() + 1, 4), model->index(index.row(), 4).data().toInt());
-    model->setData(model->index(index.row() + 1, 5), model->index(index.row(), 5).data().toInt());
-    model->setData(model->index(index.row() + 1, 6), model->index(index.row(), 6).data().toBool());
-    model->setData(model->index(index.row() + 1, 7), model->index(index.row(), 7).data().toBool());
-    model->setData(model->index(index.row() + 1, 8), model->index(index.row(), 8).data().toBool());
+    model->setData(model->index(index.row() + 1, 4),
+                   model->index(index.row(), 4).data().toInt());
+    model->setData(model->index(index.row() + 1, 5),
+                   model->index(index.row(), 5).data().toInt());
+    model->setData(model->index(index.row() + 1, 6),
+                   model->index(index.row(), 6).data().toBool());
+    model->setData(model->index(index.row() + 1, 7),
+                   model->index(index.row(), 7).data().toBool());
+    model->setData(model->index(index.row() + 1, 8),
+                   model->index(index.row(), 8).data().toBool());
 
     table->setCurrentIndex(model->index(index.row() + 1, 0));
     drawSelectionRects();
   }
 }
 
-void ChildWidget::splitSymbol()
-{
+void ChildWidget::splitSymbol() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     QModelIndex left = model->index(index.row(), 1);
     QModelIndex right = model->index(index.row(), 3);
     int width = right.data().toInt() - left.data().toInt();
     model->insertRow(index.row() + 1);
     model->setData(model->index(index.row() + 1, 0), "*");
-    model->setData(model->index(index.row() + 1, 1), right.data().toInt() - width / 2);
-    model->setData(model->index(index.row() + 1, 2), model->index(index.row(), 2).data().toInt());
+    model->setData(model->index(index.row() + 1, 1),
+                   right.data().toInt() - width / 2);
+    model->setData(model->index(index.row() + 1, 2),
+                   model->index(index.row(), 2).data().toInt());
     model->setData(model->index(index.row() + 1, 3), right.data().toInt());
-    model->setData(model->index(index.row() + 1, 4), model->index(index.row(), 4).data().toInt());
-    model->setData(model->index(index.row() + 1, 5), model->index(index.row(), 5).data().toInt());
-    model->setData(model->index(index.row() + 1, 6), model->index(index.row(), 6).data().toBool());
-    model->setData(model->index(index.row() + 1, 7), model->index(index.row(), 7).data().toBool());
-    model->setData(model->index(index.row() + 1, 8), model->index(index.row(), 8).data().toBool());
+    model->setData(model->index(index.row() + 1, 4),
+                   model->index(index.row(), 4).data().toInt());
+    model->setData(model->index(index.row() + 1, 5),
+                   model->index(index.row(), 5).data().toInt());
+    model->setData(model->index(index.row() + 1, 6),
+                   model->index(index.row(), 6).data().toBool());
+    model->setData(model->index(index.row() + 1, 7),
+                   model->index(index.row(), 7).data().toBool());
+    model->setData(model->index(index.row() + 1, 8),
+                   model->index(index.row(), 8).data().toBool());
     model->setData(right, right.data().toInt() - width / 2);
     drawSelectionRects();
   }
 }
 
 template<class T>
-inline T min(T arg1, T arg2)
-{
+inline T min(T arg1, T arg2) {
   return((arg1 < arg2) ? arg1 : arg2);
 }
 
 template<class T>
-inline T max(T arg1, T arg2)
-{
+inline T max(T arg1, T arg2) {
   return((arg1 > arg2) ? arg1 : arg2);
 }
 
-void ChildWidget::joinSymbol()
-{
+void ChildWidget::joinSymbol() {
   QModelIndex index = selectionModel->currentIndex(), next = model->index(
                         index.row() + 1,
                         index.column());
 
-  if (index.isValid() && next.isValid())
-  {
+  if (index.isValid() && next.isValid()) {
     int row = index.row();
-    model->setData(model->index(row, 0), model->index(row, 0).data().toString() + model->index(row
-                   + 1, 0).data().toString());
+    model->setData(model->index(row, 0),
+                   model->index(row, 0).data().toString() + model->index(row
+                       + 1, 0).data().toString());
     min(2, 3);
-    model->setData(model->index(row, 1), min(model->index(row, 1).data().toInt(), model->index(row
-                   + 1, 1).data().toInt()));
-    model->setData(model->index(row, 2), max(model->index(row, 2).data().toInt(), model->index(row
-                   + 1, 2).data().toInt()));
-    model->setData(model->index(row, 3), max(model->index(row, 3).data().toInt(), model->index(row
-                   + 1, 3).data().toInt()));
-    model->setData(model->index(row, 4), min(model->index(row, 4).data().toInt(), model->index(row
-                   + 1, 4).data().toInt()));
-    model->setData(model->index(row, 5), min(model->index(row, 5).data().toInt(), model->index(row
-                   + 1, 5).data().toInt()));
-    model->setData(model->index(row, 6), model->index(row, 6).data().toBool() || model->index(row
-                   + 1, 6).data().toBool());
-    model->setData(model->index(row, 7), model->index(row, 7).data().toBool() || model->index(row
-                   + 1, 7).data().toBool());
-    model->setData(model->index(row, 8), model->index(row, 8).data().toBool() || model->index(row
-                   + 1, 8).data().toBool());
+    model->setData(model->index(row, 1),
+                   min(model->index(row, 1).data().toInt(), model->index(row
+                       + 1, 1).data().toInt()));
+    model->setData(model->index(row, 2),
+                   max(model->index(row, 2).data().toInt(), model->index(row
+                       + 1, 2).data().toInt()));
+    model->setData(model->index(row, 3),
+                   max(model->index(row, 3).data().toInt(), model->index(row
+                       + 1, 3).data().toInt()));
+    model->setData(model->index(row, 4),
+                   min(model->index(row, 4).data().toInt(), model->index(row
+                       + 1, 4).data().toInt()));
+    model->setData(model->index(row, 5),
+                   min(model->index(row, 5).data().toInt(), model->index(row
+                       + 1, 5).data().toInt()));
+    model->setData(model->index(row, 6),
+                   model->index(row, 6).data().toBool() || model->index(row
+                       + 1, 6).data().toBool());
+    model->setData(model->index(row, 7),
+                   model->index(row, 7).data().toBool() || model->index(row
+                       + 1, 7).data().toBool());
+    model->setData(model->index(row, 8),
+                   model->index(row, 8).data().toBool() || model->index(row
+                       + 1, 8).data().toBool());
     model->removeRow(row + 1);
     table->setCurrentIndex(model->index(row, 0));
     table->setFocus();
@@ -956,28 +890,23 @@ void ChildWidget::joinSymbol()
   }
 }
 
-void ChildWidget::deleteSymbol()
-{
+void ChildWidget::deleteSymbol() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     model->removeRow(index.row());
   }
 }
 
-void ChildWidget::moveUp()
-{
+void ChildWidget::moveUp() {
   moveSymbolRow(-1);
 }
 
-void ChildWidget::moveDown()
-{
+void ChildWidget::moveDown() {
   moveSymbolRow(2);
 }
 
-void ChildWidget::moveTo()
-{
+void ChildWidget::moveTo() {
   if (table->currentIndex().row() < 0)
     return;
 
@@ -985,8 +914,7 @@ void ChildWidget::moveTo()
   int destRow = 0;
   GetRowIDDialog dialog(this);
 
-  if (dialog.exec())
-  {
+  if (dialog.exec()) {
     QString string = dialog.lineEdit->text();
 
     if (string.toInt() == 0)
@@ -1006,12 +934,10 @@ void ChildWidget::moveTo()
   table->resizeRowToContents(destRow);
 }
 
-void ChildWidget::goToRow()
-{
+void ChildWidget::goToRow() {
   GetRowIDDialog dialog(this);
   int row;
-  if (dialog.exec())
-  {
+  if (dialog.exec()) {
     QString string = dialog.lineEdit->text();
 
     if (string.toInt() == 0)
@@ -1028,23 +954,20 @@ void ChildWidget::goToRow()
   }
 }
 
-QString ChildWidget::userFriendlyCurrentFile()
-{
+QString ChildWidget::userFriendlyCurrentFile() {
   return strippedName(boxFile);
 }
 
 /* Get symbol string and convert it to hexadecimal codes */
-QString ChildWidget::getSymbolHexCode()
-{
+QString ChildWidget::getSymbolHexCode() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     QString symbol = model->index(index.row(), 0).data().toString();
     QString result = "";
-    for (int i = 0; i < symbol.size(); ++i)
-    {
-      QString str2 = QString::number(symbol[i].unicode(), 16).toUpper().rightJustified(4, '0');
+    for (int i = 0; i < symbol.size(); ++i) {
+      QString str2 = QString::number(symbol[i].unicode(),
+                                     16).toUpper().rightJustified(4, '0');
       result.append("0x" + str2 + " ");
     }
     return result;
@@ -1053,12 +976,10 @@ QString ChildWidget::getSymbolHexCode()
 }
 
 /* Get size of box */
-QString ChildWidget::getBoxSize()
-{
+QString ChildWidget::getBoxSize() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
+  if (index.isValid()) {
     int left = model->index(index.row(), 1).data().toInt();
     int bottom = model->index(index.row(), 2).data().toInt();
     int right = model->index(index.row(), 3).data().toInt();
@@ -1070,74 +991,62 @@ QString ChildWidget::getBoxSize()
   return QString::null;
 }
 
-QString ChildWidget::currentBoxFile()
-{
+QString ChildWidget::currentBoxFile() {
   return QFileInfo(boxFile).canonicalFilePath();
 }
 
-void ChildWidget::documentWasModified()
-{
+void ChildWidget::documentWasModified() {
   modified = true;
   emit modifiedChanged();
 }
 
-void ChildWidget::emitBoxChanged()
-{
+void ChildWidget::emitBoxChanged() {
   emit boxChanged();
 }
 
-void ChildWidget::drawSelectionRects()
-{
+void ChildWidget::drawSelectionRects() {
   QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
 
-  if (!selectedIndexes.empty())
-  {
+  if (!selectedIndexes.empty()) {
     QModelIndex index = selectedIndexes.first();
     QString letter = model->index(index.row(), 0).data().toString();
     int left = model->index(index.row(), 1).data().toInt();
     int bottom = model->index(index.row(), 2).data().toInt();
     int right = model->index(index.row(), 3).data().toInt();
     int top = model->index(index.row(), 4).data().toInt();
-    imageSelectionRect->setRect(QRectF(QPoint(left, top), QPointF(right, bottom)));
+    imageSelectionRect->setRect(QRectF(QPoint(left, top),
+                                       QPointF(right, bottom)));
     imageSelectionRect->setVisible(true);
     imageView->ensureVisible(imageSelectionRect);
 
-    if (symbolShown == true)
-    {
+    if (symbolShown == true) {
       text2->setPlainText(letter);
-      // TODO: get font metrics and calculate better placement
+      // TODO(zdenop): get font metrics and calculate better placement
       // (e.g. visible in case of narrow margin)
       text2->setPos(QPoint(left, top - 16 * 2 - 15));
       text2->setVisible(true);
-    }
-    else
-    {
+    } else {
       text2->setVisible(false);
     }
-  }
-  else
-  {
+  } else {
     imageSelectionRect->setVisible(false);
     text2->setVisible(false);
   }
 }
 
-void ChildWidget::closeEvent(QCloseEvent* event)
-{
-  if (!maybeSave())
-  {
+void ChildWidget::closeEvent(QCloseEvent* event) {
+  if (!maybeSave()) {
     event->ignore();
   }
-
 }
 
-bool ChildWidget::maybeSave()
-{
-  if (isModified())
-  {
+bool ChildWidget::maybeSave() {
+  if (isModified()) {
     QMessageBox::StandardButton ret;
-    ret = QMessageBox::warning(this, SETTING_APPLICATION, tr("'%1' has been modified.\n"
-                               "Do you want to save your changes?").arg(userFriendlyCurrentFile()), QMessageBox::Save
+    ret = QMessageBox::warning(this, SETTING_APPLICATION,
+                               tr("'%1' has been modified.\n"
+                                  "Do you want to save your changes?").arg(
+                                 userFriendlyCurrentFile()), QMessageBox::Save
                                | QMessageBox::Discard | QMessageBox::Cancel);
     if (ret == QMessageBox::Save)
       return save(boxFile);
@@ -1147,17 +1056,14 @@ bool ChildWidget::maybeSave()
   return true;
 }
 
-void ChildWidget::setCurrentImageFile(const QString& fileName)
-{
+void ChildWidget::setCurrentImageFile(const QString& fileName) {
   imageFile = QFileInfo(fileName).canonicalFilePath();
 }
 
-void ChildWidget::setCurrentBoxFile(const QString& fileName)
-{
+void ChildWidget::setCurrentBoxFile(const QString& fileName) {
   boxFile = QFileInfo(fileName).canonicalFilePath();
 }
 
-QString ChildWidget::strippedName(const QString& fullFileName)
-{
+QString ChildWidget::strippedName(const QString& fullFileName) {
   return QFileInfo(fullFileName).fileName();
 }

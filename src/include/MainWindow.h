@@ -1,8 +1,8 @@
 /**********************************************************************
-* File:        MainWindow.h
+* File:                MainWindow.h
 * Description: MainWindow functions
-* Author:      Marcel Kolodziejczyk
-* Created:     2010-01-04
+* Author:            Marcel Kolodziejczyk
+* Created:         2010-01-04
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011, Zdenko Podobny
@@ -11,7 +11,7 @@
 ** you may not use this file except in compliance with the License.
 ** You may obtain a copy of the License at
 **
-**    http://www.apache.org/licenses/LICENSE-2.0
+**        http://www.apache.org/licenses/LICENSE-2.0
 **
 ** Unless required by applicable law or agreed to in writing, software
 ** distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,8 +21,8 @@
 *
 **********************************************************************/
 
-#ifndef MAINWINDOW_H_
-#define MAINWINDOW_H_
+#ifndef SRC_INCLUDE_MAINWINDOW_H_
+#define SRC_INCLUDE_MAINWINDOW_H_
 
 #include <QSignalMapper>
 #include <QCloseEvent>
@@ -45,9 +45,9 @@
 #include <QtNetwork/QNetworkReply>
 #include <QUrl>
 
-#include "ChildWidget.h"
-#include "Settings.h"
-#include "SettingsDialog.h"
+#include "src/include/ChildWidget.h"
+#include "src/include/Settings.h"
+#include "src/include/SettingsDialog.h"
 
 class ChildWidget;
 class QAction;
@@ -56,8 +56,7 @@ class QTabWidget;
 class QSignalMapper;
 class ShortCutsDialog;
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public QMainWindow {
     Q_OBJECT
     QNetworkAccessManager manager;
 
@@ -69,10 +68,9 @@ class MainWindow : public QMainWindow
 
   public slots:
     void checkForUpdate();
-    void requestFinished(QNetworkReply*);
+    void requestFinished(QNetworkReply* reply);
 
   protected:
-
     void closeEvent(QCloseEvent* event);
 
   private slots:
@@ -126,7 +124,7 @@ class MainWindow : public QMainWindow
     void createStatusBar();
     void readSettings();
     void writeSettings();
-    void checkVersion(QNetworkReply*);
+    void checkVersion(QNetworkReply* reply);
     void updateRecentFileActions();
 
     QTabWidget* tabWidget;
@@ -191,4 +189,4 @@ class MainWindow : public QMainWindow
     QLabel* _zoom;
 };
 
-#endif /* MAINWINDOW_H_ */
+#endif  // SRC_INCLUDE_MAINWINDOW_H_

@@ -21,11 +21,10 @@
 **********************************************************************/
 
 #include <QtGui>
-#include "GetRowIDDialog.h"
+#include "dialogs/GetRowIDDialog.h"
 
 GetRowIDDialog::GetRowIDDialog(QWidget* parent)
-  : QDialog(parent)
-{
+  : QDialog(parent) {
   setupUi(this);
   buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
 
@@ -36,8 +35,7 @@ GetRowIDDialog::GetRowIDDialog(QWidget* parent)
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-void GetRowIDDialog::on_lineEdit_textChanged()
-{
+void GetRowIDDialog::on_lineEdit_textChanged() {
   buttonBox->button(QDialogButtonBox::Ok)->setEnabled(
     lineEdit->hasAcceptableInput());
 }

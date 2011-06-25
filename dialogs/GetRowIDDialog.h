@@ -20,23 +20,22 @@
 *
 **********************************************************************/
 
-#ifndef GETROWIDDIALOG_H
-#define GETROWIDDIALOG_H
+#ifndef DIALOGS_GETROWIDDIALOG_H_
+#define DIALOGS_GETROWIDDIALOG_H_
 
 #include <QDialog>
 
 #include "ui_GetRowIDDialog.h"
 
-class GetRowIDDialog : public QDialog, public Ui::GetRowIDDialog
-{
-    Q_OBJECT
+class GetRowIDDialog : public QDialog, public Ui::GetRowIDDialog {
+  Q_OBJECT
 
   public:
-    GetRowIDDialog(QWidget* parent = 0);
+    explicit GetRowIDDialog(QWidget* parent = 0);
 
   private slots:
     void on_lineEdit_textChanged();
 };
 
 
-#endif // GETROWIDDIALOG_H
+#endif  // DIALOGS_GETROWIDDIALOG_H_

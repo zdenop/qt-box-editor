@@ -20,8 +20,8 @@
 *
 **********************************************************************/
 
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef SRC_INCLUDE_SETTINGS_H_
+#define SRC_INCLUDE_SETTINGS_H_
 
 #define SETTING_ORGANIZATION "qt-box-editor"
 #define SETTING_APPLICATION "QT Box Editor"
@@ -32,4 +32,4 @@
 #define TABLE_FONT "Arial"
 #define TABLE_FONT_SIZE 12
 
-#endif // SETTINGS_H
+#endif  // SRC_INCLUDE_SETTINGS_H_
