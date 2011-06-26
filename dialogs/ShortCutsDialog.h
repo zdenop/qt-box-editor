@@ -23,7 +23,7 @@
 #ifndef DIALOGS_SHORTCUTSDIALOG_H_
 #define DIALOGS_SHORTCUTSDIALOG_H_
 
-#include <QDialog>
+#include <QtGui/QDialog>
 #include "ui_ShortCutDialog.h"
 
 class ShortCutsDialog : public QDialog, public Ui::ShortCutDialog {

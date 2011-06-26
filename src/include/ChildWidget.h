@@ -24,28 +24,31 @@
 #ifndef SRC_INCLUDE_CHILDWIDGET_H_
 #define SRC_INCLUDE_CHILDWIDGET_H_
 
-#include <QStandardItemModel>
-#include <QTableView>
-#include <QAbstractItemView>
-#include <QHeaderView>
+#include <string>
+#include <algorithm>
+
+#include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtCore/QSettings>
+#include <QtCore/QTextStream>
+#include <QtCore/qmath.h>
+#include <QtGui/QAbstractItemView>
+#include <QtGui/QApplication>
 #include <QtGui/QClipboard>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
-#include <QtGui/QGraphicsRectItem>
+#include <QtGui/QHeaderView>
+#include <QtGui/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QSplitter>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QTableView>
 #include <QtGui/QTableWidgetItem>
-#include <QFileInfo>
-#include <QDir>
-#include <QTextStream>
-#include <QtGui/QApplication>
-#include <QDebug>
-#include <QCloseEvent>
-#include <QMessageBox>
-#include <QtCore/qmath.h>
-#include <QTransform>
-#include <QSettings>
+#include <QtGui/QTransform>
 
 class QGraphicsScene;
 class QGraphicsView;

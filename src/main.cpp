@@ -21,8 +21,8 @@
 *
 **********************************************************************/
 
-#include <QApplication>
-#include <QTextCodec>
+#include <QtCore/QTextCodec>
+#include <QtGui/QApplication>
 
 #if defined _COMPOSE_STATIC_
 #include <QtPlugin>

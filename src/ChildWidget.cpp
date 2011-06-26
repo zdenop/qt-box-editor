@@ -21,9 +21,6 @@
 *
 **********************************************************************/
 
-#include <string>
-#include <algorithm>
-
 #include "include/ChildWidget.h"
 #include "include/Settings.h"
 #include "include/SettingsDialog.h"

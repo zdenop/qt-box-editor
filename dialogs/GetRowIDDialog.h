@@ -23,7 +23,7 @@
 #ifndef DIALOGS_GETROWIDDIALOG_H_
 #define DIALOGS_GETROWIDDIALOG_H_
 
-#include <QDialog>
+#include <QtGui/QDialog>
 
 #include "ui_GetRowIDDialog.h"
 
