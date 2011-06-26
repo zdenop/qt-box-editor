@@ -21,6 +21,9 @@
 *
 **********************************************************************/
 
+#include <string>
+#include <algorithm>
+
 #include "include/ChildWidget.h"
 #include "include/Settings.h"
 #include "include/SettingsDialog.h"
@@ -217,7 +220,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
 
   if (!QFile::exists(boxFileName)) {
     QMessageBox::warning(this, tr("Missing file"),
-                         tr("Cannot load image, because there is no corresponding box file"));
+           tr("Cannot load image, because there is no corresponding box file"));
     return false;
   }
   imageHeight = image.height();
@@ -404,9 +407,9 @@ bool ChildWidget::importToChild(const QString& fileName) {
     if (!line.isEmpty()) {
       if (row > model->rowCount()) {
         QMessageBox::warning(this, SETTING_APPLICATION,
-                             tr("There are more symbols in import file than boxes!"
-                                " Rest of symbols are ignored").arg(fileName).arg(
-                               file.errorString()));
+                         tr("There are more symbols in import file than boxes!"
+                            " Rest of symbols are ignored").arg(fileName).arg(
+                           file.errorString()));
         file.close();
         QApplication::restoreOverrideCursor();
         return true;
@@ -418,8 +421,8 @@ bool ChildWidget::importToChild(const QString& fileName) {
 
   if (row < model->rowCount()) {
     QMessageBox::warning(this, SETTING_APPLICATION,
-                         tr("There are less symbols in import file than boxes!").arg(
-                           fileName).arg(file.errorString()));
+                   tr("There are less symbols in import file than boxes!").arg(
+                     fileName).arg(file.errorString()));
   }
 
   file.close();
@@ -428,6 +431,77 @@ bool ChildWidget::importToChild(const QString& fileName) {
   return true;
 }
 
+/**
+   * Export symbols from table to text file. eType identify export format:
+   * 1 - one symbol per line
+   * 2 - one row per line
+   * 3 - one paragraph per line
+   * Returns false if export was not possible for some reason.
+   *
+   * Export will work only on one column text correctly.
+   * Words are identified if space between boxes is bigger than 6.
+   * Lines are identified if space between boxes is bigger than -6.
+   * Paragraph is identified based on left indentation (15) of from last left
+   * margin.
+*/
+bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
+  QFile file(fileName);
+
+  if (!file.open(QFile::WriteOnly | QFile::Text)) {
+    QMessageBox::warning(
+      this,
+      SETTING_APPLICATION,
+      tr("Cannot write file %1:\n%2.").arg(boxFile).arg(file.errorString()));
+    return false;
+  }
+
+  QTextStream out(&file);
+  out.setCodec("UTF-8");
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  QString letter;
+  int left, bottom, right, top;
+  int line_start_prev = 0;
+  int right_prev = -1;
+
+  for (int row = 0; row < model->rowCount(); ++row) {
+    letter = model->index(row, 0).data().toString();
+    left = model->index(row, 1).data().toInt();
+    bottom = model->index(row, 2).data().toInt();
+    right = model->index(row, 3).data().toInt();
+    top = model->index(row, 4).data().toInt();
+
+    if (eType == 1 && (right_prev != -1)) {
+      out << "\n";
+    }
+    if (eType == 2) {
+      if (((left - right_prev) > 6) && (right_prev != -1))  // new word
+        out << " ";
+      if (((left - right_prev) < -6) && (right_prev != -1))  // new line
+        out << "\n";
+    }
+    if (eType == 3) {
+      if (((left - right_prev) > 6) && (right_prev != -1))  // new word
+        out << " ";
+
+      if (((left - right_prev) < -6) && (right_prev != -1)) {  // new line
+        // TODO(zdenop): make it more inteligent ;-) try also linespace
+        if (left - line_start_prev > 15)  // new paragraph
+          out << "\n";
+        else
+          out << " ";
+        line_start_prev = left;
+      }
+    }
+
+    out << letter;
+    right_prev = right;
+  }
+
+  out << "\n";
+  QApplication::restoreOverrideCursor();
+  return true;
+}
 
 bool ChildWidget::isBoxSelected() {
   return selectionModel->hasSelection();

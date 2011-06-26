@@ -200,6 +200,52 @@ void MainWindow::importSym() {
     statusBar()->showMessage(tr("File saved"), 2000);
 }
 
+// TODO(zdenop): simplified/join code symbolPerLine(), rowPerLine(),
+//               paragraphPerLine()
+void MainWindow::symbolPerLine() {
+  QString currentFileName = activeChild()->currentBoxFile().replace(
+                              ".box",".txt");
+  QString fileName = QFileDialog::getSaveFileName(this,
+                     tr("Export symbols to file..."),
+                     currentFileName,
+                     tr("Text files (*.txt);;All files (*)"));
+
+  if (fileName.isEmpty())
+    return;
+
+  if (activeChild() && activeChild()->exportTxt(1, fileName))
+    statusBar()->showMessage(tr("Data exported"), 2000);
+}
+
+void MainWindow::rowPerLine() {
+  QString currentFileName = activeChild()->currentBoxFile().replace(
+                              ".box",".txt");
+  QString fileName = QFileDialog::getSaveFileName(this,
+                     tr("Export symbols to file..."),
+                     currentFileName,
+                     tr("Text files (*.txt);;All files (*)"));
+
+  if (fileName.isEmpty())
+    return;
+
+  if (activeChild() && activeChild()->exportTxt(2, fileName))
+    statusBar()->showMessage(tr("Data exported"), 2000);
+}
+
+void MainWindow::paragraphPerLine() {
+  QString currentFileName = activeChild()->currentBoxFile().replace(
+                              ".box",".txt");
+  QString fileName = QFileDialog::getSaveFileName(this,
+                     tr("Export symbols to file..."),
+                     currentFileName,
+                     tr("Text files (*.txt);;All files (*)"));
+
+  if (fileName.isEmpty())
+    return;
+
+  if (activeChild() && activeChild()->exportTxt(3, fileName))
+    statusBar()->showMessage(tr("Data exported"), 2000);
+}
 bool MainWindow::closeActiveTab() {
   if (tabWidget->currentWidget() && tabWidget->currentWidget()->close()) {
     tabWidget->removeTab(tabWidget->currentIndex());
@@ -459,6 +505,9 @@ void MainWindow::handleClose(int i) {
 void MainWindow::updateMenus() {
   saveAsAct->setEnabled((activeChild()) != 0);
   importSymAct->setEnabled((activeChild()) != 0);
+  symbolPerLineAct->setEnabled((activeChild()) != 0);
+  rowPerLineAct->setEnabled((activeChild()) != 0);
+  paragraphPerLineAct->setEnabled((activeChild()) != 0);
   closeAct->setEnabled(activeChild() != 0);
   closeAllAct->setEnabled(activeChild() != 0);
   nextAct->setEnabled(activeChild() != 0);
@@ -580,10 +629,26 @@ void MainWindow::createActions() {
 
   importSymAct = new QAction(QIcon(":/images/import.svg"),
                              tr("I&mport symbols..."), this);
-  // importSymAct->setShortcuts(QKeySequence::Save);
   importSymAct->setStatusTip(tr("Import symbols from text document"));
   importSymAct->setEnabled(false);
   connect(importSymAct, SIGNAL(triggered()), this, SLOT(importSym()));
+
+  // TODO cez parameter?
+  symbolPerLineAct = new QAction(tr("One symbol per line..."), this);
+  symbolPerLineAct->setStatusTip(tr("Export symbols to text file."));
+  symbolPerLineAct->setEnabled(false);
+  connect(symbolPerLineAct, SIGNAL(triggered()), this, SLOT(symbolPerLine()));
+
+  rowPerLineAct = new QAction(tr("One row per line..."), this);
+  rowPerLineAct->setStatusTip(tr("Export symbols to text file."));
+  rowPerLineAct->setEnabled(false);
+  connect(rowPerLineAct, SIGNAL(triggered()), this, SLOT(rowPerLine()));
+
+  paragraphPerLineAct = new QAction(tr("One paragraph per line..."), this);
+  paragraphPerLineAct->setStatusTip(tr("Export symbols to text file."));
+  paragraphPerLineAct->setEnabled(false);
+  connect(paragraphPerLineAct, SIGNAL(triggered()), this,
+          SLOT(paragraphPerLine()));
 
   closeAct = new QAction(QIcon(":/images/window-close.png"),
                          tr("Cl&ose"), this);
@@ -768,6 +833,11 @@ void MainWindow::createMenus() {
   fileMenu->addAction(saveAsAct);
   fileMenu->addSeparator();
   fileMenu->addAction(importSymAct);
+  fileMenu->addAction(exportMenu->menuAction());
+  exportMenu = fileMenu->addMenu(tr("&Export..."));
+  exportMenu->addAction(symbolPerLineAct);
+  exportMenu->addAction(rowPerLineAct);
+  exportMenu->addAction(paragraphPerLineAct);
   fileMenu->addSeparator();
   fileMenu->addAction(closeAct);
   fileMenu->addAction(closeAllAct);

@@ -24,9 +24,6 @@
 #ifndef SRC_INCLUDE_CHILDWIDGET_H_
 #define SRC_INCLUDE_CHILDWIDGET_H_
 
-#include <string>
-#include <algorithm>
-
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
@@ -89,6 +86,7 @@ class ChildWidget : public QSplitter {
 
     bool save(const QString& fileName);
     bool importToChild(const QString& fileName);
+    bool exportTxt(const int& eType, const QString& fileName);
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);
     void setSelectionRect();

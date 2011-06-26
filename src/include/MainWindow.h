@@ -79,6 +79,9 @@ class MainWindow : public QMainWindow {
     void save();
     void saveAs();
     void importSym();
+    void symbolPerLine();
+    void rowPerLine();
+    void paragraphPerLine();
     bool closeActiveTab();
     bool closeAllTabs();
     void nextTab();
@@ -132,6 +135,7 @@ class MainWindow : public QMainWindow {
     QSignalMapper* windowMapper;
 
     QMenu* fileMenu;
+    QMenu* exportMenu;
     QMenu* editMenu;
     QMenu* viewMenu;
     QMenu* helpMenu;
@@ -147,6 +151,9 @@ class MainWindow : public QMainWindow {
     QAction* saveAct;
     QAction* saveAsAct;
     QAction* importSymAct;
+    QAction* symbolPerLineAct;
+    QAction* rowPerLineAct;
+    QAction* paragraphPerLineAct;
     QAction* closeAct;
     QAction* closeAllAct;
     QAction* fSeparatorAct;
