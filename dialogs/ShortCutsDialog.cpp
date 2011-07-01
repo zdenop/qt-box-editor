@@ -20,19 +20,20 @@
 *
 **********************************************************************/
 
-#include "ShortCutsDialog.h"
+#include "dialogs/ShortCutsDialog.h"
 
 ShortCutsDialog::ShortCutsDialog(QWidget* parent)
-  : QDialog(parent)
-{
+  : QDialog(parent) {
   setupUi(this);
   textEdit -> setHtml(tr(
                         "<h1>Editor shortcuts:</h1>"
                         "<p><b>F1</b> — this help<br/>"
                         "<b>Ins</b> — insert symbol below current symbol<br/>"
                         "<b>Del</b> — delete current symbol<br/>"
-                        "<b>CTRL + 1</b> — join current symbol with next symbol<br/>"
-                        "<b>CTRL + 2</b> — split current symbol to 2 symbols<br/>"
+                        "<b>CTRL + 1</b> — join current symbol with next symbol"
+                        "<br/>"
+                        "<b>CTRL + 2</b> — split current symbol to 2 symbols"
+                        "<br/>"
                         "<br/>"
                         "<b>CTRL + B</b> — set symbol as <b>bold</b><br/>"
                         "<b>CTRL + I</b> — set symbol as <i>italic</i><br/>"
@@ -42,14 +43,20 @@ ShortCutsDialog::ShortCutsDialog(QWidget* parent)
                         "<br/>"
                         "<b>CTRL + +/-</b> — zoom image<br/>"
                         "<b>CTRL + *</b> — zoom image to original scale<br/>"
-                        "<b>CTRL + .</b> — zoom image to fit whole image in current view<br/>"
-                        "<b>CTRL + &gt;</b> — zoom image to fit height of image in current view<br/>"
-                        "<b>CTRL + &lt;</b> — zoom image to fit width of image in current view<br/>"
-                        "<b>CTRL + /</b> — zoom current box to fit in current view<br/>"
+                        "<b>CTRL + .</b> — zoom image to fit whole image in "
+                        "current view<br/>"
+                        "<b>CTRL + &gt;</b> — zoom image to fit height of "
+                        "image in current view"
+                        "<br/>"
+                        "<b>CTRL + &lt;</b> — zoom image to fit width of image"
+                        " in current view<br/>"
+                        "<b>CTRL + /</b> — zoom current box to fit in current"
+                        " view<br/>"
                         "<br/>"
                         "<b>CTRL + D</b> — direct type mode<br/>"
                         "<br/>"
-                        "<b>CTRL + arrows up/down</b> — move symbol up/down in table<br/>"
+                        "<b>CTRL + arrows up/down</b> — move symbol up/down in"
+                        "table<br/>"
                         "<b>CTRL + G</b> — go to row id…<br/>"
                         "<b>CTRL + M</b> — Move row to row id…<br/>"
                         "<b>CTRL + T</b> — setting dialog<br/>"

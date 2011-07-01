@@ -1,8 +1,8 @@
 /**********************************************************************
-* File:        ChildWidget.h
+* File:                ChildWidget.h
 * Description: ChildWidget functions
-* Author:      Marcel Kolodziejczyk
-* Created:     2010-01-06
+* Author:            Marcel Kolodziejczyk
+* Created:         2010-01-06
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011, Zdenko Podobny
@@ -11,7 +11,7 @@
 ** you may not use this file except in compliance with the License.
 ** You may obtain a copy of the License at
 **
-**    http://www.apache.org/licenses/LICENSE-2.0
+**        http://www.apache.org/licenses/LICENSE-2.0
 **
 ** Unless required by applicable law or agreed to in writing, software
 ** distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,31 +21,31 @@
 *
 **********************************************************************/
 
-#ifndef CHILDWIDGET_H_
-#define CHILDWIDGET_H_
+#ifndef SRC_INCLUDE_CHILDWIDGET_H_
+#define SRC_INCLUDE_CHILDWIDGET_H_
 
-#include <QStandardItemModel>
-#include <QTableView>
-#include <QAbstractItemView>
-#include <QHeaderView>
+#include <QtCore/QDebug>
+#include <QtCore/QDir>
+#include <QtCore/QFileInfo>
+#include <QtCore/QSettings>
+#include <QtCore/QTextStream>
+#include <QtCore/qmath.h>
+#include <QtGui/QAbstractItemView>
+#include <QtGui/QApplication>
 #include <QtGui/QClipboard>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QGraphicsView>
-#include <QtGui/QGraphicsRectItem>
+#include <QtGui/QHeaderView>
+#include <QtGui/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPixmap>
 #include <QtGui/QSplitter>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QTableView>
 #include <QtGui/QTableWidgetItem>
-#include <QFileInfo>
-#include <QDir>
-#include <QTextStream>
-#include <QtGui/QApplication>
-#include <QDebug>
-#include <QCloseEvent>
-#include <QMessageBox>
-#include <QtCore/qmath.h>
-#include <QTransform>
-#include <QSettings>
+#include <QtGui/QTransform>
 
 class QGraphicsScene;
 class QGraphicsView;
@@ -55,16 +55,14 @@ class QTableView;
 class QGraphicsItem;
 class QGraphicsRectItem;
 
-class ChildWidget : public QSplitter
-{
+class ChildWidget : public QSplitter {
     Q_OBJECT
 
   public:
-    ChildWidget(QWidget* parent = 0);
+    explicit ChildWidget(QWidget* parent = 0);
 
-    bool isModified()
-    {
-      return modified;
+    bool isModified() {
+        return modified;
     }
     bool isBoxSelected();
     bool isBold();
@@ -82,13 +80,13 @@ class ChildWidget : public QSplitter
     QString getSymbolHexCode();
     QString getBoxSize();
     QString currentBoxFile();
-    QString canonicalImageFileName()
-    {
-      return imageFile;
+    QString canonicalImageFileName() {
+        return imageFile;
     }
 
     bool save(const QString& fileName);
     bool importToChild(const QString& fileName);
+    bool exportTxt(const int& eType, const QString& fileName);
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);
     void setSelectionRect();
@@ -173,4 +171,4 @@ class ChildWidget : public QSplitter
     int widgetWidth;
 };
 
-#endif /* CHILDWIDGET_H_ */
+#endif  // SRC_INCLUDE_CHILDWIDGET_H_

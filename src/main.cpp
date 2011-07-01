@@ -21,19 +21,18 @@
 *
 **********************************************************************/
 
-#include <QApplication>
-#include <QTextCodec>
-
-#include "MainWindow.h"
-#include "Settings.h"
+#include <QtCore/QTextCodec>
+#include <QtGui/QApplication>
 
 #if defined _COMPOSE_STATIC_
 #include <QtPlugin>
 Q_IMPORT_PLUGIN(qsvg)
 #endif
 
-int main(int argc, char* argv[])
-{
+#include "include/MainWindow.h"
+#include "include/Settings.h"
+
+int main(int argc, char* argv[]) {
   Q_INIT_RESOURCE(application);
 
   QApplication app(argc, argv);
@@ -45,10 +44,9 @@ int main(int argc, char* argv[])
 
   MainWindow mainWin;
   mainWin.show();
-  for (int i = 1; i < argc; ++i)
-    {
-      mainWin.addChild(argv[i]);
-    }
+  for (int i = 1; i < argc; ++i) {
+    mainWin.addChild(argv[i]);
+  }
 
   return app.exec();
 }

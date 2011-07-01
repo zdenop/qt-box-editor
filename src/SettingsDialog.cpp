@@ -20,11 +20,10 @@
 *
 **********************************************************************/
 
-#include "SettingsDialog.h"
+#include "include/SettingsDialog.h"
 
 SettingsDialog::SettingsDialog(QWidget* parent)
-  : QDialog(parent)
-{
+  : QDialog(parent) {
   setFixedSize(420, 370);
   setWindowTitle(tr("%1 :: Settings...").arg(SETTING_APPLICATION));
 
@@ -35,13 +34,15 @@ SettingsDialog::SettingsDialog(QWidget* parent)
   tabSetting = new QTabWidget(this);
   tabSetting->resize(width(), height());
 
-  fontLabel = new QLabel(tableFont.family().toAscii() + tr(", %1 pt").arg(tableFont.pointSize()), this);
+  fontLabel = new QLabel(tableFont.family().toAscii() +
+                         tr(", %1 pt").arg(tableFont.pointSize()), this);
   fontLabel->setFont(tableFont);
   QPushButton* fontButton = new QPushButton(tr("Change..."));
   fontButton->setMaximumSize(QSize(75, 26));
   connect(fontButton, SIGNAL(clicked()), this, SLOT(on_fontButton_clicked()));
 
-  QSpacerItem* horizontalSpacer_1 = new QSpacerItem(158, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_1 =
+    new QSpacerItem(158, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
   QGroupBox* fontGroupBox = new QGroupBox(tr("Font"));
 
   QGridLayout* gridLayout_1 = new QGridLayout(fontGroupBox);
@@ -54,55 +55,66 @@ SettingsDialog::SettingsDialog(QWidget* parent)
   QGroupBox* colorsGroupBox = new QGroupBox(tr("Colors"));
   QGridLayout* gridLayout_2 = new QGridLayout(colorsGroupBox);
 
-  QLabel* colorRectLabel = new QLabel(tr("Selection rectangle:"), colorsGroupBox);
+  QLabel* colorRectLabel = new QLabel(tr("Selection rectangle:"),
+                                      colorsGroupBox);
   gridLayout_2->addWidget(colorRectLabel, 0, 0, 1, 1);
 
-  QSpacerItem* horizontalSpacer_2 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_2 = new QSpacerItem(25, 12, QSizePolicy::Fixed,
+      QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_2, 0, 1, 1, 1);
 
   colorRectButton = new QPushButton(colorsGroupBox);
   colorRectButton->setMaximumSize(QSize(75, 26));
-  connect(colorRectButton, SIGNAL(clicked()), this, SLOT(on_colorRectButton_clicked()));
+  connect(colorRectButton, SIGNAL(clicked()), this,
+          SLOT(on_colorRectButton_clicked()));
   updateColorButton(colorRectButton, rectColor);
   gridLayout_2->addWidget(colorRectButton, 0, 2, 1, 1);
 
-  QLabel* colorFillRectLabel = new QLabel(tr("Selection fill:"), colorsGroupBox);
+  QLabel* colorFillRectLabel = new QLabel(tr("Selection fill:"),
+                                          colorsGroupBox);
   gridLayout_2->addWidget(colorFillRectLabel, 2, 0, 1, 1);
 
-  QSpacerItem* horizontalSpacer_3 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_3 = new QSpacerItem(25, 12, QSizePolicy::Fixed,
+      QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_3, 2, 1, 1, 1);
 
   rectFillColorButton = new QPushButton(colorsGroupBox);
   rectFillColorButton->setMaximumSize(QSize(75, 26));
-  connect(rectFillColorButton, SIGNAL(clicked()), this, SLOT(on_rectFillColorButton_clicked()));
+  connect(rectFillColorButton, SIGNAL(clicked()), this,
+          SLOT(on_rectFillColorButton_clicked()));
   updateColorButton(rectFillColorButton, rectFillColor);
   gridLayout_2->addWidget(rectFillColorButton, 2, 2, 1, 1);
 
   QLabel* colorBoxLabel = new QLabel(tr("Boxes:"), colorsGroupBox);
   gridLayout_2->addWidget(colorBoxLabel, 3, 0, 1, 1);
 
-  QSpacerItem* horizontalSpacer_4 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_4 = new QSpacerItem(25, 12, QSizePolicy::Fixed,
+      QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_4, 3, 1, 1, 1);
 
   colorBoxButton = new QPushButton(colorsGroupBox);
   colorBoxButton->setMaximumSize(QSize(75, 26));
-  connect(colorBoxButton, SIGNAL(clicked()), this, SLOT(on_colorBoxButton_clicked()));
+  connect(colorBoxButton, SIGNAL(clicked()), this,
+          SLOT(on_colorBoxButton_clicked()));
   updateColorButton(colorBoxButton, boxColor);
   gridLayout_2->addWidget(colorBoxButton, 3, 2, 1, 1);
 
   QLabel* backgroundColorLabel = new QLabel(tr("Background:"), colorsGroupBox);
   gridLayout_2->addWidget(backgroundColorLabel, 4, 0, 1, 1);
 
-  QSpacerItem* horizontalSpacer_5 = new QSpacerItem(25, 12, QSizePolicy::Fixed, QSizePolicy::Minimum);
+  QSpacerItem* horizontalSpacer_5 = new QSpacerItem(25, 12, QSizePolicy::Fixed,
+      QSizePolicy::Minimum);
   gridLayout_2->addItem(horizontalSpacer_5, 4, 1, 1, 1);
 
   backgroundColorButton = new QPushButton(colorsGroupBox);
   backgroundColorButton->setMaximumSize(QSize(75, 26));
-  connect(backgroundColorButton, SIGNAL(clicked()), this, SLOT(on_backgroundColorButton_clicked()));
+  connect(backgroundColorButton, SIGNAL(clicked()), this,
+          SLOT(on_backgroundColorButton_clicked()));
   updateColorButton(backgroundColorButton, backgroundColor);
   gridLayout_2->addWidget(backgroundColorButton, 4, 2, 1, 1);
 
-  QSpacerItem* verticalSpacer = new QSpacerItem(20, 53, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  QSpacerItem* verticalSpacer = new QSpacerItem(20, 53, QSizePolicy::Minimum,
+      QSizePolicy::Expanding);
 
   QWidget* layoutWidget1 = new QWidget(tabSetting);
   QVBoxLayout* fontAndColorsLayout = new QVBoxLayout(layoutWidget1);
@@ -112,7 +124,7 @@ SettingsDialog::SettingsDialog(QWidget* parent)
 
   QWidget* fontAndColorsSett = new QWidget;
   fontAndColorsSett->setLayout(fontAndColorsLayout);
-  tabSetting->addTab(fontAndColorsSett, tr("Font && Colors"));   //&amp;
+  tabSetting->addTab(fontAndColorsSett, tr("Font && Colors"));   // &amp;
 
   verticalLayout->addWidget(tabSetting);
 
@@ -120,7 +132,8 @@ SettingsDialog::SettingsDialog(QWidget* parent)
   buttonBox->setObjectName(QString::fromUtf8("buttonBox"));
   buttonBox->setGeometry(QRect(30, 240, 341, 32));
   buttonBox->setOrientation(Qt::Horizontal);
-  buttonBox->setStandardButtons(QDialogButtonBox::Cancel | QDialogButtonBox::Ok);
+  buttonBox->setStandardButtons(QDialogButtonBox::Cancel |
+                                QDialogButtonBox::Ok);
 
   QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(saveSettings()));
   QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -128,130 +141,108 @@ SettingsDialog::SettingsDialog(QWidget* parent)
   verticalLayout->addWidget(buttonBox);
 }
 
-SettingsDialog::~SettingsDialog()
-{
-}
+SettingsDialog::~SettingsDialog() {}
 
-void SettingsDialog::on_fontButton_clicked()
-{
+void SettingsDialog::on_fontButton_clicked() {
   bool ok = false;
 
-  tableFont = QFontDialog::getFont(&ok, fontLabel->font(), this, "Select font...");
-  if (ok)
-    {
-      fontLabel->setFont(tableFont);
-      fontLabel->setText(tableFont.family().toAscii() + tr(", %1 pt").arg(tableFont.pointSize()));
-    }
+  tableFont = QFontDialog::getFont(&ok, fontLabel->font(), this,
+                                   "Select font...");
+  if (ok) {
+    fontLabel->setFont(tableFont);
+    fontLabel->setText(tableFont.family().toAscii() +
+                       tr(", %1 pt").arg(tableFont.pointSize()));
+  }
 }
 
-void SettingsDialog::on_colorRectButton_clicked()
-{
+void SettingsDialog::on_colorRectButton_clicked() {
   chooseColor(colorRectButton, &rectColor);
 }
 
-void SettingsDialog::on_rectFillColorButton_clicked()
-{
+void SettingsDialog::on_rectFillColorButton_clicked() {
   chooseColor(rectFillColorButton, &rectFillColor);
 }
 
-void SettingsDialog::on_colorBoxButton_clicked()
-{
+void SettingsDialog::on_colorBoxButton_clicked() {
   chooseColor(colorBoxButton, &boxColor);
 }
 
-void SettingsDialog::on_backgroundColorButton_clicked()
-{
+void SettingsDialog::on_backgroundColorButton_clicked() {
   chooseColor(backgroundColorButton, &backgroundColor);
 }
 
 
-void SettingsDialog::initSettings()
-{
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+void SettingsDialog::initSettings() {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
 
   QString fontname = settings.value("GUI/Font").toString();
 
-  if (fontname.isEmpty())
-    {
-      tableFont.setFamily(TABLE_FONT);
-      tableFont.setPointSize(TABLE_FONT_SIZE);
-    }
-  else
-    {
-      tableFont = settings.value("GUI/Font").value<QFont>();
-    }
+  if (fontname.isEmpty()) {
+    tableFont.setFamily(TABLE_FONT);
+    tableFont.setPointSize(TABLE_FONT_SIZE);
+  } else {
+    tableFont = settings.value("GUI/Font").value<QFont>();
+  }
 
-  if (settings.contains("GUI/Rectagle"))
-    {
-      rectColor = settings.value("GUI/Rectagle").value<QColor>();
-    }
-  else
-    {
-      rectColor = Qt::red;
-    }
+  if (settings.contains("GUI/Rectagle")) {
+    rectColor = settings.value("GUI/Rectagle").value<QColor>();
+  } else {
+    rectColor = Qt::red;
+  }
 
-  if (settings.contains("GUI/Rectagle_fill"))
+  if (settings.contains("GUI/Rectagle_fill")) {
     rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
-  else
-    {
-      rectFillColor = Qt::red;
-      rectFillColor.setAlpha(127);
-    }
+  } else {
+    rectFillColor = Qt::red;
+    rectFillColor.setAlpha(127);
+  }
 
-  if (settings.contains("GUI/Box"))
-    {
-      boxColor = settings.value("GUI/Box").value<QColor>();
-    }
-  else
-    {
-      boxColor = Qt::green;
-    }
+  if (settings.contains("GUI/Box")) {
+    boxColor = settings.value("GUI/Box").value<QColor>();
+  } else {
+    boxColor = Qt::green;
+  }
 
-  if (settings.contains("GUI/BackgroundColor"))
-    {
-      backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
-    }
-  else
-    {
-      backgroundColor = (Qt::gray);
-    }
+  if (settings.contains("GUI/BackgroundColor")) {
+    backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
+  } else {
+    backgroundColor = (Qt::gray);
+  }
 }
 
-void SettingsDialog::saveSettings()
-{
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope, SETTING_ORGANIZATION, SETTING_APPLICATION);
+void SettingsDialog::saveSettings() {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
 
   settings.setValue("GUI/Font", tableFont);
   settings.setValue("GUI/Rectagle", rectColor);
   settings.setValue("GUI/Rectagle_fill", rectFillColor);
   settings.setValue("GUI/Box", boxColor);
   settings.setValue("GUI/BackgroundColor", backgroundColor);
-  //emit setTableFont(tableFont); // TODO: use font for open child windows
+  // emit setTableFont(tableFont); // TODO: use font for open child windows
   emit accept();
 }
 
-void SettingsDialog::chooseColor(QPushButton* button, QColor* color)
-{
+void SettingsDialog::chooseColor(QPushButton* button, QColor* color) {
 #if QT_VERSION >= 0x040500
-  QColor newColor = QColorDialog::getColor(*color, this, tr("Select color..."), QColorDialog::ShowAlphaChannel);
+  QColor newColor = QColorDialog::getColor(*color, this, tr("Select color..."),
+                    QColorDialog::ShowAlphaChannel);
 #else
   QColor newColor = QColorDialog::getColor(*color, this, tr("Select color..."));
 #endif
-  if (newColor.isValid())
-    {
-      *color = newColor;
-      updateColorButton(button, *color);
-    }
+  if (newColor.isValid()) {
+    *color = newColor;
+    updateColorButton(button, *color);
+  }
 }
 
 void SettingsDialog::updateColorButton(QPushButton* button,
-                                       const QColor& color)
-{
+                                       const QColor& color) {
   QPixmap pixmap(68, 20);
   pixmap.fill(color);
   QIcon icon(pixmap);
   QSize iconSize(pixmap.width(), pixmap.height());
   button->setIconSize(iconSize);
   button->setIcon(icon);
-
 }

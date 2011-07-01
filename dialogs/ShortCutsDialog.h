@@ -20,18 +20,17 @@
 *
 **********************************************************************/
 
-#ifndef SHORTCUTSDIALOG_H
-#define SHORTCUTSDIALOG_H
+#ifndef DIALOGS_SHORTCUTSDIALOG_H_
+#define DIALOGS_SHORTCUTSDIALOG_H_
 
-#include <QDialog>
+#include <QtGui/QDialog>
 #include "ui_ShortCutDialog.h"
 
-class ShortCutsDialog : public QDialog, public Ui::ShortCutDialog
-{
-    Q_OBJECT
+class ShortCutsDialog : public QDialog, public Ui::ShortCutDialog {
+  Q_OBJECT
 
   public:
-    ShortCutsDialog(QWidget* = 0);
+    explicit ShortCutsDialog(QWidget* = 0);
 };
 
-#endif // SHORTCUTSDIALOG_H
+#endif  // DIALOGS_SHORTCUTSDIALOG_H_
