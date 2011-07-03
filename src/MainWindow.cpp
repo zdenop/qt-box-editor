@@ -182,7 +182,7 @@ void MainWindow::saveAs() {
     statusBar()->showMessage(tr("File saved"), 2000);
 }
 
-void MainWindow::importSym() {
+void MainWindow::importPLSym() {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
   // try to get path from settings
@@ -196,7 +196,25 @@ void MainWindow::importSym() {
   if (textFile.isEmpty())
     return;
 
-  if (activeChild() && activeChild()->importToChild(textFile))
+  if (activeChild() && activeChild()->importSPLToChild(textFile))
+    statusBar()->showMessage(tr("File saved"), 2000);
+}
+
+void MainWindow::importTextSym() {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
+  // try to get path from settings
+  QString last_path = settings.value("last_path").toString();
+
+  QString textFile = QFileDialog::getOpenFileName(
+                       this,
+                       tr("Select text file..."),
+                       last_path,
+                       tr("Text files (*.txt);;All files (*.*)"));
+  if (textFile.isEmpty())
+    return;
+
+  if (activeChild() && activeChild()->importTextToChild(textFile))
     statusBar()->showMessage(tr("File saved"), 2000);
 }
 
@@ -504,7 +522,8 @@ void MainWindow::handleClose(int i) {
 
 void MainWindow::updateMenus() {
   saveAsAct->setEnabled((activeChild()) != 0);
-  importSymAct->setEnabled((activeChild()) != 0);
+  importPLSymAct->setEnabled((activeChild()) != 0);
+  importTextSymAct->setEnabled((activeChild()) != 0);
   symbolPerLineAct->setEnabled((activeChild()) != 0);
   rowPerLineAct->setEnabled((activeChild()) != 0);
   paragraphPerLineAct->setEnabled((activeChild()) != 0);
@@ -627,11 +646,17 @@ void MainWindow::createActions() {
   saveAsAct->setEnabled(false);
   connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
-  importSymAct = new QAction(QIcon(":/images/import.svg"),
-                             tr("I&mport symbols..."), this);
-  importSymAct->setStatusTip(tr("Import symbols from text document"));
-  importSymAct->setEnabled(false);
-  connect(importSymAct, SIGNAL(triggered()), this, SLOT(importSym()));
+  importPLSymAct = new QAction(
+                             tr("I&mport file with one symbol per line"), this);
+  importPLSymAct->setStatusTip(tr("Import symbols from text document"));
+  importPLSymAct->setEnabled(false);
+  connect(importPLSymAct, SIGNAL(triggered()), this, SLOT(importPLSym()));
+
+  importTextSymAct = new QAction(QIcon(":/images/import.svg"),
+                             tr("Import &text file"), this);
+  importTextSymAct->setStatusTip(tr("Import symbols from text document"));
+  importTextSymAct->setEnabled(false);
+  connect(importTextSymAct, SIGNAL(triggered()), this, SLOT(importTextSym()));
 
   // TODO cez parameter?
   symbolPerLineAct = new QAction(tr("One symbol per line..."), this);
@@ -832,8 +857,9 @@ void MainWindow::createMenus() {
   fileMenu->addAction(saveAct);
   fileMenu->addAction(saveAsAct);
   fileMenu->addSeparator();
-  fileMenu->addAction(importSymAct);
-  //fileMenu->addAction(exportMenu->menuAction());
+  importMenu = fileMenu->addMenu(tr("&Import..."));
+  importMenu->addAction(importPLSymAct);
+  importMenu->addAction(importTextSymAct);
   exportMenu = fileMenu->addMenu(tr("&Export..."));
   exportMenu->addAction(symbolPerLineAct);
   exportMenu->addAction(rowPerLineAct);
@@ -887,7 +913,7 @@ void MainWindow::createToolBars() {
   fileToolBar->addAction(exitAct);
   fileToolBar->addAction(openAct);
   fileToolBar->addAction(saveAct);
-  fileToolBar->addAction(importSymAct);
+  fileToolBar->addAction(importTextSymAct);
 
   viewToolBar = addToolBar(tr("View"));
   viewToolBar->setObjectName("viewToolBar");

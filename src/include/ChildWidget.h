@@ -85,7 +85,8 @@ class ChildWidget : public QSplitter {
     }
 
     bool save(const QString& fileName);
-    bool importToChild(const QString& fileName);
+    bool importSPLToChild(const QString& fileName);
+    bool importTextToChild(const QString& fileName);
     bool exportTxt(const int& eType, const QString& fileName);
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);

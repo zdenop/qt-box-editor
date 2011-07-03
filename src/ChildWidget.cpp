@@ -383,7 +383,7 @@ bool ChildWidget::save(const QString& fileName) {
   return true;
 }
 
-bool ChildWidget::importToChild(const QString& fileName) {
+bool ChildWidget::importSPLToChild(const QString& fileName) {
   QFile file(fileName);
 
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -427,6 +427,86 @@ bool ChildWidget::importToChild(const QString& fileName) {
 
   file.close();
   QApplication::restoreOverrideCursor();
+
+  modified = true;
+  emit modifiedChanged();
+
+  return true;
+}
+
+
+bool ChildWidget::importTextToChild(const QString& fileName) {
+  // TODO(zdenop): code clean up, and join with importSPLToChild
+  QFile file(fileName);
+
+  if (!file.open(QFile::ReadOnly | QFile::Text)) {
+    QMessageBox::warning(this, SETTING_APPLICATION,
+                         tr("Cannot read file %1:\n%2.").arg(fileName).arg(
+                           file.errorString()));
+    return false;
+  }
+
+  // TODO(zdenop): get ligatures from settings or ask user
+  QList<QString> ligatures;
+  ligatures.append("fl");
+  ligatures.append("fi");
+
+  QTextStream in(&file);
+  in.setCodec("UTF-8");
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QString line;
+  QString symbolText;
+
+  do {
+    line = in.readLine();
+    if (!line.isEmpty()) {
+      symbolText += line;
+    }
+  } while (!line.isEmpty());
+  file.close();
+
+  // check if there are ligatures in line
+  for (int i = 0; i < ligatures.size(); ++i) {
+   symbolText.replace(ligatures[i], QString("\n%1\n").arg(ligatures[i]));
+   }
+
+  QStringList lines;
+  QString oneLetter, letters;
+  bool ligature;
+  QList<QString> symbols;
+
+  lines = symbolText.split("\n");  // split string to lines
+  for (int i = 0; i < lines.size(); ++i) {
+    letters = lines.at(i);
+    ligature = false;
+    for (int m = 0; m < ligatures.size(); ++m) {
+      if (ligatures.at(m) == letters) {  // this is ligature
+        symbols.append(letters);
+        ligature = true;
+      }
+   }
+   if (ligature == false) {
+     letters = letters.remove(QRegExp("\\s+"));  // remove whitespace
+     for (int j = 0; j < letters.size(); ++j) {  // split lines to letters
+       oneLetter = letters[j];
+       symbols.append(oneLetter);
+       }
+     }
+  }
+  if (symbols.size() != model->rowCount()) {
+    QMessageBox::warning(this, SETTING_APPLICATION,
+                     tr("Number of symbols in import file differ with number of boxes!"));
+    }
+
+  for (int i = 0; i < symbols.size(); ++i) {
+    model->setData(model->index(i, 0, QModelIndex()), symbols.at(i));
+    }
+
+  QApplication::restoreOverrideCursor();
+
+  modified = true;
+  emit modifiedChanged();
 
   return true;
 }

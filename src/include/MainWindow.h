@@ -78,7 +78,8 @@ class MainWindow : public QMainWindow {
     void openRecentFile();
     void save();
     void saveAs();
-    void importSym();
+    void importPLSym();
+    void importTextSym();
     void symbolPerLine();
     void rowPerLine();
     void paragraphPerLine();
@@ -135,6 +136,7 @@ class MainWindow : public QMainWindow {
     QSignalMapper* windowMapper;
 
     QMenu* fileMenu;
+    QMenu* importMenu;
     QMenu* exportMenu;
     QMenu* editMenu;
     QMenu* viewMenu;
@@ -150,7 +152,8 @@ class MainWindow : public QMainWindow {
     QAction* openAct;
     QAction* saveAct;
     QAction* saveAsAct;
-    QAction* importSymAct;
+    QAction* importPLSymAct;
+    QAction* importTextSymAct;
     QAction* symbolPerLineAct;
     QAction* rowPerLineAct;
     QAction* paragraphPerLineAct;
