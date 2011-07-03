@@ -833,7 +833,7 @@ void MainWindow::createMenus() {
   fileMenu->addAction(saveAsAct);
   fileMenu->addSeparator();
   fileMenu->addAction(importSymAct);
-  fileMenu->addAction(exportMenu->menuAction());
+  //fileMenu->addAction(exportMenu->menuAction());
   exportMenu = fileMenu->addMenu(tr("&Export..."));
   exportMenu->addAction(symbolPerLineAct);
   exportMenu->addAction(rowPerLineAct);
