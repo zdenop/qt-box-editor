@@ -25,37 +25,27 @@
 #define SRC_INCLUDE_SETTINGSDIALOG_H_
 
 #include <QtCore/QSettings>
-#include <QtCore/QVariant>
-#include <QtGui/QAction>
-#include <QtGui/QButtonGroup>
 #include <QtGui/QColorDialog>
-#include <QtGui/QDialog>
-#include <QtGui/QDialogButtonBox>
 #include <QtGui/QFontDialog>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QSpacerItem>
-#include <QtGui/QTabWidget>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QWidget>
 
+#include "ui_SettingsDialog.h"
 #include "src/include/Settings.h"
 
-class SettingsDialog : public QDialog {
-    Q_OBJECT
+class SettingsDialog : public QDialog, public Ui::SettingsDialog {
+  Q_OBJECT
+//class SettingsDialog : public QDialog {
+  //  Q_OBJECT
   public:
     explicit SettingsDialog(QWidget* pard = 0);
     ~SettingsDialog();
-    QDialogButtonBox* buttonBox;
+    /*QDialogButtonBox* buttonBox;
     QTabWidget* tabSetting;
     QVBoxLayout* fontAndColorsLayout;
     QLabel* fontLabel;
     QPushButton* colorRectButton;
     QPushButton* rectFillColorButton;
     QPushButton* colorBoxButton;
-    QPushButton* backgroundColorButton;
+    QPushButton* backgroundColorButton;*/
 
     void initSettings();
 

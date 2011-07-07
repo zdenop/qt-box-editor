@@ -25,7 +25,8 @@ DEFINES += VERSION=\\\"$${VERSION}\\\"
 
 FORMS += \
     dialogs/ShortCutDialog.ui \
-    dialogs/GetRowIDDialog.ui
+    dialogs/GetRowIDDialog.ui \
+    src/SettingsDialog.ui
 
 SOURCES += src/main.cpp \
     src/MainWindow.cpp \

@@ -20,7 +20,6 @@
 *
 **********************************************************************/
 
-#include <QtGui>
 #include "dialogs/GetRowIDDialog.h"
 
 GetRowIDDialog::GetRowIDDialog(QWidget* parent)
