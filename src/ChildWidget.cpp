@@ -456,7 +456,7 @@ bool ChildWidget::importTextToChild(const QString& fileName) {
   }
 
   QList<QString> ligatures = settings.value("Text/Ligatures").toString()
-      .split("\n");
+                             .split("\n");
 
   QTextStream in(&file);
   in.setCodec("UTF-8");
@@ -547,9 +547,15 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   QString letter;
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
   int left, bottom, right, top;
   int line_start_prev = 0;
+  int line_end_prev = 0;
   int right_prev = -1;
+  int last_bottom = -1;
+  int wordSpace = settings.value("Text/WordSpace").toInt();
+  int paraIndent = settings.value("Text/ParagraphIndent").toInt();
 
   for (int row = 0; row < model->rowCount(); ++row) {
     letter = model->index(row, 0).data().toString();
@@ -558,31 +564,43 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
     right = model->index(row, 3).data().toInt();
     top = model->index(row, 4).data().toInt();
 
+    if (last_bottom == -1)
+      last_bottom = top;
     if (eType == 1 && (right_prev != -1)) {
       out << "\n";
     }
     if (eType == 2) {
-      if (((left - right_prev) > 6) && (right_prev != -1))  // new word
+      if (((left - right_prev) >= wordSpace) && (right_prev != -1))
+        // new word
         out << " ";
-      if (((left - right_prev) < -6) && (right_prev != -1))  // new line
+      if (((left - right_prev) <= -wordSpace) && (right_prev != -1))
+        // new line
         out << "\n";
     }
     if (eType == 3) {
-      if (((left - right_prev) > 6) && (right_prev != -1))  // new word
+      if (((left - right_prev) >= wordSpace) && (right_prev != -1))
+        // new word
         out << " ";
 
-      if (((left - right_prev) < -6) && (right_prev != -1)) {  // new line
-        // TODO(zdenop): make it more inteligent ;-) try also linespace
-        if (left - line_start_prev > 15)  // new paragraph
+      if (((left - right_prev) <= -wordSpace) && (right_prev != -1)) {
+        // new line
+        if (line_end_prev == 0)  // first line
+          line_end_prev = right;
+        if ((left - line_start_prev >= paraIndent) ||  // distance from left
+            (top - last_bottom >= paraIndent) ||   // distance between lines
+            (abs(right - line_end_prev) >= (paraIndent / 2)))
+          // distance from right
           out << "\n";
         else
           out << " ";
         line_start_prev = left;
+        line_end_prev = right_prev;
       }
     }
 
     out << letter;
     right_prev = right;
+    last_bottom = bottom;
   }
 
   out << "\n";
