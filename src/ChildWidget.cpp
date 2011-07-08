@@ -317,25 +317,28 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
   table->resizeRowsToContents();
   table->setCornerButtonEnabled(true);
   table->setWordWrap(true);
-  table->horizontalHeader()->setStretchLastSection(true);
 
   // set size of table
-  int tableVisibleWidth = 2 * table->frameWidth();
+  int tableVisibleWidth = 0;
+
   if (!table->verticalHeader()->isHidden()) {
-    tableVisibleWidth += 35;
-    // TODO(zdeno): table->verticalHeader()/horizontalHeader()->width() is 0
+    tableVisibleWidth += table->verticalHeader()->width();
   }
 
-  tableVisibleWidth += 25;  // scrollbar
+  tableVisibleWidth += table->verticalScrollBar()->width(); // scrollbar
 
   for (int col = 0; col < table->horizontalHeader()->count(); col++) {
-    tableVisibleWidth += table->columnWidth(col);
+    if (table->columnWidth(col) > 0)
+        tableVisibleWidth += table->columnWidth(col) + 1;
+        // add 1 pixel for table grid
   }
+  
   QList<int> splitterSizes;
   splitterSizes << tableVisibleWidth;
   splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
   table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   setSizes(splitterSizes);
+  table->horizontalHeader()->setStretchLastSection(true);
 
   return true;
 }
