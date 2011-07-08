@@ -22,24 +22,18 @@
 
 #include "include/SettingsDialog.h"
 
-SettingsDialog::SettingsDialog(QWidget* parent)
+SettingsDialog::SettingsDialog(QWidget* parent, int tabIndex)
   : QDialog(parent) {
   setFixedSize(420, 370);
   setWindowTitle(tr("%1 :: Settings...").arg(SETTING_APPLICATION));
 
-  initSettings();
   setupUi(this);
-
-  fontLabel->setFont(tableFont);
-  fontLabel->setText(tableFont.family().toAscii() +
-                     tr(", %1 pt").arg(tableFont.pointSize()));
-  updateColorButton(colorRectButton, rectColor);
-  updateColorButton(rectFillColorButton, rectFillColor);
-  updateColorButton(colorBoxButton, boxColor);
-  updateColorButton(backgroundColorButton, backgroundColor);
+  initSettings();
 
   QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(saveSettings()));
   QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+
+  tabSetting->setCurrentIndex(tabIndex);
 }
 
 SettingsDialog::~SettingsDialog() {}
@@ -110,6 +104,23 @@ void SettingsDialog::initSettings() {
   } else {
     backgroundColor = (Qt::gray);
   }
+
+  if (settings.contains("Text/OpenDialog"))
+    cbOpenDialog->setChecked(settings.value("Text/OpenDialog").toBool());
+  if (settings.contains("Text/WordSpace"))
+    sbWordSpace->setValue(settings.value("Text/WordSpace").toInt());
+  if (settings.contains("Text/ParagraphIndent"))
+    spParaIndent->setValue(settings.value("Text/ParagraphIndent").toInt());
+  if (settings.contains("Text/Ligatures"))
+    pteLigatures->setPlainText(settings.value("Text/Ligatures").toString());
+
+  fontLabel->setFont(tableFont);
+  fontLabel->setText(tableFont.family().toAscii() +
+                     tr(", %1 pt").arg(tableFont.pointSize()));
+  updateColorButton(colorRectButton, rectColor);
+  updateColorButton(rectFillColorButton, rectFillColor);
+  updateColorButton(colorBoxButton, boxColor);
+  updateColorButton(backgroundColorButton, backgroundColor);
 }
 
 void SettingsDialog::saveSettings() {
@@ -121,7 +132,33 @@ void SettingsDialog::saveSettings() {
   settings.setValue("GUI/Rectagle_fill", rectFillColor);
   settings.setValue("GUI/Box", boxColor);
   settings.setValue("GUI/BackgroundColor", backgroundColor);
-  // emit setTableFont(tableFont); // TODO(zdenop): use font for open child windows
+
+  settings.setValue("Text/OpenDialog", cbOpenDialog->isChecked());
+  settings.setValue("Text/WordSpace", sbWordSpace->value());
+  settings.setValue("Text/ParagraphIndent", spParaIndent->value());
+
+  // remove duplicates and blank lines
+  QList<QString> ligatures = pteLigatures->toPlainText().split("\n");
+  QHash<QString, bool> h;
+  QString str;
+
+  // make unique list
+  for (int i = 0; i < ligatures.size(); ++i)
+    h.insert(ligatures.at(i), true);
+  ligatures = h.keys();
+
+  // convert list to string separated with "\n"
+  for (int i = 0; i < ligatures.size(); ++i) {
+    if (i == 0)
+      str = ligatures[i];
+    else
+      str += "\n" + ligatures[i];
+  }
+  str = str.remove(QRegExp("^\n"));
+  settings.setValue("Text/Ligatures", str);
+
+  // emit setTableFont(tableFont);
+  // TODO(zdenop): use font for open child windows
   emit accept();
 }
 

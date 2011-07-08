@@ -33,20 +33,10 @@
 
 class SettingsDialog : public QDialog, public Ui::SettingsDialog {
   Q_OBJECT
-//class SettingsDialog : public QDialog {
-  //  Q_OBJECT
-  public:
-    explicit SettingsDialog(QWidget* pard = 0);
-    ~SettingsDialog();
-    /*QDialogButtonBox* buttonBox;
-    QTabWidget* tabSetting;
-    QVBoxLayout* fontAndColorsLayout;
-    QLabel* fontLabel;
-    QPushButton* colorRectButton;
-    QPushButton* rectFillColorButton;
-    QPushButton* colorBoxButton;
-    QPushButton* backgroundColorButton;*/
 
+  public:
+    explicit SettingsDialog(QWidget* pard = 0, int tabIndex = 0);
+    ~SettingsDialog();
     void initSettings();
 
   private slots:

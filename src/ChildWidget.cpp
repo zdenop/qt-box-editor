@@ -407,9 +407,9 @@ bool ChildWidget::importSPLToChild(const QString& fileName) {
     if (!line.isEmpty()) {
       if (row > model->rowCount()) {
         QMessageBox::warning(this, SETTING_APPLICATION,
-                         tr("There are more symbols in import file than boxes!"
-                            " Rest of symbols are ignored").arg(fileName).arg(
-                           file.errorString()));
+                          tr("There are more symbols in import file than boxes!"
+                             " Rest of symbols are ignored").arg(fileName).arg(
+                             file.errorString()));
         file.close();
         QApplication::restoreOverrideCursor();
         return true;
@@ -421,8 +421,8 @@ bool ChildWidget::importSPLToChild(const QString& fileName) {
 
   if (row < model->rowCount()) {
     QMessageBox::warning(this, SETTING_APPLICATION,
-                   tr("There are less symbols in import file than boxes!").arg(
-                     fileName).arg(file.errorString()));
+                         tr("There are less symbols in import file than boxes!")
+                         .arg(fileName).arg(file.errorString()));
   }
 
   file.close();
@@ -437,19 +437,26 @@ bool ChildWidget::importSPLToChild(const QString& fileName) {
 
 bool ChildWidget::importTextToChild(const QString& fileName) {
   // TODO(zdenop): code clean up, and join with importSPLToChild
-  QFile file(fileName);
 
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
+
+  QFile file(fileName);
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
     QMessageBox::warning(this, SETTING_APPLICATION,
-                         tr("Cannot read file %1:\n%2.").arg(fileName).arg(
-                           file.errorString()));
+                         tr("Cannot read file %1:\n%2.").arg(fileName)
+                         .arg(file.errorString()));
     return false;
   }
 
-  // TODO(zdenop): get ligatures from settings or ask user
-  QList<QString> ligatures;
-  ligatures.append("fl");
-  ligatures.append("fi");
+  if (settings.contains("Text/OpenDialog") != true ||
+      (settings.value("Text/OpenDialog").toBool())) {
+    SettingsDialog *runSettingsDialog = new SettingsDialog(this, 1);
+    runSettingsDialog->exec();
+  }
+
+  QList<QString> ligatures = settings.value("Text/Ligatures").toString()
+      .split("\n");
 
   QTextStream in(&file);
   in.setCodec("UTF-8");
@@ -468,8 +475,8 @@ bool ChildWidget::importTextToChild(const QString& fileName) {
 
   // check if there are ligatures in line
   for (int i = 0; i < ligatures.size(); ++i) {
-   symbolText.replace(ligatures[i], QString("\n%1\n").arg(ligatures[i]));
-   }
+    symbolText.replace(ligatures[i], QString("\n%1\n").arg(ligatures[i]));
+  }
 
   QStringList lines;
   QString oneLetter, letters;
@@ -485,23 +492,23 @@ bool ChildWidget::importTextToChild(const QString& fileName) {
         symbols.append(letters);
         ligature = true;
       }
-   }
-   if (ligature == false) {
-     letters = letters.remove(QRegExp("\\s+"));  // remove whitespace
-     for (int j = 0; j < letters.size(); ++j) {  // split lines to letters
-       oneLetter = letters[j];
-       symbols.append(oneLetter);
-       }
-     }
+    }
+    if (ligature == false) {
+      letters = letters.remove(QRegExp("\\s+"));  // remove whitespace
+      for (int j = 0; j < letters.size(); ++j) {  // split lines to letters
+        oneLetter = letters[j];
+        symbols.append(oneLetter);
+      }
+    }
   }
   if (symbols.size() != model->rowCount()) {
     QMessageBox::warning(this, SETTING_APPLICATION,
-                     tr("Number of symbols in import file differ with number of boxes!"));
-    }
+           tr("Number of symbols in import file differ with number of boxes!"));
+  }
 
   for (int i = 0; i < symbols.size(); ++i) {
     model->setData(model->index(i, 0, QModelIndex()), symbols.at(i));
-    }
+  }
 
   QApplication::restoreOverrideCursor();
 
