@@ -76,7 +76,6 @@ class ChildWidget : public QSplitter {
     bool directTypingMode;
 
     QString userFriendlyCurrentFile();
-    QString getZoom();
     QString getSymbolHexCode();
     QString getBoxSize();
     QString currentBoxFile();
@@ -94,6 +93,7 @@ class ChildWidget : public QSplitter {
     void setBolded(bool v);
     void setItalic(bool v);
     void setUnderline(bool v);
+    void getZoom();
     void setZoom(float scale);
     void setDirectTypingMode(bool v);
     void zoomOriginal();
@@ -150,6 +150,7 @@ class ChildWidget : public QSplitter {
   signals:
     void boxChanged();
     void modifiedChanged();
+    void zoomRatioChanged(qreal);
 
   protected:
     QGraphicsScene* imageScene;

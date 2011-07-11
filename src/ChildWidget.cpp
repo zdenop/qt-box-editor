@@ -332,7 +332,7 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
         tableVisibleWidth += table->columnWidth(col) + 1;
         // add 1 pixel for table grid
   }
-  
+
   QList<int> splitterSizes;
   splitterSizes << tableVisibleWidth;
   splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
@@ -721,12 +721,9 @@ void ChildWidget::setSelectionRect() {
   imageSelectionRect->setZValue(1);
 }
 
-/* Get zoom factor */
-QString ChildWidget::getZoom() {
-  QString result;
-  result.sprintf(" %2.0f", imageView->transform().m11() * 100);
-  result.append("% ");
-  return result;
+void ChildWidget::getZoom() {
+  qreal _zoomratio = imageView->transform().m11();
+  emit zoomRatioChanged(_zoomratio);
 }
 
 void ChildWidget::setZoom(float scale) {
@@ -734,16 +731,20 @@ void ChildWidget::setZoom(float scale) {
 
   transform.scale(scale, scale);
   imageView->setTransform(transform);
+  qreal _zoomratio = scale;
+  emit zoomRatioChanged(_zoomratio);
 }
 
 void ChildWidget::zoomIn() {
   imageView->scale(1.2, 1.2);
   imageView->ensureVisible(imageSelectionRect);
+  getZoom();
 }
 
 void ChildWidget::zoomOut() {
   imageView->scale(1 / 1.2, 1 / 1.2);
   imageView->ensureVisible(imageSelectionRect);
+  getZoom();
 }
 
 void ChildWidget::zoomToFit() {
@@ -788,6 +789,7 @@ void ChildWidget::zoomToSelection() {
   imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
   imageView->ensureVisible(imageSelectionRect);
   imageView->centerOn(imageSelectionRect);
+  getZoom();
 }
 
 void ChildWidget::showSymbol() {

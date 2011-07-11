@@ -118,6 +118,7 @@ class MainWindow : public QMainWindow {
     void updateCommandActions();
     void updateTabTitle();
     void updateSaveAction();
+    void zoomRatioChanged(qreal);
 
   private:
     ShortCutsDialog* shortCutsDialog;

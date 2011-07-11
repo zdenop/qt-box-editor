@@ -112,7 +112,9 @@ void MainWindow::addChild(const QString& imageFileName) {
       connect(child, SIGNAL(boxChanged()), this, SLOT(updateCommandActions()));
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateTabTitle()));
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
-
+      connect(child, SIGNAL(zoomRatioChanged(qreal)), this,
+              SLOT(zoomRatioChanged(qreal)));
+      child->getZoom();
       // save path of open image file
       QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                          SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -570,7 +572,7 @@ void MainWindow::updateCommandActions() {
   if (activeChild()) {
     _utfCodeLabel->setText(activeChild()->getSymbolHexCode());
     _boxsize->setText(activeChild()->getBoxSize());
-    _zoom->setText(activeChild()->getZoom());
+    activeChild()->getZoom();
   }
 }
 
@@ -628,13 +630,13 @@ void MainWindow::createActions() {
   openAct = new QAction(QIcon(":/images/fileopen.png"),
                         tr("&Open..."), this);
   openAct->setShortcuts(QKeySequence::Open);
-  openAct->setStatusTip(tr("Open an existing file"));
+  openAct->setToolTip(tr("Open an existing file"));
   connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   saveAct = new QAction(QIcon(":/images/filesave.png"),
                         tr("&Save"), this);
   saveAct->setShortcuts(QKeySequence::Save);
-  saveAct->setStatusTip(tr("Save the document to disk"));
+  saveAct->setToolTip(tr("Save the document to disk"));
   saveAct->setEnabled(false);
   connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
@@ -648,29 +650,29 @@ void MainWindow::createActions() {
 
   importPLSymAct = new QAction(
                              tr("I&mport file with one symbol per line"), this);
-  importPLSymAct->setStatusTip(tr("Import symbols from text document"));
+  importPLSymAct->setToolTip(tr("Import symbols from text document"));
   importPLSymAct->setEnabled(false);
   connect(importPLSymAct, SIGNAL(triggered()), this, SLOT(importPLSym()));
 
   importTextSymAct = new QAction(QIcon(":/images/import.svg"),
                              tr("Import &text file"), this);
-  importTextSymAct->setStatusTip(tr("Import symbols from text document"));
+  importTextSymAct->setToolTip(tr("Import symbols from text document"));
   importTextSymAct->setEnabled(false);
   connect(importTextSymAct, SIGNAL(triggered()), this, SLOT(importTextSym()));
 
   // TODO cez parameter?
   symbolPerLineAct = new QAction(tr("One symbol per line..."), this);
-  symbolPerLineAct->setStatusTip(tr("Export symbols to text file."));
+  symbolPerLineAct->setToolTip(tr("Export symbols to text file."));
   symbolPerLineAct->setEnabled(false);
   connect(symbolPerLineAct, SIGNAL(triggered()), this, SLOT(symbolPerLine()));
 
   rowPerLineAct = new QAction(tr("One row per line..."), this);
-  rowPerLineAct->setStatusTip(tr("Export symbols to text file."));
+  rowPerLineAct->setToolTip(tr("Export symbols to text file."));
   rowPerLineAct->setEnabled(false);
   connect(rowPerLineAct, SIGNAL(triggered()), this, SLOT(rowPerLine()));
 
   paragraphPerLineAct = new QAction(tr("One paragraph per line..."), this);
-  paragraphPerLineAct->setStatusTip(tr("Export symbols to text file."));
+  paragraphPerLineAct->setToolTip(tr("Export symbols to text file."));
   paragraphPerLineAct->setEnabled(false);
   connect(paragraphPerLineAct, SIGNAL(triggered()), this,
           SLOT(paragraphPerLine()));
@@ -678,12 +680,12 @@ void MainWindow::createActions() {
   closeAct = new QAction(QIcon(":/images/window-close.png"),
                          tr("Cl&ose"), this);
   closeAct->setShortcut(QKeySequence::Close);
-  closeAct->setStatusTip(tr("Close the active tab"));
+  closeAct->setToolTip(tr("Close the active tab"));
   connect(closeAct, SIGNAL(triggered()), this, SLOT(closeActiveTab()));
 
   closeAllAct = new QAction(tr("Close &All"), this);
   closeAllAct->setShortcut(tr("Ctrl+Shift+W"));
-  closeAllAct->setStatusTip(tr("Close all the tabs"));
+  closeAllAct->setToolTip(tr("Close all the tabs"));
   connect(closeAllAct, SIGNAL(triggered()), this, SLOT(closeAllTabs()));
 
   separatorAct = new QAction(this);
@@ -692,7 +694,7 @@ void MainWindow::createActions() {
   exitAct = new QAction(QIcon(":/images/exit.png"),
                         tr("E&xit"), this);
   exitAct->setShortcut(tr("Ctrl+Q"));
-  exitAct->setStatusTip(tr("Exit the application"));
+  exitAct->setToolTip(tr("Exit the application"));
   connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   boldAct = new QAction(QIcon(":/images/text_bold.png"),
@@ -744,9 +746,8 @@ void MainWindow::createActions() {
   connect(zoomToWidthAct, SIGNAL(triggered()), this, SLOT(zoomToWidth()));
 
   zoomToSelectionAct = new QAction(QIcon(":/images/zoom-selection.png"),
-                                   tr("Zoom to selection"), this);
+                                   tr("Zoom to selected box"), this);
   zoomToSelectionAct->setShortcut(tr("Ctrl+/"));
-  zoomToSelectionAct->setStatusTip(tr("Zoom to selected box"));
   connect(zoomToSelectionAct, SIGNAL(triggered()), this,
           SLOT(zoomToSelection()));
 
@@ -754,7 +755,7 @@ void MainWindow::createActions() {
                               tr("S&how symbol"), this);
   showSymbolAct->setCheckable(true);
   showSymbolAct->setShortcut(tr("Ctrl+L"));
-  showSymbolAct->setStatusTip(tr("Show/hide symbol over selection rectangle"));
+  showSymbolAct->setToolTip(tr("Show/hide symbol over selection rectangle"));
   connect(showSymbolAct, SIGNAL(triggered()), this, SLOT(showSymbol()));
 
   DirectTypingAct = new QAction(QIcon(":/images/key_bindings.svg"),
@@ -768,18 +769,18 @@ void MainWindow::createActions() {
                              tr("S&how boxes"), this);
   drawBoxesAct->setCheckable(true);
   drawBoxesAct->setShortcut(tr("Ctrl+H"));
-  drawBoxesAct->setStatusTip(tr("Show/hide rectangles for all boxes"));
+  drawBoxesAct->setToolTip(tr("Show/hide rectangles for all boxes"));
   connect(drawBoxesAct, SIGNAL(triggered()), this, SLOT(drawBoxes()));
 
   nextAct = new QAction(QIcon(":/images/next.png"), tr("Ne&xt"), this);
   nextAct->setShortcuts(QKeySequence::NextChild);
-  nextAct->setStatusTip(tr("Move the focus to the next window"));
+  nextAct->setToolTip(tr("Move the focus to the next window"));
   connect(nextAct, SIGNAL(triggered()), this, SLOT(nextTab()));
 
   previousAct = new QAction(QIcon(":/images/previous.png"),
                             tr("Pre&vious"), this);
   previousAct->setShortcuts(QKeySequence::PreviousChild);
-  previousAct->setStatusTip(tr("Move the focus to the previous window"));
+  previousAct->setToolTip(tr("Move the focus to the previous window"));
   connect(previousAct, SIGNAL(triggered()), this, SLOT(previousTab()));
 
   insertAct = new QAction(QIcon(":/images/insertRow.svg"),
@@ -824,16 +825,16 @@ void MainWindow::createActions() {
 
   settingsAct = new QAction(tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
-  settingsAct->setStatusTip(tr("Programm settings"));
+  settingsAct->setToolTip(tr("Programm settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(slotSettings()));
 
   checkForUpdateAct = new QAction(tr("&Check for update"), this);
-  checkForUpdateAct->setStatusTip(tr("Check whether a newer version exits."));
+  checkForUpdateAct->setToolTip(tr("Check whether a newer version exits."));
   connect(checkForUpdateAct, SIGNAL(triggered()), this, SLOT(checkForUpdate()));
 
   aboutAct = new QAction(QIcon(":/images/help-about.png"),
                          tr("&About"), this);
-  aboutAct->setStatusTip(tr("Show the application's About box"));
+  aboutAct->setToolTip(tr("Show the application's About box"));
   connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   aboutQtAct = new QAction(tr("About &Qt"), this);
@@ -980,4 +981,9 @@ void MainWindow::writeSettings() {
   settings.setValue("geometry", saveGeometry());
   settings.setValue("state", saveState());
   settings.endGroup();
+}
+
+void MainWindow::zoomRatioChanged(qreal ratio)
+{
+    _zoom->setText(QString("%1%").arg(qRound(ratio * 100)));
 }
