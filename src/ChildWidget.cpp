@@ -141,25 +141,25 @@ ChildWidget::ChildWidget(QWidget* parent)
 
   QPushButton* insertButton = new QPushButton();
   insertButton->setIcon(QIcon(":/images/insertRow.svg"));
-  insertButton->setToolTip(tr("Insert row"));
+  insertButton->setToolTip(tr("Insert symbol"));
   insertButton->setMaximumSize(QSize(24, 24));
   connect(insertButton, SIGNAL(clicked()), this, SLOT(insertSymbol()));
 
   QPushButton* joinButton = new QPushButton();
   joinButton->setIcon(QIcon(":/images/joinRow.svg"));
-  joinButton->setToolTip(tr("Join rows"));
+  joinButton->setToolTip(tr("Join symbols"));
   joinButton->setMaximumSize(QSize(24, 24));
   connect(joinButton, SIGNAL(clicked()), this, SLOT(joinSymbol()));
 
   QPushButton* splitButton = new QPushButton();
   splitButton->setIcon(QIcon(":/images/splitRow.svg"));
-  splitButton->setToolTip(tr("Split row"));
+  splitButton->setToolTip(tr("Split symbol"));
   splitButton->setMaximumSize(QSize(24, 24));
   connect(splitButton, SIGNAL(clicked()), this, SLOT(splitSymbol()));
 
   QPushButton* removeButton = new QPushButton();
   removeButton->setIcon(QIcon(":/images/deleteRow.png"));
-  removeButton->setToolTip(tr("Remove row"));
+  removeButton->setToolTip(tr("Remove symbol"));
   removeButton->setMaximumSize(QSize(24, 24));
   connect(removeButton, SIGNAL(clicked()), this, SLOT(deleteSymbol()));
 

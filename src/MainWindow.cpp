@@ -636,7 +636,7 @@ void MainWindow::createActions() {
   saveAct = new QAction(QIcon(":/images/filesave.png"),
                         tr("&Save"), this);
   saveAct->setShortcuts(QKeySequence::Save);
-  saveAct->setToolTip(tr("Save the document to disk"));
+  saveAct->setStatusTip(tr("Save the document to disk"));
   saveAct->setEnabled(false);
   connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
@@ -650,7 +650,7 @@ void MainWindow::createActions() {
 
   importPLSymAct = new QAction(
                              tr("I&mport file with one symbol per line"), this);
-  importPLSymAct->setToolTip(tr("Import symbols from text document"));
+  importPLSymAct->setStatusTip(tr("Import symbols from text document"));
   importPLSymAct->setEnabled(false);
   connect(importPLSymAct, SIGNAL(triggered()), this, SLOT(importPLSym()));
 
@@ -661,18 +661,18 @@ void MainWindow::createActions() {
   connect(importTextSymAct, SIGNAL(triggered()), this, SLOT(importTextSym()));
 
   // TODO cez parameter?
-  symbolPerLineAct = new QAction(tr("One symbol per line..."), this);
-  symbolPerLineAct->setToolTip(tr("Export symbols to text file."));
+  symbolPerLineAct = new QAction(tr("Symbol per line…"), this);
+  symbolPerLineAct->setStatusTip(tr("Export symbols to text file."));
   symbolPerLineAct->setEnabled(false);
   connect(symbolPerLineAct, SIGNAL(triggered()), this, SLOT(symbolPerLine()));
 
-  rowPerLineAct = new QAction(tr("One row per line..."), this);
-  rowPerLineAct->setToolTip(tr("Export symbols to text file."));
+  rowPerLineAct = new QAction(tr("Line by line…"), this);
+  rowPerLineAct->setStatusTip(tr("Export symbols to text file."));
   rowPerLineAct->setEnabled(false);
   connect(rowPerLineAct, SIGNAL(triggered()), this, SLOT(rowPerLine()));
 
-  paragraphPerLineAct = new QAction(tr("One paragraph per line..."), this);
-  paragraphPerLineAct->setToolTip(tr("Export symbols to text file."));
+  paragraphPerLineAct = new QAction(tr("Paragraph per line…"), this);
+  paragraphPerLineAct->setStatusTip(tr("Export symbols to text file."));
   paragraphPerLineAct->setEnabled(false);
   connect(paragraphPerLineAct, SIGNAL(triggered()), this,
           SLOT(paragraphPerLine()));
@@ -680,12 +680,12 @@ void MainWindow::createActions() {
   closeAct = new QAction(QIcon(":/images/window-close.png"),
                          tr("Cl&ose"), this);
   closeAct->setShortcut(QKeySequence::Close);
-  closeAct->setToolTip(tr("Close the active tab"));
+  closeAct->setStatusTip(tr("Close the active tab"));
   connect(closeAct, SIGNAL(triggered()), this, SLOT(closeActiveTab()));
 
   closeAllAct = new QAction(tr("Close &All"), this);
   closeAllAct->setShortcut(tr("Ctrl+Shift+W"));
-  closeAllAct->setToolTip(tr("Close all the tabs"));
+  closeAllAct->setStatusTip(tr("Close all the tabs"));
   connect(closeAllAct, SIGNAL(triggered()), this, SLOT(closeAllTabs()));
 
   separatorAct = new QAction(this);
