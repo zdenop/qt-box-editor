@@ -50,6 +50,8 @@ These icons are Faenza Icons:
     zoom-out.png
     zoom-selection.png (is modified zoom-fit.png)
 
+import.svg is modified icon of Faenza fileopen icon.
+
 joinRow.svg and splitRow.svg are adapted icons of lmproulx icons [Convergent](http://www.openclipart.org/detail/convergent-by-lmproulx) and [Divergent](http://www.openclipart.org/detail/divergent-by-lmproulx)
 
 Other icons/artwork were created for Qt Box Editor and they are release under Apache License, Version 2.0.

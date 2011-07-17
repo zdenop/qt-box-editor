@@ -1,3 +1,12 @@
+1.05
+- status bar improvement:
+  * UTF code of symbol
+  * size of box
+  * zoom factor
+- export of symbols to txt file ( symbol per line, line by line, paragraph per line)
+- import of symbols from txt file
+- improved settings dialog for export/import
+
 1.04
 - direct typing mode (automatic moving to next symbol cell after key release event)
 - improved copy&paste in symbol table
