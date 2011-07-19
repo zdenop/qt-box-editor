@@ -110,6 +110,7 @@ class ChildWidget : public QSplitter {
     void pasteToCell();
 
   public slots:
+    void sbValueChanged(int sbdValue);
     void insertSymbol();
     void splitSymbol();
     void joinSymbol();

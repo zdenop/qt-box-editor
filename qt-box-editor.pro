@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.05
+VERSION = 1.06dev
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -13,7 +13,7 @@ INCLUDEPATH += ./ \
 
 QT += network \
     svg \
-    #testlib
+    testlib
 
 CONFIG += release
 
@@ -28,19 +28,21 @@ FORMS += \
     dialogs/GetRowIDDialog.ui \
     src/SettingsDialog.ui
 
-SOURCES += src/main.cpp \
-    src/MainWindow.cpp \
-    src/ChildWidget.cpp \
-    src/SettingsDialog.cpp \
+SOURCES += dialogs/GetRowIDDialog.cpp \
     dialogs/ShortCutsDialog.cpp \
-    dialogs/GetRowIDDialog.cpp
+    src/DelegateEditors.cpp \
+    src/ChildWidget.cpp \
+    src/main.cpp \
+    src/MainWindow.cpp \
+    src/SettingsDialog.cpp
 
-HEADERS += src/include/MainWindow.h \
+HEADERS += dialogs/GetRowIDDialog.h \
+    dialogs/ShortCutsDialog.h \
+    src/include/DelegateEditors.h \
+    src/include/MainWindow.h \
     src/include/ChildWidget.h \
     src/include/Settings.h \
-    src/include/SettingsDialog.h \
-    dialogs/ShortCutsDialog.h \
-    dialogs/GetRowIDDialog.h
+    src/include/SettingsDialog.h
 
 RESOURCES = resources/application.qrc
 
@@ -50,7 +52,7 @@ win32: {
     CONFIG += static release embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
-    QTPLUGIN += qsvg # image formats
-    DEFINES += WINDOWS _COMPOSE_STATIC_
+    #QTPLUGIN += qsvg # image formats
+    #DEFINES += WINDOWS _COMPOSE_STATIC_
     RC_FILE = resources/win.rc
 }

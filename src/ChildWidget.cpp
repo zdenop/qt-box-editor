@@ -28,6 +28,7 @@
 #include "include/Settings.h"
 #include "include/SettingsDialog.h"
 #include "dialogs/GetRowIDDialog.h"
+#include "include/DelegateEditors.h"
 
 ChildWidget::ChildWidget(QWidget* parent)
   : QSplitter(Qt::Horizontal, parent) {
@@ -65,6 +66,18 @@ ChildWidget::ChildWidget(QWidget* parent)
   table->hideColumn(7);
   table->hideColumn(8);
   table->installEventFilter(this);  // installs event filter
+
+  // SpinBoxDelegate delegate;
+  SpinBoxDelegate *delegate = new SpinBoxDelegate;
+  // TODO(zdenop): setMaximum for delegates after changing box
+  table->setItemDelegateForColumn(1, delegate);
+  table->setItemDelegateForColumn(2, delegate);
+  table->setItemDelegateForColumn(3, delegate);
+  table->setItemDelegateForColumn(4, delegate);
+  connect(delegate, SIGNAL(sbd_valueChanged(int)), this,
+          SLOT(sbValueChanged(int)));
+  connect(delegate, SIGNAL(sbd_editingFinished()), this,
+          SLOT(drawSelectionRects()));
 
   // Font for table
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -325,12 +338,12 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
     tableVisibleWidth += table->verticalHeader()->width();
   }
 
-  tableVisibleWidth += table->verticalScrollBar()->width(); // scrollbar
+  tableVisibleWidth += table->verticalScrollBar()->width();  // scrollbar
 
   for (int col = 0; col < table->horizontalHeader()->count(); col++) {
     if (table->columnWidth(col) > 0)
-        tableVisibleWidth += table->columnWidth(col) + 1;
-        // add 1 pixel for table grid
+      tableVisibleWidth += table->columnWidth(col) + 1;
+    // add 1 pixel for table grid
   }
 
   QList<int> splitterSizes;
@@ -1247,4 +1260,36 @@ void ChildWidget::setCurrentBoxFile(const QString& fileName) {
 
 QString ChildWidget::strippedName(const QString& fullFileName) {
   return QFileInfo(fullFileName).fileName();
+}
+
+void ChildWidget::sbValueChanged(int sbdValue) {
+  QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+  QModelIndex index = selectedIndexes.first();
+
+  int left = model->index(index.row(), 1).data().toInt();
+  int bottom = model->index(index.row(), 2).data().toInt();
+  int right = model->index(index.row(), 3).data().toInt();
+  int top = model->index(index.row(), 4).data().toInt();
+
+  switch (index.column()) {
+  case 1:
+    left = sbdValue;
+    break;
+  case 2:
+    bottom = sbdValue;
+    break;
+  case 3:
+    right = sbdValue;
+    break;
+  case 4:
+    top = sbdValue;
+    break;
+  default :
+    break;
+  }
+
+  imageSelectionRect->setRect(QRectF(QPoint(left, top),
+                                     QPointF(right, bottom)));
+  imageSelectionRect->setVisible(true);
+  imageView->ensureVisible(imageSelectionRect);
 }
