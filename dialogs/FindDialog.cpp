@@ -21,6 +21,7 @@
 **********************************************************************/
 
 #include "dialogs/FindDialog.h"
+#include "include/Settings.h"
 
 FindDialog::FindDialog(QWidget* parent)
   : QDialog(parent) {
@@ -46,6 +47,9 @@ FindDialog::FindDialog(QWidget* parent)
   connect(findNextButton, SIGNAL(clicked()), this, SLOT(findNext()));
   connect(findPrevButton, SIGNAL(clicked()), this, SLOT(findPrev()));
   connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
+  connect(checkBox_Mc, SIGNAL(toggled(bool)), this, SLOT(changed_Mc(bool)));
+
+  getSettings();
 }
 
 void FindDialog::on_lineEdit_textChanged() {
@@ -67,4 +71,34 @@ void FindDialog::findPrev() {
     checkBox_Mc->isChecked() ? Qt::CaseSensitive
     : Qt::CaseInsensitive;
   emit findPrev(symbol, mc);
+}
+
+void FindDialog::changed_Mc(bool status) {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
+  settings.setValue("Find/MatchCase", status);
+}
+
+void FindDialog::closeEvent(QCloseEvent* event) {
+    writeGeometry();
+    event->accept();
+}
+
+void FindDialog::getSettings() {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
+  if (settings.contains("Find/MatchCase"))
+    checkBox_Mc->setChecked(settings.value("Find/MatchCase").toBool());
+
+  QPoint pos = settings.value("Find/Pos", QPoint(200, 200)).toPoint();
+  QSize size = settings.value("Find/Size").toSize();
+  resize(size);
+  move(pos);
+}
+
+void FindDialog::writeGeometry() {
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
+  settings.setValue("Find/Pos", pos());
+  settings.setValue("Find/Size", size());
 }

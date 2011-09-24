@@ -23,6 +23,8 @@
 #ifndef DIALOGS_FINDDIALOG_H_
 #define DIALOGS_FINDDIALOG_H_
 
+#include <QtCore/QSettings>
+#include <QtGui/QCloseEvent>
 #include <QtGui/QPushButton>
 #include <QtGui/QDialog>
 
@@ -38,15 +40,22 @@ class FindDialog : public QDialog, public Ui::Find {
     void findNext(const QString &smbl, Qt::CaseSensitivity mc);
     void findPrev(const QString &smbl, Qt::CaseSensitivity mc);
 
+  protected:
+    void closeEvent(QCloseEvent* event);
+
   private:
     QPushButton *findNextButton;
     QPushButton *findPrevButton;
     QPushButton *closeButton;
 
+    void writeGeometry();
+
   private slots:
     void on_lineEdit_textChanged();
     void findNext();
     void findPrev();
+    void changed_Mc(bool status);
+    void getSettings();
 };
 
 
