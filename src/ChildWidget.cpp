@@ -28,6 +28,7 @@
 #include "include/Settings.h"
 #include "include/SettingsDialog.h"
 #include "dialogs/GetRowIDDialog.h"
+#include "dialogs/FindDialog.h"
 #include "include/DelegateEditors.h"
 
 ChildWidget::ChildWidget(QWidget* parent)
@@ -120,6 +121,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   imageView = new QGraphicsView(imageScene);
   imageView->setRenderHints(QPainter::Antialiasing |
                             QPainter::SmoothPixmapTransform);
+  imageView->setAttribute(Qt::WA_TranslucentBackground, true);
   imageView->setAutoFillBackground(true);
   imageView->setBackgroundBrush(backgroundColor);
 
@@ -218,6 +220,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   boxesVisible = false;
   symbolShown = true;
   directTypingMode = false;
+  f_dialog = 0;
 }
 
 bool ChildWidget::loadImage(const QString& fileName) {
@@ -1148,6 +1151,24 @@ void ChildWidget::goToRow() {
   }
 }
 
+void ChildWidget::find() {
+    if (!f_dialog) {
+      f_dialog = new FindDialog(this);
+      connect(f_dialog, SIGNAL(findNext(const QString &,
+                                        Qt::CaseSensitivity)),
+              this, SLOT(findNext(const QString &,
+                                  Qt::CaseSensitivity)));
+      connect(f_dialog, SIGNAL(findPrev(const QString &,
+                                        Qt::CaseSensitivity)),
+              this, SLOT(findPrev(const QString &,
+                                  Qt::CaseSensitivity)));
+    }
+
+    f_dialog->show();
+    f_dialog->raise();
+    f_dialog->activateWindow();
+}
+
 QString ChildWidget::userFriendlyCurrentFile() {
   return strippedName(boxFile);
 }
@@ -1213,6 +1234,7 @@ void ChildWidget::drawSelectionRects() {
     imageSelectionRect->setVisible(true);
     imageView->ensureVisible(imageSelectionRect);
 
+
     if (symbolShown == true) {
       text2->setPlainText(letter);
       // TODO(zdenop): get font metrics and calculate better placement
@@ -1226,6 +1248,7 @@ void ChildWidget::drawSelectionRects() {
     imageSelectionRect->setVisible(false);
     text2->setVisible(false);
   }
+
 }
 
 void ChildWidget::closeEvent(QCloseEvent* event) {
@@ -1292,4 +1315,35 @@ void ChildWidget::sbValueChanged(int sbdValue) {
                                      QPointF(right, bottom)));
   imageSelectionRect->setVisible(true);
   imageView->ensureVisible(imageSelectionRect);
+}
+
+void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
+  int row = table->currentIndex().row() + 1;
+  while (row < model->rowCount()) {
+    QString letter = model->index(row, 0).data().toString();
+    if (letter.contains(symbol, mc)) {
+      table->setCurrentIndex(model->index(row, 0));
+      table->setFocus();
+      drawSelectionRects();
+      return;
+    }
+    ++row;
+  }
+  QApplication::beep();
+}
+
+void ChildWidget::findPrev(const QString &symbol,
+                           Qt::CaseSensitivity mc) {
+  int row = table->currentIndex().row() - 1;
+  while (row >= 0) {
+    QString letter = model->index(row, 0).data().toString();
+    if (letter.contains(symbol, mc)) {
+      table->setCurrentIndex(model->index(row, 0));
+      table->setFocus();
+      drawSelectionRects();
+      return;
+    }
+    --row;
+  }
+  QApplication::beep();
 }

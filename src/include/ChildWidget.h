@@ -54,6 +54,7 @@ class QItemSelectionModel;
 class QTableView;
 class QGraphicsItem;
 class QGraphicsRectItem;
+class FindDialog;
 
 class ChildWidget : public QSplitter {
     Q_OBJECT
@@ -120,6 +121,9 @@ class ChildWidget : public QSplitter {
     void moveDown();
     void moveTo();
     void goToRow();
+    void find();
+    void findNext(const QString &symbol, Qt::CaseSensitivity mc);
+    void findPrev(const QString &symbol, Qt::CaseSensitivity mc);
 
   private slots:
     void documentWasModified();
@@ -132,6 +136,7 @@ class ChildWidget : public QSplitter {
     QColor boxColor;
     QColor backgroundColor;
     QGraphicsItem* m_message;
+    FindDialog *f_dialog;
 
     void moveSymbolRow(int direction);
     QList<QTableWidgetItem*> takeRow(int row);

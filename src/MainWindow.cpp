@@ -427,6 +427,13 @@ void MainWindow::goToRow() {
     activeChild()->goToRow();
   }
 }
+
+void MainWindow::find() {
+  if (activeChild()) {
+    activeChild()->find();
+  }
+}
+
 void MainWindow::slotSettings() {
   runSettingsDialog = new SettingsDialog(this);
   runSettingsDialog->exec();
@@ -543,6 +550,7 @@ void MainWindow::updateMenus() {
   zoomToSelectionAct->setEnabled(activeChild() != 0);
   showSymbolAct->setEnabled(activeChild() != 0);
   goToRowAct->setEnabled(activeChild() != 0);
+  findAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
   DirectTypingAct->setEnabled(activeChild() != 0);
 }
@@ -823,6 +831,11 @@ void MainWindow::createActions() {
   goToRowAct->setShortcut(tr("Ctrl+G"));
   connect(goToRowAct, SIGNAL(triggered()), this, SLOT(goToRow()));
 
+  findAct = new QAction(QIcon(":/images/gnome-edit-find.svg"),
+                           tr("&Find…"), this);
+  findAct->setShortcut(tr("Ctrl+F"));
+  connect(findAct, SIGNAL(triggered()), this, SLOT(find()));
+
   settingsAct = new QAction(tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
   settingsAct->setToolTip(tr("Programm settings"));
@@ -889,6 +902,7 @@ void MainWindow::createMenus() {
   editMenu->addAction(moveDownAct);
   editMenu->addAction(moveToAct);
   editMenu->addAction(goToRowAct);
+  editMenu->addAction(findAct);
   editMenu->addSeparator();
   editMenu->addAction(DirectTypingAct);
   editMenu->addSeparator();

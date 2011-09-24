@@ -26,7 +26,8 @@ DEFINES += VERSION=\\\"$${VERSION}\\\"
 FORMS += \
     dialogs/ShortCutDialog.ui \
     dialogs/GetRowIDDialog.ui \
-    src/SettingsDialog.ui
+    src/SettingsDialog.ui \
+    dialogs/FindDialog.ui
 
 SOURCES += dialogs/GetRowIDDialog.cpp \
     dialogs/ShortCutsDialog.cpp \
@@ -34,7 +35,8 @@ SOURCES += dialogs/GetRowIDDialog.cpp \
     src/ChildWidget.cpp \
     src/main.cpp \
     src/MainWindow.cpp \
-    src/SettingsDialog.cpp
+    src/SettingsDialog.cpp \
+    dialogs/FindDialog.cpp
 
 HEADERS += dialogs/GetRowIDDialog.h \
     dialogs/ShortCutsDialog.h \
@@ -42,13 +44,14 @@ HEADERS += dialogs/GetRowIDDialog.h \
     src/include/MainWindow.h \
     src/include/ChildWidget.h \
     src/include/Settings.h \
-    src/include/SettingsDialog.h
+    src/include/SettingsDialog.h \
+    dialogs/FindDialog.h
 
 RESOURCES = resources/application.qrc
 
 win32: {
     DESTDIR = ./win32
-    DIR_SEPARATOR = \
+    #DIR_SEPARATOR = \
     CONFIG += static release embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
@@ -56,3 +59,6 @@ win32: {
     #DEFINES += WINDOWS _COMPOSE_STATIC_
     RC_FILE = resources/win.rc
 }
+
+
+
