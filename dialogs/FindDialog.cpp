@@ -91,7 +91,7 @@ void FindDialog::getSettings() {
     checkBox_Mc->setChecked(settings.value("Find/MatchCase").toBool());
 
   QPoint pos = settings.value("Find/Pos", QPoint(200, 200)).toPoint();
-  QSize size = settings.value("Find/Size").toSize();
+  QSize size = settings.value("Find/Size", QSize(300, 100)).toSize();
   resize(size);
   move(pos);
 }
