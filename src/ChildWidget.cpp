@@ -1153,7 +1153,7 @@ void ChildWidget::goToRow() {
 
 void ChildWidget::find() {
     if (!f_dialog) {
-      f_dialog = new FindDialog(this);
+      f_dialog = new FindDialog(this, userFriendlyCurrentFile());
       connect(f_dialog, SIGNAL(findNext(const QString &,
                                         Qt::CaseSensitivity)),
               this, SLOT(findNext(const QString &,
@@ -1255,6 +1255,8 @@ void ChildWidget::closeEvent(QCloseEvent* event) {
   if (!maybeSave()) {
     event->ignore();
   }
+  if (f_dialog)
+    delete f_dialog;
 }
 
 bool ChildWidget::maybeSave() {

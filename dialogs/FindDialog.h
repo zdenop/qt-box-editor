@@ -34,7 +34,7 @@ class FindDialog : public QDialog, public Ui::Find {
   Q_OBJECT
 
   public:
-    explicit FindDialog(QWidget* parent = 0);
+    explicit FindDialog(QWidget* parent = 0, QString title = "");
 
   signals:
     void findNext(const QString &smbl, Qt::CaseSensitivity mc);

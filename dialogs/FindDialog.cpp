@@ -23,10 +23,12 @@
 #include "dialogs/FindDialog.h"
 #include "include/Settings.h"
 
-FindDialog::FindDialog(QWidget* parent)
+FindDialog::FindDialog(QWidget* parent, QString title)
   : QDialog(parent) {
   setupUi(this);
 
+  if (!title.isEmpty())
+      setWindowTitle(tr("Find in %1:").arg(title));
   findNextButton = new QPushButton(tr("&Next"));
   findNextButton->setDefault(true);
   findNextButton->setEnabled(false);
