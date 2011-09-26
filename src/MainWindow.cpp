@@ -952,6 +952,8 @@ void MainWindow::createToolBars() {
   editToolBar->addAction(boldAct);
   editToolBar->addAction(italicAct);
   editToolBar->addAction(underlineAct);
+  editToolBar->addSeparator();
+  editToolBar->addAction(findAct);
 }
 
 void MainWindow::createStatusBar() {
