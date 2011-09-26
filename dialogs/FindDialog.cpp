@@ -43,7 +43,7 @@ FindDialog::FindDialog(QWidget* parent, QString title)
   buttonBox->addButton(closeButton,
                        QDialogButtonBox::RejectRole);
 
-  QRegExp regExp(".");
+  QRegExp regExp(".+");  // no empty string test
   lineEdit->setValidator(new QRegExpValidator(regExp, this));
 
   connect(findNextButton, SIGNAL(clicked()), this, SLOT(findNext()));
