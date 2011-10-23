@@ -865,22 +865,14 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
     QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
     if (pKeyEvent->modifiers() & Qt::ControlModifier) {
       switch (pKeyEvent->key()) {
-      case Qt::Key_Up: {
-        moveSymbolRow(-1);
-        break;
-      }
-      case Qt::Key_Down: {
-        moveSymbolRow(2);
-        break;
-      }
-      case Qt::Key_C: {
-        copyFromCell();
-        break;
-      }
-      case Qt::Key_V: {
-        pasteToCell();
-        break;
-      }
+          case Qt::Key_C: {
+            copyFromCell();
+            break;
+          }
+          case Qt::Key_V: {
+            pasteToCell();
+            break;
+          }
       }
       pKeyEvent->accept();
       return true;
