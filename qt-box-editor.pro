@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.06
+VERSION = 1.07dev
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -13,7 +13,7 @@ INCLUDEPATH += ./ \
 
 QT += network \
     svg \
-    # testlib
+    testlib
 
 CONFIG += release
 

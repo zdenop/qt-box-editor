@@ -564,7 +564,6 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
   QTextStream out(&file);
   out.setCodec("UTF-8");
   QApplication::setOverrideCursor(Qt::WaitCursor);
-
   QString letter;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -585,24 +584,29 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
 
     if (last_bottom == -1)
       last_bottom = top;
-    if (eType == 1 && (right_prev != -1)) {
+
+   if (eType == 1 && (right_prev != -1)) {
       out << "\n";
     }
+
+    // line by line
     if (eType == 2) {
-      if (((left - right_prev) >= wordSpace) && (right_prev != -1))
+      if (((left - right_prev) >= wordSpace) && (right_prev != -1)) {
         // new word
         out << " ";
-      if (((left - right_prev) <= -wordSpace) && (right_prev != -1))
-        // new line
+      } else if (((left - right_prev) <= (2 * (left - right))) && (right_prev != -1)) {
+        // new line -> if negative difference is bigger than double of letter width
         out << "\n";
+      }
     }
+
     if (eType == 3) {
       if (((left - right_prev) >= wordSpace) && (right_prev != -1))
         // new word
         out << " ";
 
-      if (((left - right_prev) <= -wordSpace) && (right_prev != -1)) {
-        // new line
+      if (((left - right_prev) <= (2 * (left - right))) && (right_prev != -1)) {
+        // new line -> if negative difference is bigger than double of letter width
         if (line_end_prev == 0)  // first line
           line_end_prev = right;
         if ((left - line_start_prev >= paraIndent) ||  // distance from left
