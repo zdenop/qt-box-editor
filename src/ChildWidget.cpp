@@ -54,10 +54,6 @@ ChildWidget::ChildWidget(QWidget* parent)
     selectionModel,
     SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     this, SLOT(emitBoxChanged()));
-  connect(
-    selectionModel,
-    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-    this, SLOT(drawSelectionRects()));
   table->setSelectionModel(selectionModel);
   // table->verticalHeader()->hide();
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
@@ -1220,6 +1216,7 @@ void ChildWidget::documentWasModified() {
 }
 
 void ChildWidget::emitBoxChanged() {
+  drawSelectionRects();
   emit boxChanged();
 }
 
