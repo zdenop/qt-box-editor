@@ -36,6 +36,7 @@ SOURCES += dialogs/GetRowIDDialog.cpp \
     src/main.cpp \
     src/MainWindow.cpp \
     src/SettingsDialog.cpp \
+    src/TessTools.cpp \
     dialogs/FindDialog.cpp
 
 HEADERS += dialogs/GetRowIDDialog.h \
@@ -45,6 +46,7 @@ HEADERS += dialogs/GetRowIDDialog.h \
     src/include/ChildWidget.h \
     src/include/Settings.h \
     src/include/SettingsDialog.h \
+    src/include/TessTools.h \
     dialogs/FindDialog.h
 
 RESOURCES = resources/application.qrc
@@ -60,5 +62,11 @@ win32: {
     RC_FILE = resources/win.rc
 }
 
+QMAKE_CXXFLAGS += -Wno-ignored-qualifiers
 
+unix: {
+    INCLUDEPATH += /usr/include/leptonica /usr/local/include/tesseract/
+#/opt/include/tesseract/
+    LIBS += -llept -ltesseract
+}
 

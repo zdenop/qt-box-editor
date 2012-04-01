@@ -30,6 +30,7 @@
 #include "dialogs/GetRowIDDialog.h"
 #include "dialogs/FindDialog.h"
 #include "include/DelegateEditors.h"
+#include "include/TessTools.h"
 
 ChildWidget::ChildWidget(QWidget* parent)
   : QSplitter(Qt::Horizontal, parent) {
@@ -227,31 +228,143 @@ bool ChildWidget::loadImage(const QString& fileName) {
                              tr("Cannot load %1.").arg(fileName));
     return false;
   }
+  imageHeight = image.height();
+  imageWidth = image.width();
+  setCurrentImageFile(fileName);
+
   QString boxFileName = QFileInfo(fileName).path() + QDir::separator()
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
-    QMessageBox::warning(this, tr("Missing file"),
-           tr("Cannot load image, because there is no corresponding box file"));
-    return false;
-  }
-  imageHeight = image.height();
-  imageWidth = image.width();
-
-  if (loadBoxes(boxFileName)) {
-    setCurrentImageFile(fileName);
-    imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
-    imageSelectionRect->setParentItem(imageItem);
-    modified = false;
-    emit modifiedChanged();
-    connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
-            SLOT(emitBoxChanged()));
-    connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
-            SLOT(documentWasModified()));
+      if (!qCreateBoxes(fileName, boxFileName)) return false;
   } else {
-    return false;
-  }
+      if (!loadBoxes(boxFileName)) return false;
+      }
+
+  setCurrentBoxFile(boxFileName);
+  imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
+  imageSelectionRect->setParentItem(imageItem);
+  modified = false;
+  emit modifiedChanged();
+  connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
+          SLOT(emitBoxChanged()));
+  connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
+          SLOT(documentWasModified()));
   return true;
+}
+
+bool ChildWidget::qCreateBoxes(const QString& fileName, const QString& boxFileName) {
+    switch( QMessageBox::question(
+                   this,
+                   tr("Missing file"),
+                   tr("Cannot load image, because there is no corresponding box file.\nCreate new?"),
+                   QMessageBox::Yes |
+                   QMessageBox::No |
+                   QMessageBox::Cancel,
+                   QMessageBox::Cancel ) )
+       {
+         case QMessageBox::Yes: {
+           TessTools tt;
+           QString str = tt.makeBoxes(fileName.toUtf8().data());
+           QTextStream boxdata(&str);
+           if (!fillTableData(boxdata))
+                   return false;
+           save(boxFileName);
+           break;
+           }
+         case QMessageBox::No:
+         case QMessageBox::Cancel:
+         default:
+           return false;
+       }
+    return true;
+}
+
+bool ChildWidget::fillTableData(QTextStream &boxdata) {
+    boxdata.setCodec("UTF-8");
+    QString line;
+    int row = 0;
+    int firstPage = -1;
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    do {
+      line = boxdata.readLine();
+      if (!line.isEmpty()) {
+        QFont letterFont;
+        QStringList pieces = line.split(" ", QString::SkipEmptyParts);
+        QString letter = pieces.value(0);
+        bool bold = false, italic = false, underline = false;
+        // formating is present only in case there are more than 2 letters
+        if (letter.at(0) == '@' && letter.size() > 1) {
+          bold = true;
+          letterFont.setBold(true);
+          letter.remove(0, 1);
+        }
+        if (letter.at(0) == '$' && letter.size() > 1) {
+          italic = true;
+          letterFont.setItalic(true);
+          letter.remove(0, 1);
+        }
+        if (letter.at(0) == '\'' && letter.size() > 1) {
+          underline = true;
+          letterFont.setUnderline(true);
+          letter.remove(0, 1);
+        }
+        int left = pieces.value(1).toInt();
+        int bottom = imageHeight - pieces.value(2).toInt();
+        int right = pieces.value(3).toInt();
+        int top = imageHeight - pieces.value(4).toInt();
+        int page = pieces.value(5).toInt();
+
+        // TODO(zdenop): implement support for multipage tif
+        if (firstPage < 0)
+          firstPage = page;  // first page can have number 5 ;-)
+        if (firstPage == page) {  // ignore other pages than first page
+          model->insertRow(row);
+          model->setData(model->index(row, 0, QModelIndex()), letterFont,
+                         Qt::FontRole);
+          model->setData(model->index(row, 0, QModelIndex()), letter);
+          model->setData(model->index(row, 1, QModelIndex()), left);
+          model->setData(model->index(row, 2, QModelIndex()), bottom);
+          model->setData(model->index(row, 3, QModelIndex()), right);
+          model->setData(model->index(row, 4, QModelIndex()), top);
+          model->setData(model->index(row, 5, QModelIndex()), page);
+          model->setData(model->index(row, 6, QModelIndex()), italic);
+          model->setData(model->index(row, 7, QModelIndex()), bold);
+          model->setData(model->index(row, 8, QModelIndex()), underline);
+          row++;
+        }
+      }
+    } while (!line.isEmpty());
+
+    table->resizeColumnsToContents();
+    table->resizeRowsToContents();
+    table->setCornerButtonEnabled(true);
+    table->setWordWrap(true);
+
+    // set size of table
+    int tableVisibleWidth = 0;
+
+    if (!table->verticalHeader()->isHidden()) {
+      tableVisibleWidth += table->verticalHeader()->width();
+    }
+
+    tableVisibleWidth += table->verticalScrollBar()->width();  // scrollbar
+
+    for (int col = 0; col < table->horizontalHeader()->count(); col++) {
+      if (table->columnWidth(col) > 0)
+        tableVisibleWidth += table->columnWidth(col) + 1;
+      // add 1 pixel for table grid
+    }
+
+    QList<int> splitterSizes;
+    splitterSizes << tableVisibleWidth;
+    splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
+    table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setSizes(splitterSizes);
+    table->horizontalHeader()->setStretchLastSection(true);
+
+    QApplication::restoreOverrideCursor();
+    return true;
 }
 
 bool ChildWidget::loadBoxes(const QString& fileName) {
@@ -265,93 +378,8 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
   }
 
   QTextStream in(&file);
-  in.setCodec("UTF-8");
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  QString line;
-  int row = 0;
-  int firstPage = -1;
-  do {
-    line = in.readLine();
-    if (!line.isEmpty()) {
-      QFont letterFont;
-      QStringList pieces = line.split(" ", QString::SkipEmptyParts);
-      QString letter = pieces.value(0);
-      bool bold = false, italic = false, underline = false;
-      // formating is present only in case there are more than 2 letters
-      if (letter.at(0) == '@' && letter.size() > 1) {
-        bold = true;
-        letterFont.setBold(true);
-        letter.remove(0, 1);
-      }
-      if (letter.at(0) == '$' && letter.size() > 1) {
-        italic = true;
-        letterFont.setItalic(true);
-        letter.remove(0, 1);
-      }
-      if (letter.at(0) == '\'' && letter.size() > 1) {
-        underline = true;
-        letterFont.setUnderline(true);
-        letter.remove(0, 1);
-      }
-      int left = pieces.value(1).toInt();
-      int bottom = imageHeight - pieces.value(2).toInt();
-      int right = pieces.value(3).toInt();
-      int top = imageHeight - pieces.value(4).toInt();
-      int page = pieces.value(5).toInt();
-
-      // TODO(zdenop): implement support for multipage tif
-      if (firstPage < 0)
-        firstPage = page;  // first page can have number 5 ;-)
-      if (firstPage == page) {  // ignore other pages than first page
-        model->insertRow(row);
-        model->setData(model->index(row, 0, QModelIndex()), letterFont,
-                       Qt::FontRole);
-        model->setData(model->index(row, 0, QModelIndex()), letter);
-        model->setData(model->index(row, 1, QModelIndex()), left);
-        model->setData(model->index(row, 2, QModelIndex()), bottom);
-        model->setData(model->index(row, 3, QModelIndex()), right);
-        model->setData(model->index(row, 4, QModelIndex()), top);
-        model->setData(model->index(row, 5, QModelIndex()), page);
-        model->setData(model->index(row, 6, QModelIndex()), italic);
-        model->setData(model->index(row, 7, QModelIndex()), bold);
-        model->setData(model->index(row, 8, QModelIndex()), underline);
-        row++;
-      }
-    }
-  } while (!line.isEmpty());
-
+  fillTableData(in);
   file.close();
-  QApplication::restoreOverrideCursor();
-
-  setCurrentBoxFile(fileName);
-
-  table->resizeColumnsToContents();
-  table->resizeRowsToContents();
-  table->setCornerButtonEnabled(true);
-  table->setWordWrap(true);
-
-  // set size of table
-  int tableVisibleWidth = 0;
-
-  if (!table->verticalHeader()->isHidden()) {
-    tableVisibleWidth += table->verticalHeader()->width();
-  }
-
-  tableVisibleWidth += table->verticalScrollBar()->width();  // scrollbar
-
-  for (int col = 0; col < table->horizontalHeader()->count(); col++) {
-    if (table->columnWidth(col) > 0)
-      tableVisibleWidth += table->columnWidth(col) + 1;
-    // add 1 pixel for table grid
-  }
-
-  QList<int> splitterSizes;
-  splitterSizes << tableVisibleWidth;
-  splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
-  table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-  setSizes(splitterSizes);
-  table->horizontalHeader()->setStretchLastSection(true);
-
   return true;
 }
 
