@@ -1,0 +1,9 @@
+*~
+*.swp
+Makefile
+temp*
+.hg*
+x_code*
+qt-box-editor-*
+qt-box-editor.pro.*
+tests*
