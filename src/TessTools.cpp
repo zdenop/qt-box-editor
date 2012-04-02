@@ -32,34 +32,34 @@
 #include <QFile>
 
 QString TessTools::makeBoxes(const char* image) {
-    //TODO(zdenop): remove
-    qDebug() << "makebox:" << image;
+  //TODO(zdenop): remove
+  qDebug() << "makebox:" << image;
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    PIX   *pixs;
-    if ((pixs = pixRead(image)) == NULL) {
-      printf("Unsupported image type.\n");
-      return "";
-    }
-    pixDestroy(&pixs);
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  PIX   *pixs;
+  if ((pixs = pixRead(image)) == NULL) {
+    printf("Unsupported image type.\n");
+    return "";
+  }
+  pixDestroy(&pixs);
 
-    tesseract::TessBaseAPI api;
+  tesseract::TessBaseAPI api;
 
-    // http://code.google.com/p/tesseract-ocr/issues/detail?id=228
-    setlocale (LC_NUMERIC, "C");
+  // http://code.google.com/p/tesseract-ocr/issues/detail?id=228
+  setlocale(LC_NUMERIC, "C");
 
-    //TODO(zdenop): select path, select language
-    if (api.Init(NULL,"eng")) {
-        fprintf(stderr, "Could not initialize tesseract.\n");
-        return "";
-    }
+  //TODO(zdenop): select path, select language
+  if (api.Init(NULL,"eng")) {
+    fprintf(stderr, "Could not initialize tesseract.\n");
+    return "";
+  }
 
-    api.SetVariable("tessedit_create_boxfile", "1");
-    STRING text_out;
-    if (!api.ProcessPages(image, NULL, 0, &text_out)) {
-      printf("Error during processing.\n");
-    }
+  api.SetVariable("tessedit_create_boxfile", "1");
+  STRING text_out;
+  if (!api.ProcessPages(image, NULL, 0, &text_out)) {
+    printf("Error during processing.\n");
+  }
 
-    QApplication::restoreOverrideCursor();
-    return QString::fromUtf8(text_out.string());
+  QApplication::restoreOverrideCursor();
+  return QString::fromUtf8(text_out.string());
 }

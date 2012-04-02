@@ -30,8 +30,8 @@
 
 class TessTools {
 
-  public:
-    QString makeBoxes(const char* image);
+public:
+  QString makeBoxes(const char* image);
 };
 
 

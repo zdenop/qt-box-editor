@@ -58,8 +58,12 @@ win32: {
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti
     QTPLUGIN += qsvg # image formats
-    DEFINES += WINDOWS _COMPOSE_STATIC_
+    DEFINES += WINDOWS _COMPOSE_STATIC_ __BLOB_T_DEFINED
     RC_FILE = resources/win.rc
+    INCLUDEPATH +=  win32-external/include/tesseract/ \
+                    win32-external/include/leptonica/
+    LIBS += win32-external/lib/libtesseract.a \
+            -llept -lws2_32
 }
 
 QMAKE_CXXFLAGS += -Wno-ignored-qualifiers

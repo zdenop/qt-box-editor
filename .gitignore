@@ -1,10 +1,13 @@
 *~
 *.swp
-Makefile
-temp*
 .hg*
+temp*
 x_code*
 qt-box-editor-*
 qt-box-editor.pro.*
 tests*
 old*
+Makefile
+Makefile.Debug
+Makefile.Release
+object_script.*

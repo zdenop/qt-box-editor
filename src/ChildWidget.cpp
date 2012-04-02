@@ -236,10 +236,10 @@ bool ChildWidget::loadImage(const QString& fileName) {
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
-      if (!qCreateBoxes(fileName, boxFileName)) return false;
+    if (!qCreateBoxes(fileName, boxFileName)) return false;
   } else {
-      if (!loadBoxes(boxFileName)) return false;
-      }
+    if (!loadBoxes(boxFileName)) return false;
+  }
 
   setCurrentBoxFile(boxFileName);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
@@ -254,117 +254,116 @@ bool ChildWidget::loadImage(const QString& fileName) {
 }
 
 bool ChildWidget::qCreateBoxes(const QString& fileName, const QString& boxFileName) {
-    switch( QMessageBox::question(
-                   this,
-                   tr("Missing file"),
-                   tr("Cannot load image, because there is no corresponding box file.\nCreate new?"),
-                   QMessageBox::Yes |
-                   QMessageBox::No |
-                   QMessageBox::Cancel,
-                   QMessageBox::Cancel ) )
-       {
-         case QMessageBox::Yes: {
-           TessTools tt;
-           QString str = tt.makeBoxes(fileName.toUtf8().data());
-           QTextStream boxdata(&str);
-           if (!fillTableData(boxdata))
-                   return false;
-           save(boxFileName);
-           break;
-           }
-         case QMessageBox::No:
-         case QMessageBox::Cancel:
-         default:
-           return false;
-       }
-    return true;
+  switch (QMessageBox::question(
+            this,
+            tr("Missing file"),
+            tr("Cannot load image, because there is no corresponding box file.\nCreate new?"),
+            QMessageBox::Yes |
+            QMessageBox::No |
+            QMessageBox::Cancel,
+            QMessageBox::Cancel)) {
+  case QMessageBox::Yes: {
+    TessTools tt;
+    QString str = tt.makeBoxes(fileName.toUtf8().data());
+    QTextStream boxdata(&str);
+    if (!fillTableData(boxdata))
+      return false;
+    save(boxFileName);
+    break;
+  }
+  case QMessageBox::No:
+  case QMessageBox::Cancel:
+  default:
+    return false;
+  }
+  return true;
 }
 
 bool ChildWidget::fillTableData(QTextStream &boxdata) {
-    boxdata.setCodec("UTF-8");
-    QString line;
-    int row = 0;
-    int firstPage = -1;
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    do {
-      line = boxdata.readLine();
-      if (!line.isEmpty()) {
-        QFont letterFont;
-        QStringList pieces = line.split(" ", QString::SkipEmptyParts);
-        QString letter = pieces.value(0);
-        bool bold = false, italic = false, underline = false;
-        // formating is present only in case there are more than 2 letters
-        if (letter.at(0) == '@' && letter.size() > 1) {
-          bold = true;
-          letterFont.setBold(true);
-          letter.remove(0, 1);
-        }
-        if (letter.at(0) == '$' && letter.size() > 1) {
-          italic = true;
-          letterFont.setItalic(true);
-          letter.remove(0, 1);
-        }
-        if (letter.at(0) == '\'' && letter.size() > 1) {
-          underline = true;
-          letterFont.setUnderline(true);
-          letter.remove(0, 1);
-        }
-        int left = pieces.value(1).toInt();
-        int bottom = imageHeight - pieces.value(2).toInt();
-        int right = pieces.value(3).toInt();
-        int top = imageHeight - pieces.value(4).toInt();
-        int page = pieces.value(5).toInt();
-
-        // TODO(zdenop): implement support for multipage tif
-        if (firstPage < 0)
-          firstPage = page;  // first page can have number 5 ;-)
-        if (firstPage == page) {  // ignore other pages than first page
-          model->insertRow(row);
-          model->setData(model->index(row, 0, QModelIndex()), letterFont,
-                         Qt::FontRole);
-          model->setData(model->index(row, 0, QModelIndex()), letter);
-          model->setData(model->index(row, 1, QModelIndex()), left);
-          model->setData(model->index(row, 2, QModelIndex()), bottom);
-          model->setData(model->index(row, 3, QModelIndex()), right);
-          model->setData(model->index(row, 4, QModelIndex()), top);
-          model->setData(model->index(row, 5, QModelIndex()), page);
-          model->setData(model->index(row, 6, QModelIndex()), italic);
-          model->setData(model->index(row, 7, QModelIndex()), bold);
-          model->setData(model->index(row, 8, QModelIndex()), underline);
-          row++;
-        }
+  boxdata.setCodec("UTF-8");
+  QString line;
+  int row = 0;
+  int firstPage = -1;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  do {
+    line = boxdata.readLine();
+    if (!line.isEmpty()) {
+      QFont letterFont;
+      QStringList pieces = line.split(" ", QString::SkipEmptyParts);
+      QString letter = pieces.value(0);
+      bool bold = false, italic = false, underline = false;
+      // formating is present only in case there are more than 2 letters
+      if (letter.at(0) == '@' && letter.size() > 1) {
+        bold = true;
+        letterFont.setBold(true);
+        letter.remove(0, 1);
       }
-    } while (!line.isEmpty());
+      if (letter.at(0) == '$' && letter.size() > 1) {
+        italic = true;
+        letterFont.setItalic(true);
+        letter.remove(0, 1);
+      }
+      if (letter.at(0) == '\'' && letter.size() > 1) {
+        underline = true;
+        letterFont.setUnderline(true);
+        letter.remove(0, 1);
+      }
+      int left = pieces.value(1).toInt();
+      int bottom = imageHeight - pieces.value(2).toInt();
+      int right = pieces.value(3).toInt();
+      int top = imageHeight - pieces.value(4).toInt();
+      int page = pieces.value(5).toInt();
 
-    table->resizeColumnsToContents();
-    table->resizeRowsToContents();
-    table->setCornerButtonEnabled(true);
-    table->setWordWrap(true);
-
-    // set size of table
-    int tableVisibleWidth = 0;
-
-    if (!table->verticalHeader()->isHidden()) {
-      tableVisibleWidth += table->verticalHeader()->width();
+      // TODO(zdenop): implement support for multipage tif
+      if (firstPage < 0)
+        firstPage = page;  // first page can have number 5 ;-)
+      if (firstPage == page) {  // ignore other pages than first page
+        model->insertRow(row);
+        model->setData(model->index(row, 0, QModelIndex()), letterFont,
+                       Qt::FontRole);
+        model->setData(model->index(row, 0, QModelIndex()), letter);
+        model->setData(model->index(row, 1, QModelIndex()), left);
+        model->setData(model->index(row, 2, QModelIndex()), bottom);
+        model->setData(model->index(row, 3, QModelIndex()), right);
+        model->setData(model->index(row, 4, QModelIndex()), top);
+        model->setData(model->index(row, 5, QModelIndex()), page);
+        model->setData(model->index(row, 6, QModelIndex()), italic);
+        model->setData(model->index(row, 7, QModelIndex()), bold);
+        model->setData(model->index(row, 8, QModelIndex()), underline);
+        row++;
+      }
     }
+  } while (!line.isEmpty());
 
-    tableVisibleWidth += table->verticalScrollBar()->width();  // scrollbar
+  table->resizeColumnsToContents();
+  table->resizeRowsToContents();
+  table->setCornerButtonEnabled(true);
+  table->setWordWrap(true);
 
-    for (int col = 0; col < table->horizontalHeader()->count(); col++) {
-      if (table->columnWidth(col) > 0)
-        tableVisibleWidth += table->columnWidth(col) + 1;
-      // add 1 pixel for table grid
-    }
+  // set size of table
+  int tableVisibleWidth = 0;
 
-    QList<int> splitterSizes;
-    splitterSizes << tableVisibleWidth;
-    splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
-    table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    setSizes(splitterSizes);
-    table->horizontalHeader()->setStretchLastSection(true);
+  if (!table->verticalHeader()->isHidden()) {
+    tableVisibleWidth += table->verticalHeader()->width();
+  }
 
-    QApplication::restoreOverrideCursor();
-    return true;
+  tableVisibleWidth += table->verticalScrollBar()->width();  // scrollbar
+
+  for (int col = 0; col < table->horizontalHeader()->count(); col++) {
+    if (table->columnWidth(col) > 0)
+      tableVisibleWidth += table->columnWidth(col) + 1;
+    // add 1 pixel for table grid
+  }
+
+  QList<int> splitterSizes;
+  splitterSizes << tableVisibleWidth;
+  splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
+  table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+  setSizes(splitterSizes);
+  table->horizontalHeader()->setStretchLastSection(true);
+
+  QApplication::restoreOverrideCursor();
+  return true;
 }
 
 bool ChildWidget::loadBoxes(const QString& fileName) {
@@ -450,9 +449,9 @@ bool ChildWidget::importSPLToChild(const QString& fileName) {
     if (!line.isEmpty()) {
       if (row > model->rowCount()) {
         QMessageBox::warning(this, SETTING_APPLICATION,
-                          tr("There are more symbols in import file than boxes!"
-                             " Rest of symbols are ignored").arg(fileName).arg(
-                             file.errorString()));
+                             tr("There are more symbols in import file than boxes!"
+                                " Rest of symbols are ignored").arg(fileName).arg(
+                               file.errorString()));
         file.close();
         QApplication::restoreOverrideCursor();
         return true;
@@ -546,7 +545,7 @@ bool ChildWidget::importTextToChild(const QString& fileName) {
   }
   if (symbols.size() != model->rowCount()) {
     QMessageBox::warning(this, SETTING_APPLICATION,
-           tr("Number of symbols in import file differ with number of boxes!"));
+                         tr("Number of symbols in import file differ with number of boxes!"));
   }
 
   for (int i = 0; i < symbols.size(); ++i) {
@@ -609,7 +608,7 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
     if (last_bottom == -1)
       last_bottom = top;
 
-   if (eType == 1 && (right_prev != -1)) {
+    if (eType == 1 && (right_prev != -1)) {
       out << "\n";
     }
 
@@ -893,14 +892,14 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
     QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
     if (pKeyEvent->modifiers() & Qt::ControlModifier) {
       switch (pKeyEvent->key()) {
-          case Qt::Key_C: {
-            copyFromCell();
-            break;
-          }
-          case Qt::Key_V: {
-            pasteToCell();
-            break;
-          }
+      case Qt::Key_C: {
+        copyFromCell();
+        break;
+      }
+      case Qt::Key_V: {
+        pasteToCell();
+        break;
+      }
       }
       pKeyEvent->accept();
       return true;
@@ -1172,21 +1171,21 @@ void ChildWidget::goToRow() {
 }
 
 void ChildWidget::find() {
-    if (!f_dialog) {
-      f_dialog = new FindDialog(this, userFriendlyCurrentFile());
-      connect(f_dialog, SIGNAL(findNext(const QString &,
-                                        Qt::CaseSensitivity)),
-              this, SLOT(findNext(const QString &,
-                                  Qt::CaseSensitivity)));
-      connect(f_dialog, SIGNAL(findPrev(const QString &,
-                                        Qt::CaseSensitivity)),
-              this, SLOT(findPrev(const QString &,
-                                  Qt::CaseSensitivity)));
-    }
+  if (!f_dialog) {
+    f_dialog = new FindDialog(this, userFriendlyCurrentFile());
+    connect(f_dialog, SIGNAL(findNext(const QString &,
+                                      Qt::CaseSensitivity)),
+            this, SLOT(findNext(const QString &,
+                                Qt::CaseSensitivity)));
+    connect(f_dialog, SIGNAL(findPrev(const QString &,
+                                      Qt::CaseSensitivity)),
+            this, SLOT(findPrev(const QString &,
+                                Qt::CaseSensitivity)));
+  }
 
-    f_dialog->show();
-    f_dialog->raise();
-    f_dialog->activateWindow();
+  f_dialog->show();
+  f_dialog->raise();
+  f_dialog->activateWindow();
 }
 
 QString ChildWidget::userFriendlyCurrentFile() {
