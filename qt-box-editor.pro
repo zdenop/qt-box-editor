@@ -62,8 +62,7 @@ win32: {
     RC_FILE = resources/win.rc
     INCLUDEPATH +=  win32-external/include/tesseract/ \
                     win32-external/include/leptonica/
-    LIBS += win32-external/lib/libtesseract.a \
-            -llept -lws2_32
+    LIBS += -ltesseract -llept -lws2_32 -Lwin32-external/lib
 }
 
 QMAKE_CXXFLAGS += -Wno-ignored-qualifiers

@@ -236,7 +236,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
-    if (!qCreateBoxes(fileName, boxFileName)) return false;
+    if (!qCreateBoxes(boxFileName, image)) return false;
   } else {
     if (!loadBoxes(boxFileName)) return false;
   }
@@ -253,7 +253,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
   return true;
 }
 
-bool ChildWidget::qCreateBoxes(const QString& fileName, const QString& boxFileName) {
+bool ChildWidget::qCreateBoxes(const QString &boxFileName, QImage& image) {
   switch (QMessageBox::question(
             this,
             tr("Missing file"),
@@ -264,7 +264,9 @@ bool ChildWidget::qCreateBoxes(const QString& fileName, const QString& boxFileNa
             QMessageBox::Cancel)) {
   case QMessageBox::Yes: {
     TessTools tt;
-    QString str = tt.makeBoxes(fileName.toUtf8().data());
+    QString str = tt.makeBoxes(image);
+    if (str == "")
+        return false;
     QTextStream boxdata(&str);
     if (!fillTableData(boxdata))
       return false;
