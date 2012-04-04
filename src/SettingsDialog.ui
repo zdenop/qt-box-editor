@@ -46,7 +46,7 @@
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>2</number>
        </property>
        <widget class="QWidget" name="fontAndColorsSett">
         <attribute name="title">
@@ -58,7 +58,7 @@
            <x>5</x>
            <y>5</y>
            <width>386</width>
-           <height>286</height>
+           <height>291</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="fontAndColorsLayout">
@@ -291,7 +291,7 @@
           <rect>
            <x>10</x>
            <y>10</y>
-           <width>174</width>
+           <width>183</width>
            <height>256</height>
           </rect>
          </property>
@@ -467,6 +467,120 @@ p, li { white-space: pre-wrap; }
          </property>
          <property name="text">
           <string>&lt;b&gt;Word space&lt;/b&gt; and &lt;b&gt;Paragraph indent&lt;/b&gt; it used during export to text file</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="tab">
+        <attribute name="title">
+         <string>Tesseract</string>
+        </attribute>
+        <widget class="QLabel" name="lblPrefix">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>20</y>
+           <width>112</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string notr="true">TESSDATA_PREFIX:</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pbPrefix">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>320</x>
+           <y>20</y>
+           <width>71</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Select...</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lnPrefix">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>120</x>
+           <y>20</y>
+           <width>192</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>&lt;p&gt;Put here path to your tessdata directory. E.g. if your tessdata directory is &amp;quot;C:\Program Files\Tesseract-OCR\tessdata&amp;quot; put here &amp;quot;C:\Program Files\Tesseract-OCR\&amp;quot;.&lt;/p&gt;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblLang">
+         <property name="geometry">
+          <rect>
+           <x>9</x>
+           <y>60</y>
+           <width>101</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Language:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="cbLang">
+         <property name="geometry">
+          <rect>
+           <x>120</x>
+           <y>60</y>
+           <width>121</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Available languages&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+        </widget>
+        <widget class="QPushButton" name="pbCheck">
+         <property name="geometry">
+          <rect>
+           <x>320</x>
+           <y>60</y>
+           <width>71</width>
+           <height>21</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>Check</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="lblNote">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>100</y>
+           <width>371</width>
+           <height>91</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;Note:&lt;/span&gt; You must set TESSDATA_PREFIX with tesseract (&amp;gt;=3.00 and &amp;lt;=3.02) language files! Otherwise program can not find  language data files. &lt;/p&gt;&lt;p&gt;Then click on button &amp;quot;Check&amp;quot; to create list of available languages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
