@@ -35,21 +35,7 @@ public:
   QString makeBoxes(const char* image);
   QString makeBoxes(QImage& qImage);
   static PIX* qImage2PIX(QImage& qImage);
-  static QImage PIX2QImage(PIX *pixImage);
-
-protected:
-  Pix*                 pix_;
-  const unsigned char* image_data_;     //< Raw source image.
-
-  int                  image_width_;    //< Width of source image/pix.
-  int                  image_height_;   //< Height of source image/pix.
-  int                  image_bytespp_;  //< Bytes per pixel of source image/pix.
-  int                  image_bytespl_;  //< Bytes per line of source image/pix.
-  // Limits of image rectangle to be processed.
-  int                  scale_;          //< Scale factor from original image.
-  int                  yres_;           //< y pixels/inch in source image.
-  int                  estimated_res_;  //< Resolution estimate from text size.
+  static QImage PIX2qImage(PIX *pixImage);
 };
-
 
 #endif  // SRC_INCLUDE_TESSTOOLS_H_
