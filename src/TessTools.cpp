@@ -36,9 +36,6 @@
  * input: filename
  */
 QString TessTools::makeBoxes(const char* image) {
-  //TODO(zdenop): remove
-  qDebug() << "makebox:" << image;
-
   QApplication::setOverrideCursor(Qt::WaitCursor);
   PIX   *pixs;
   if ((pixs = pixRead(image)) == NULL) {
@@ -72,7 +69,6 @@ QString TessTools::makeBoxes(const char* image) {
  * Create tesseract box data from QImage
  */
 QString TessTools::makeBoxes(QImage& qImage) {
-  qDebug() << "makeBoxes from QImage";
   QApplication::setOverrideCursor(Qt::WaitCursor);
   PIX   *pixs;
   if ((pixs = qImage2PIX(qImage)) == NULL) {
@@ -129,6 +125,7 @@ PIX* TessTools::qImage2PIX(QImage& qImage) {
       *((l_uint8 *)lines + j) = a[j];
     }
   }
+
   return pixEndianByteSwapNew(pixs);
 }
 
@@ -137,10 +134,8 @@ PIX* TessTools::qImage2PIX(QImage& qImage) {
  * input: PIX
  * result: QImage
  */
-QImage TessTools::PIX2QImage(PIX *pixImage) {
-  // TODO: first check if pixImage is PIX ;-) inputFormat(pix)
-
-  l_uint32 * s_data = pixGetData(pixEndianByteSwapNew(pixImage));
+QImage TessTools::PIX2qImage(PIX *pixImage) {
+  l_uint32 * datas = pixGetData(pixEndianByteSwapNew(pixImage));
 
   int width = pixGetWidth(pixImage);
   int height = pixGetHeight(pixImage);
@@ -155,7 +150,7 @@ QImage TessTools::PIX2QImage(PIX *pixImage) {
   else
     format = QImage::Format_RGB32;
 
-  QImage result((uchar*)s_data, width, height, bytesPerLine, format);
+  QImage result((uchar*)datas, width, height, bytesPerLine, format);
 
   // Handle pallete
   QVector<QRgb> _bwCT;
