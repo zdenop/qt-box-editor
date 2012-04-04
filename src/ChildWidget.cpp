@@ -342,24 +342,22 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
   table->setCornerButtonEnabled(true);
   table->setWordWrap(true);
 
-  // set size of table
+  // set optimum size of table
   int tableVisibleWidth = 0;
-
-  if (!table->verticalHeader()->isHidden()) {
-    tableVisibleWidth += table->verticalHeader()->width();
-  }
-
-  tableVisibleWidth += table->verticalScrollBar()->width();  // scrollbar
+  tableVisibleWidth += table->verticalHeader()->sizeHint().width();
 
   for (int col = 0; col < table->horizontalHeader()->count(); col++) {
     if (table->columnWidth(col) > 0)
-      tableVisibleWidth += table->columnWidth(col) + 1;
-    // add 1 pixel for table grid
+      tableVisibleWidth += table->columnWidth(col) + 1;  // add 1 pixel for table grid
   }
+
+  tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();  // scrollbar
+  tableVisibleWidth += table->frameWidth()*2;
 
   QList<int> splitterSizes;
   splitterSizes << tableVisibleWidth;
   splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
+
   table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   setSizes(splitterSizes);
   table->horizontalHeader()->setStretchLastSection(true);
