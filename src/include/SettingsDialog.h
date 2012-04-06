@@ -27,6 +27,9 @@
 #include <QtCore/QSettings>
 #include <QtGui/QColorDialog>
 #include <QtGui/QFontDialog>
+#include <QtGui/QFileDialog>
+#include <QSortFilterProxyModel>
+#include <QDebug>
 
 #include "ui_SettingsDialog.h"
 #include "src/include/Settings.h"
@@ -38,6 +41,8 @@ class SettingsDialog : public QDialog, public Ui::SettingsDialog {
     explicit SettingsDialog(QWidget* pard = 0, int tabIndex = 0);
     ~SettingsDialog();
     void initSettings();
+    void initLangs();
+    QString getLangName(QString lang);
 
   private slots:
     void on_fontButton_clicked();
@@ -45,6 +50,8 @@ class SettingsDialog : public QDialog, public Ui::SettingsDialog {
     void on_rectFillColorButton_clicked();
     void on_colorBoxButton_clicked();
     void on_backgroundColorButton_clicked();
+    void on_pbSelectDP_clicked();
+    void on_pbCheck_clicked();
     void saveSettings();
 
   private:

@@ -23,56 +23,34 @@
 #include <baseapi.h>
 #include <allheaders.h>
 #include "TessTools.h"
+#include "src/include/Settings.h"
 #include <locale.h>
 
-#include <QtCore/QDebug>
 #include <QtGui/QApplication>
+#include <QWidget>
 #include <QTextStream>
+#include <QSettings>
 #include <QStringList>
+#include <QMessageBox>
+#include <QDir>
 #include <QFile>
 
-/*!
- * Create tesseract box data
- * input: filename
- */
-QString TessTools::makeBoxes(const char* image) {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  PIX   *pixs;
-  if ((pixs = pixRead(image)) == NULL) {
-    printf("Unsupported image type.\n");
-    return "";
-  }
-  pixDestroy(&pixs);
+const char *TessTools::kTrainedDataSuffix = "traineddata";
 
-  tesseract::TessBaseAPI api;
+TessTools::TessTools() {
+}
 
-  // http://code.google.com/p/tesseract-ocr/issues/detail?id=228
-  setlocale(LC_NUMERIC, "C");
-
-  //TODO(zdenop): select path, select language
-  if (api.Init(NULL,"eng")) {
-    fprintf(stderr, "Could not initialize tesseract.\n");
-    return "";
-  }
-
-  api.SetVariable("tessedit_create_boxfile", "1");
-  STRING text_out;
-  if (!api.ProcessPages(image, NULL, 0, &text_out)) {
-    printf("Error during processing.\n");
-  }
-
-  QApplication::restoreOverrideCursor();
-  return QString::fromUtf8(text_out.string());
+TessTools::~TessTools() {
 }
 
 /*!
  * Create tesseract box data from QImage
  */
 QString TessTools::makeBoxes(QImage& qImage) {
-  QApplication::setOverrideCursor(Qt::WaitCursor);
   PIX   *pixs;
+
   if ((pixs = qImage2PIX(qImage)) == NULL) {
-    printf("Unsupported image type.\n");
+    msg("Unsupported image type");
     return "";
   }
   tesseract::TessBaseAPI api;
@@ -80,17 +58,32 @@ QString TessTools::makeBoxes(QImage& qImage) {
   // http://code.google.com/p/tesseract-ocr/issues/detail?id=228
   setlocale(LC_NUMERIC, "C");
 
-  //TODO(zdenop): select path, select language
-  if (api.Init(NULL,"eng")) {
-    fprintf(stderr, "Could not initialize tesseract.\n");
+  // QString to  const char *
+  QByteArray byteArray = getLang().toAscii();
+  const char * apiLang = byteArray.data();
+
+  if (strcmp(apiLang, "") == 0) {
+      msg("You need to configure tesseract in Settings!");
+      return "";
+  }
+
+  QByteArray byteArray1 = getDataPath().toUtf8();
+  const char * datapath = byteArray1.data();
+
+  // workaroung if datapath/TESSDATA_PREFIX is set...
+  setenv("TESSDATA_PREFIX", datapath, 1);
+
+  if (api.Init(NULL, apiLang)) {
+    msg("Could not initialize tesseract.\n");
     return "";
   }
 
   api.SetVariable("tessedit_create_boxfile", "1");
   STRING text_out;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   //TODO(zdenop) take care about pages!
   if (!api.ProcessPage(pixs, 0, NULL, NULL, 0, &text_out)) {
-    printf("Error during processing.\n");
+    msg("Error during processing.\n");
   }
 
   QApplication::restoreOverrideCursor();
@@ -135,12 +128,11 @@ PIX* TessTools::qImage2PIX(QImage& qImage) {
  * result: QImage
  */
 QImage TessTools::PIX2qImage(PIX *pixImage) {
-  l_uint32 * datas = pixGetData(pixEndianByteSwapNew(pixImage));
-
   int width = pixGetWidth(pixImage);
   int height = pixGetHeight(pixImage);
   int depth = pixGetDepth(pixImage);
   int bytesPerLine = pixGetWpl(pixImage) * 4;
+  l_uint32 * datas = pixGetData(pixEndianByteSwapNew(pixImage));
 
   QImage::Format format;
   if (depth == 1)
@@ -172,9 +164,67 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
 
   if (result.isNull()) {
     static QImage none(0,0,QImage::Format_Invalid);
-    qDebug() << "***Invalid format!!!";
+    msg("Invalid format!!!");
     return none;
   }
 
   return result.rgbSwapped();
+}
+
+QString TessTools::getDataPath() {
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       SETTING_ORGANIZATION, SETTING_APPLICATION);
+    QString dataPath;
+    if (settings.contains("Tesseract/DataPath")) {
+      dataPath = settings.value("Tesseract/DataPath").toString();
+    }
+    return dataPath;
+}
+
+QString TessTools::getLang() {
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       SETTING_ORGANIZATION, SETTING_APPLICATION);
+    QString lang;
+    if (settings.contains("Tesseract/Lang")) {
+        lang = settings.value("Tesseract/Lang").toString();
+    }
+   return lang;
+}
+
+/*!
+ * Get QList<QString> with list of available languages
+ */
+QList<QString> TessTools::getLanguages(QString datapath) {
+    QList<QString> languages;
+    QDir dir(datapath);
+
+    if (!dir.exists()) {
+      QMessageBox msgBox;
+      msgBox.setText(QObject::tr("Cannot find the tessdata directory '%1'!\n").arg(datapath) +
+                  QObject::tr("Please check your configuration or tesseract instalation"));
+      msgBox.exec();
+      return languages;
+      }
+
+    QString filter = "*.";
+    filter += kTrainedDataSuffix;
+    QStringList filters;
+    filters << filter.trimmed();
+    dir.setNameFilters(filters);
+
+    QFileInfoList list = dir.entryInfoList();
+
+    for (int i = 0; i < list.size(); ++i) {
+      QFileInfo fileInfo = list.at(i);
+      languages.append(QString("%1").arg(fileInfo.baseName()));
+    }
+    qSort(languages);
+
+    return languages;
+}
+
+void TessTools::msg(QString messageText) {
+    QMessageBox msgBox;
+    msgBox.setText(messageText);
+    msgBox.exec();
 }

@@ -21,6 +21,8 @@
 **********************************************************************/
 
 #include "include/SettingsDialog.h"
+#include "include/TessTools.h"
+
 
 SettingsDialog::SettingsDialog(QWidget* parent, int tabIndex)
   : QDialog(parent) {
@@ -28,6 +30,7 @@ SettingsDialog::SettingsDialog(QWidget* parent, int tabIndex)
   setWindowTitle(tr("%1 :: Settings...").arg(SETTING_APPLICATION));
 
   setupUi(this);
+  initLangs();
   initSettings();
 
   QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(saveSettings()));
@@ -69,8 +72,7 @@ void SettingsDialog::on_backgroundColorButton_clicked() {
 
 void SettingsDialog::initSettings() {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                     SETTING_ORGANIZATION, SETTING_APPLICATION);
-
+                       SETTING_ORGANIZATION, SETTING_APPLICATION);
   QString fontname = settings.value("GUI/Font").toString();
 
   if (fontname.isEmpty()) {
@@ -105,6 +107,7 @@ void SettingsDialog::initSettings() {
     backgroundColor = (Qt::gray);
   }
 
+  // Text settings
   if (settings.contains("Text/OpenDialog"))
     cbOpenDialog->setChecked(settings.value("Text/OpenDialog").toBool());
   if (settings.contains("Text/WordSpace"))
@@ -121,6 +124,16 @@ void SettingsDialog::initSettings() {
   updateColorButton(rectFillColorButton, rectFillColor);
   updateColorButton(colorBoxButton, boxColor);
   updateColorButton(backgroundColorButton, backgroundColor);
+
+  // Tesseract settings
+  if (settings.contains("Tesseract/DataPath")) {
+    lnPrefix->setText(settings.value("Tesseract/DataPath").toString());
+  }
+  if (settings.contains("Tesseract/Lang")) {
+      int langindex = cbLang->findData(
+            settings.value("Tesseract/Lang").toString());
+      cbLang->setCurrentIndex(langindex);
+  }
 }
 
 void SettingsDialog::saveSettings() {
@@ -157,6 +170,10 @@ void SettingsDialog::saveSettings() {
   str = str.remove(QRegExp("^\n"));
   settings.setValue("Text/Ligatures", str);
 
+  settings.setValue("Tesseract/DataPath", lnPrefix->text());
+  settings.setValue("Tesseract/Lang",
+                    cbLang->itemData(cbLang->currentIndex()).toString());
+
   // emit setTableFont(tableFont);
   // TODO(zdenop): use font for open child windows
   emit accept();
@@ -183,4 +200,267 @@ void SettingsDialog::updateColorButton(QPushButton* button,
   QSize iconSize(pixmap.width(), pixmap.height());
   button->setIconSize(iconSize);
   button->setIcon(icon);
+}
+
+void SettingsDialog::on_pbSelectDP_clicked() {
+    QString prefix_dir = QFileDialog::getExistingDirectory(
+                          this,
+                          tr("Select Path Prefix To tessdata Directory..."),
+                          lnPrefix->text(),
+                          QFileDialog::ShowDirsOnly
+                          | QFileDialog::DontResolveSymlinks);
+    // we need only prefix without /tessdata!!!
+    if (prefix_dir.contains(QRegExp("/tessdata$")))
+            prefix_dir.replace(QRegExp("/tessdata$"),"/");
+    else if (prefix_dir.contains(QRegExp("/tessdata/$")))
+        prefix_dir.replace(QRegExp("/tessdata/$"),"/");
+    if (prefix_dir != "")
+        lnPrefix->setText(prefix_dir);
+    initLangs();
+}
+
+void SettingsDialog::on_pbCheck_clicked() {
+    initLangs();
+}
+
+void SettingsDialog::initLangs() {
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                    SETTING_ORGANIZATION, SETTING_APPLICATION);
+    QString datapath = settings.value("Tesseract/DataPath").toString();
+    datapath += "tessdata";
+    TessTools tt;
+    QList<QString> languages = tt.getLanguages(datapath);
+
+    // Clean combobox with languages
+    int langsCount = cbLang->count();
+    if (langsCount > 0)
+      for (int i = langsCount; i >= 0; i--) {
+        cbLang->removeItem(0);
+      }
+
+    QString lang;
+    foreach(lang, languages)
+    if (getLangName(lang) == "")
+      cbLang->addItem(lang, lang);
+    else
+      cbLang->addItem(getLangName(lang), lang);
+
+    // sort language list
+    QSortFilterProxyModel* proxy = new QSortFilterProxyModel(cbLang);
+    proxy->setSourceModel(cbLang->model());
+    cbLang->model()->setParent(proxy);
+    cbLang->setModel(proxy);
+    cbLang->model()->sort(0);
+}
+
+/**
+ * Get Language name from ISO 639-1 code
+ * http://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+ */
+QString SettingsDialog::getLangName(QString lang) {
+    QMap<QString,QString> map;
+    map["abk"] = QObject::tr("Abkhaz");
+    map["aar"] = QObject::tr("Afar");
+    map["afr"] = QObject::tr("Afrikaans");
+    map["aka"] = QObject::tr("Akan");
+    map["sqi"] = QObject::tr("Albanian");
+    map["amh"] = QObject::tr("Amharic");
+    map["ara"] = QObject::tr("Arabic");
+    map["arg"] = QObject::tr("Aragonese");
+    map["hye"] = QObject::tr("Armenian");
+    map["asm"] = QObject::tr("Assamese");
+    map["ava"] = QObject::tr("Avaric");
+    map["ave"] = QObject::tr("Avestan");
+    map["aym"] = QObject::tr("Aymara");
+    map["aze"] = QObject::tr("Azerbaijani");
+    map["bam"] = QObject::tr("Bambara");
+    map["bak"] = QObject::tr("Bashkir");
+    map["eus"] = QObject::tr("Basque");
+    map["bel"] = QObject::tr("Belarusian");
+    map["ben"] = QObject::tr("Bengali");
+    map["bih"] = QObject::tr("Bihari");
+    map["bis"] = QObject::tr("Bislama");
+    map["bos"] = QObject::tr("Bosnian");
+    map["bre"] = QObject::tr("Breton");
+    map["bul"] = QObject::tr("Bulgarian");
+    map["mya"] = QObject::tr("Burmese");
+    map["cat"] = QObject::tr("Catalan; Valencian");
+    map["cha"] = QObject::tr("Chamorro");
+    map["che"] = QObject::tr("Chechen");
+    map["nya"] = QObject::tr("Chichewa; Chewa; Nyanja");
+    map["zho"] = QObject::tr("Chinese");
+    map["chv"] = QObject::tr("Chuvash");
+    map["cor"] = QObject::tr("Cornish");
+    map["cos"] = QObject::tr("Corsican");
+    map["cre"] = QObject::tr("Cree");
+    map["hrv"] = QObject::tr("Croatian");
+    map["ces"] = QObject::tr("Czech");
+    map["dan"] = QObject::tr("Danish");
+    map["div"] = QObject::tr("Divehi; Dhivehi; Maldivian;");
+    map["nld"] = QObject::tr("Dutch");
+    map["dzo"] = QObject::tr("Dzongkha");
+    map["eng"] = QObject::tr("English");
+    map["epo"] = QObject::tr("Esperanto");
+    map["est"] = QObject::tr("Estonian");
+    map["ewe"] = QObject::tr("Ewe");
+    map["fao"] = QObject::tr("Faroese");
+    map["fij"] = QObject::tr("Fijian");
+    map["fin"] = QObject::tr("Finnish");
+    map["fra"] = QObject::tr("French");
+    map["ful"] = QObject::tr("Fula; Fulah; Pulaar; Pular");
+    map["glg"] = QObject::tr("Galician");
+    map["kat"] = QObject::tr("Georgian");
+    map["deu"] = QObject::tr("German");
+    map["ell"] = QObject::tr("Greek, Modern");
+    map["grn"] = QObject::tr("Guaraní");
+    map["guj"] = QObject::tr("Gujarati");
+    map["hat"] = QObject::tr("Haitian; Haitian Creole");
+    map["hau"] = QObject::tr("Hausa");
+    map["heb"] = QObject::tr("Hebrew (modern)");
+    map["her"] = QObject::tr("Herero");
+    map["hin"] = QObject::tr("Hindi");
+    map["hmo"] = QObject::tr("Hiri Motu");
+    map["hun"] = QObject::tr("Hungarian");
+    map["ina"] = QObject::tr("Interlingua");
+    map["ind"] = QObject::tr("Indonesian");
+    map["ile"] = QObject::tr("Interlingue");
+    map["gle"] = QObject::tr("Irish");
+    map["ibo"] = QObject::tr("Igbo");
+    map["ipk"] = QObject::tr("Inupiaq");
+    map["ido"] = QObject::tr("Ido");
+    map["isl"] = QObject::tr("Icelandic");
+    map["ita"] = QObject::tr("Italian");
+    map["iku"] = QObject::tr("Inuktitut");
+    map["jpn"] = QObject::tr("Japanese");
+    map["jav"] = QObject::tr("Javanese");
+    map["kal"] = QObject::tr("Kalaallisut, Greenlandic");
+    map["kan"] = QObject::tr("Kannada");
+    map["kau"] = QObject::tr("Kanuri");
+    map["kas"] = QObject::tr("Kashmiri");
+    map["kaz"] = QObject::tr("Kazakh");
+    map["khm"] = QObject::tr("Khmer");
+    map["kik"] = QObject::tr("Kikuyu, Gikuyu");
+    map["kin"] = QObject::tr("Kinyarwanda");
+    map["kir"] = QObject::tr("Kirghiz, Kyrgyz");
+    map["kom"] = QObject::tr("Komi");
+    map["kon"] = QObject::tr("Kongo");
+    map["kor"] = QObject::tr("Korean");
+    map["kur"] = QObject::tr("Kurdish");
+    map["kua"] = QObject::tr("Kwanyama, Kuanyama");
+    map["lat"] = QObject::tr("Latin");
+    map["ltz"] = QObject::tr("Luxembourgish, Letzeburgesch");
+    map["lug"] = QObject::tr("Luganda");
+    map["lim"] = QObject::tr("Limburgish, Limburgan, Limburger");
+    map["lin"] = QObject::tr("Lingala");
+    map["lao"] = QObject::tr("Lao");
+    map["lit"] = QObject::tr("Lithuanian");
+    map["lub"] = QObject::tr("Luba-Katanga");
+    map["lav"] = QObject::tr("Latvian");
+    map["glv"] = QObject::tr("Manx");
+    map["mkd"] = QObject::tr("Macedonian");
+    map["mlg"] = QObject::tr("Malagasy");
+    map["msa"] = QObject::tr("Malay");
+    map["mal"] = QObject::tr("Malayalam");
+    map["mlt"] = QObject::tr("Maltese");
+    map["mri"] = QObject::tr("Māori");
+    map["mar"] = QObject::tr("Marathi (Marāṭhī)");
+    map["mah"] = QObject::tr("Marshallese");
+    map["mon"] = QObject::tr("Mongolian");
+    map["nau"] = QObject::tr("Nauru");
+    map["nav"] = QObject::tr("Navajo, Navaho");
+    map["nob"] = QObject::tr("Norwegian Bokmål");
+    map["nde"] = QObject::tr("North Ndebele");
+    map["nep"] = QObject::tr("Nepali");
+    map["ndo"] = QObject::tr("Ndonga");
+    map["nno"] = QObject::tr("Norwegian Nynorsk");
+    map["nor"] = QObject::tr("Norwegian");
+    map["iii"] = QObject::tr("Nuosu");
+    map["nbl"] = QObject::tr("South Ndebele");
+    map["oci"] = QObject::tr("Occitan");
+    map["oji"] = QObject::tr("Ojibwe, Ojibwa");
+    map["chu"] = QObject::tr("Old Church Slavonic, Church Slavic, Church Slavonic, Old Bulgarian, Old Slavonic");
+    map["orm"] = QObject::tr("Oromo");
+    map["ori"] = QObject::tr("Oriya");
+    map["oss"] = QObject::tr("Ossetian, Ossetic");
+    map["pan"] = QObject::tr("Panjabi, Punjabi");
+    map["pli"] = QObject::tr("Pāli");
+    map["fas"] = QObject::tr("Persian");
+    map["pol"] = QObject::tr("Polish");
+    map["pus"] = QObject::tr("Pashto, Pushto");
+    map["por"] = QObject::tr("Portuguese");
+    map["que"] = QObject::tr("Quechua");
+    map["roh"] = QObject::tr("Romansh");
+    map["run"] = QObject::tr("Kirundi");
+    map["ron"] = QObject::tr("Romanian, Moldavian, Moldovan");
+    map["rus"] = QObject::tr("Russian");
+    map["san"] = QObject::tr("Sanskrit (Saṁskṛta)");
+    map["srd"] = QObject::tr("Sardinian");
+    map["snd"] = QObject::tr("Sindhi");
+    map["sme"] = QObject::tr("Northern Sami");
+    map["smo"] = QObject::tr("Samoan");
+    map["sag"] = QObject::tr("Sango");
+    map["srp"] = QObject::tr("Serbian");
+    map["gla"] = QObject::tr("Scottish Gaelic; Gaelic");
+    map["sna"] = QObject::tr("Shona");
+    map["sin"] = QObject::tr("Sinhala, Sinhalese");
+    map["slk"] = QObject::tr("Slovak");
+    map["slv"] = QObject::tr("Slovene");
+    map["som"] = QObject::tr("Somali");
+    map["sot"] = QObject::tr("Southern Sotho");
+    map["spa"] = QObject::tr("Spanish; Castilian");
+    map["sun"] = QObject::tr("Sundanese");
+    map["swa"] = QObject::tr("Swahili");
+    map["ssw"] = QObject::tr("Swati");
+    map["swe"] = QObject::tr("Swedish");
+    map["tam"] = QObject::tr("Tamil");
+    map["tel"] = QObject::tr("Telugu");
+    map["tgk"] = QObject::tr("Tajik");
+    map["tha"] = QObject::tr("Thai");
+    map["tir"] = QObject::tr("Tigrinya");
+    map["bod"] = QObject::tr("Tibetan Standard, Tibetan, Central");
+    map["tuk"] = QObject::tr("Turkmen");
+    map["tgl"] = QObject::tr("Tagalog");
+    map["tsn"] = QObject::tr("Tswana");
+    map["ton"] = QObject::tr("Tonga (Tonga Islands)");
+    map["tur"] = QObject::tr("Turkish");
+    map["tso"] = QObject::tr("Tsonga");
+    map["tat"] = QObject::tr("Tatar");
+    map["twi"] = QObject::tr("Twi");
+    map["tah"] = QObject::tr("Tahitian");
+    map["uig"] = QObject::tr("Uighur, Uyghur");
+    map["ukr"] = QObject::tr("Ukrainian");
+    map["urd"] = QObject::tr("Urdu");
+    map["uzb"] = QObject::tr("Uzbek");
+    map["ven"] = QObject::tr("Venda");
+    map["vie"] = QObject::tr("Vietnamese");
+    map["vol"] = QObject::tr("Volapük");
+    map["wln"] = QObject::tr("Walloon");
+    map["cym"] = QObject::tr("Welsh");
+    map["wol"] = QObject::tr("Wolof");
+    map["fry"] = QObject::tr("Western Frisian");
+    map["xho"] = QObject::tr("Xhosa");
+    map["yid"] = QObject::tr("Yiddish");
+    map["yor"] = QObject::tr("Yoruba");
+    map["zha"] = QObject::tr("Zhuang, Chuang");
+    map["zul"] = QObject::tr("Zulu");
+
+    // custom definition
+    map["chi_tra"] = QObject::tr("Chinese (Traditional)");
+    map["chi_sim"] = QObject::tr("Chinese (Simplified)");
+    map["dan-frak"] = QObject::tr("Danish (Fraktur)");
+    map["deu-frak"] = QObject::tr("German (Fraktur)");
+    map["slk-frak"] = QObject::tr("Slovak (Fraktur)");
+    map["swe-frak"] = QObject::tr("Swedish (Fraktur)");
+    // xxxx
+    map["chr"] = QObject::tr("Cherokee");
+    map["enm"] = QObject::tr("Middle English");
+    map["frk"] = QObject::tr("Frankish");
+    map["frm"] = QObject::tr("Middle French");
+    map["ita_old"] = QObject::tr("Italian - old");
+    map["osd"] = QObject::tr("Orientation and script detection");
+    map["spa_old"] = QObject::tr("Spanish - old");
+    // unknown
+    map["equ"] = QObject::tr("equ");
+
+    return map[lang];
 }

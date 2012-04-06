@@ -483,17 +483,20 @@ p, li { white-space: pre-wrap; }
         <widget class="QLabel" name="lblPrefix">
          <property name="geometry">
           <rect>
-           <x>0</x>
+           <x>1</x>
            <y>20</y>
-           <width>112</width>
+           <width>111</width>
            <height>21</height>
           </rect>
          </property>
          <property name="text">
           <string notr="true">TESSDATA_PREFIX:</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
         </widget>
-        <widget class="QPushButton" name="pbPrefix">
+        <widget class="QPushButton" name="pbSelectDP">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -511,7 +514,7 @@ p, li { white-space: pre-wrap; }
         </widget>
         <widget class="QLineEdit" name="lnPrefix">
          <property name="enabled">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="geometry">
           <rect>
@@ -522,7 +525,7 @@ p, li { white-space: pre-wrap; }
           </rect>
          </property>
          <property name="toolTip">
-          <string>&lt;p&gt;Put here path to your tessdata directory. E.g. if your tessdata directory is &amp;quot;C:\Program Files\Tesseract-OCR\tessdata&amp;quot; put here &amp;quot;C:\Program Files\Tesseract-OCR\&amp;quot;.&lt;/p&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string/>
@@ -549,7 +552,7 @@ p, li { white-space: pre-wrap; }
           <rect>
            <x>120</x>
            <y>60</y>
-           <width>121</width>
+           <width>191</width>
            <height>20</height>
           </rect>
          </property>
@@ -580,7 +583,7 @@ p, li { white-space: pre-wrap; }
           </rect>
          </property>
          <property name="text">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;Note:&lt;/span&gt; You must set TESSDATA_PREFIX with tesseract (&amp;gt;=3.00 and &amp;lt;=3.02) language files! Otherwise program can not find  language data files. &lt;/p&gt;&lt;p&gt;Then click on button &amp;quot;Check&amp;quot; to create list of available languages.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600; color:#ff0000;&quot;&gt;Note:&lt;/span&gt; You must set &lt;span style=&quot; font-weight:600;&quot;&gt;Data Path&lt;/span&gt; with tesseract (&amp;gt;=3.00 and &amp;lt;=3.02) language files! Otherwise program can not find language data files. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>

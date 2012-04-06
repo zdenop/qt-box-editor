@@ -32,10 +32,18 @@
 class TessTools {
 
 public:
-  QString makeBoxes(const char* image);
+  TessTools();
+  ~TessTools();
   QString makeBoxes(QImage& qImage);
   static PIX* qImage2PIX(QImage& qImage);
   static QImage PIX2qImage(PIX *pixImage);
+  QList<QString> getLanguages(QString datapath);
+
+private:
+  QString getDataPath();
+  QString getLang();
+  void msg(QString messageText);
+  static const char *kTrainedDataSuffix;
 };
 
 #endif  // SRC_INCLUDE_TESSTOOLS_H_
