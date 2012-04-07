@@ -45,11 +45,16 @@ DrawRectangle::~DrawRectangle()
 {
     delete ui;
 }
-
+/**
+ * Input: tesseract coord; e.g.:Bounding box=(197,27)->(206,41)
+ * return: image coord ; e.g.: (197, , 206, )
+ */
 QRect DrawRectangle::getRectangle() const
 {
     QRect coords;
-    coords.setCoords(ui->spinBox_x1->value(), ui->spinBox_y1->value(),
-                     ui->spinBox_x2->value(), ui->spinBox_y2->value());
+    coords.setCoords(ui->spinBox_x1->value(),
+                     ui->spinBox_y1->maximum() - ui->spinBox_y1->value(),
+                     ui->spinBox_x2->value(),
+                     ui->spinBox_y2->maximum() - ui->spinBox_y2->value());
     return coords;
 }
