@@ -29,6 +29,7 @@
 #include "include/SettingsDialog.h"
 #include "dialogs/GetRowIDDialog.h"
 #include "dialogs/FindDialog.h"
+#include "dialogs/DrawRectangle.h"
 #include "include/DelegateEditors.h"
 #include "include/TessTools.h"
 
@@ -218,6 +219,8 @@ ChildWidget::ChildWidget(QWidget* parent)
   symbolShown = true;
   directTypingMode = false;
   f_dialog = 0;
+  m_DrawRectangle = 0;
+  rectangle = 0;
 }
 
 bool ChildWidget::loadImage(const QString& fileName) {
@@ -841,6 +844,26 @@ void ChildWidget::showSymbol() {
   else
     symbolShown = false;
   drawSelectionRects();
+}
+
+void ChildWidget::drawRectangle() {
+    if (!m_DrawRectangle) {
+        m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
+                                            imageWidth, imageHeight);
+    }
+    int ret = m_DrawRectangle->exec();
+    if (ret) {
+      QRect newCoords = m_DrawRectangle->getRectangle();
+      if (rectangle) {
+         imageScene->removeItem(rectangle);
+      }
+      rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
+                              newCoords.width(), newCoords.height(),
+                              QPen(QColor(255, 0, 0, 200)));
+      rectangle->setZValue(1);
+      rectangle->setRect(QRectF(newCoords));
+      rectangle->setVisible(true);
+    }
 }
 
 void ChildWidget::drawBoxes() {

@@ -27,7 +27,8 @@ FORMS += \
     dialogs/ShortCutDialog.ui \
     dialogs/GetRowIDDialog.ui \
     src/SettingsDialog.ui \
-    dialogs/FindDialog.ui
+    dialogs/FindDialog.ui \
+    dialogs/DrawRectangle.ui
 
 SOURCES += dialogs/GetRowIDDialog.cpp \
     dialogs/ShortCutsDialog.cpp \
@@ -37,7 +38,8 @@ SOURCES += dialogs/GetRowIDDialog.cpp \
     src/MainWindow.cpp \
     src/SettingsDialog.cpp \
     src/TessTools.cpp \
-    dialogs/FindDialog.cpp
+    dialogs/FindDialog.cpp \
+    dialogs/DrawRectangle.cpp
 
 HEADERS += dialogs/GetRowIDDialog.h \
     dialogs/ShortCutsDialog.h \
@@ -47,7 +49,8 @@ HEADERS += dialogs/GetRowIDDialog.h \
     src/include/Settings.h \
     src/include/SettingsDialog.h \
     src/include/TessTools.h \
-    dialogs/FindDialog.h
+    dialogs/FindDialog.h \
+    dialogs/DrawRectangle.h
 
 RESOURCES = resources/application.qrc
 

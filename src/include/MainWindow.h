@@ -109,6 +109,7 @@ class MainWindow : public QMainWindow {
     void moveTo();
     void goToRow();
     void find();
+    void drawRect();
     void slotSettings();
     void shortCutList();
     void about();
@@ -193,6 +194,7 @@ class MainWindow : public QMainWindow {
     QAction* moveDownAct;
     QAction* goToRowAct;
     QAction* findAct;
+    QAction* drawRectAct;
     QAction* checkForUpdateAct;
     QAction* shortCutListAct;
     QAction* aboutAct;

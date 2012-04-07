@@ -434,6 +434,12 @@ void MainWindow::find() {
   }
 }
 
+void MainWindow::drawRect() {
+    if (activeChild()) {
+        activeChild()->drawRectangle();
+    }
+}
+
 void MainWindow::slotSettings() {
   runSettingsDialog = new SettingsDialog(this);
   runSettingsDialog->exec();
@@ -551,6 +557,7 @@ void MainWindow::updateMenus() {
   showSymbolAct->setEnabled(activeChild() != 0);
   goToRowAct->setEnabled(activeChild() != 0);
   findAct->setEnabled(activeChild() != 0);
+  drawRectAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
   DirectTypingAct->setEnabled(activeChild() != 0);
 }
@@ -836,6 +843,11 @@ void MainWindow::createActions() {
   findAct->setShortcut(tr("Ctrl+F"));
   connect(findAct, SIGNAL(triggered()), this, SLOT(find()));
 
+  drawRectAct = new QAction(QIcon(":/images/rectangle.svg"),
+                        tr("Draw &Rectangle…"), this);
+  drawRectAct->setShortcut(tr("Ctrl+R"));
+  connect(drawRectAct, SIGNAL(triggered()), this, SLOT(drawRect()));
+
   settingsAct = new QAction(tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
   settingsAct->setToolTip(tr("Programm settings"));
@@ -905,6 +917,7 @@ void MainWindow::createMenus() {
   editMenu->addAction(findAct);
   editMenu->addSeparator();
   editMenu->addAction(DirectTypingAct);
+  editMenu->addAction(drawRectAct);
   editMenu->addSeparator();
   editMenu->addAction(settingsAct);
 
@@ -946,6 +959,7 @@ void MainWindow::createToolBars() {
   viewToolBar->addAction(showSymbolAct);
   viewToolBar->addAction(drawBoxesAct);
   viewToolBar->addAction(DirectTypingAct);
+  viewToolBar->addAction(drawRectAct);
 
   editToolBar = addToolBar(tr("Edit"));
   editToolBar->setObjectName("editToolBar");

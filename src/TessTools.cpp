@@ -164,7 +164,7 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
 
   if (result.isNull()) {
     static QImage none(0,0,QImage::Format_Invalid);
-    msg("Invalid format!!!");
+    qDebug("Invalid format!!!\n");
     return none;
   }
 
@@ -228,3 +228,4 @@ void TessTools::msg(QString messageText) {
     msgBox.setText(messageText);
     msgBox.exec();
 }
+

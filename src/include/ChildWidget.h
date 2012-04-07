@@ -55,6 +55,7 @@ class QTableView;
 class QGraphicsItem;
 class QGraphicsRectItem;
 class FindDialog;
+class DrawRectangle;
 
 class ChildWidget : public QSplitter {
     Q_OBJECT
@@ -111,6 +112,7 @@ class ChildWidget : public QSplitter {
     void deleteBoxes(const QList<QGraphicsItem*> &items);
     void copyFromCell();
     void pasteToCell();
+    void drawRectangle();
 
   public slots:
     void sbValueChanged(int sbdValue);
@@ -139,6 +141,7 @@ class ChildWidget : public QSplitter {
     QColor backgroundColor;
     QGraphicsItem* m_message;
     FindDialog *f_dialog;
+    DrawRectangle *m_DrawRectangle;
 
     void moveSymbolRow(int direction);
     QList<QTableWidgetItem*> takeRow(int row);
@@ -165,6 +168,7 @@ class ChildWidget : public QSplitter {
     QGraphicsView* imageView;
     QGraphicsItem* imageItem;
     QGraphicsRectItem* imageSelectionRect;
+    QGraphicsRectItem* rectangle;
     QGraphicsTextItem* text2;
 
     QTableView* table;

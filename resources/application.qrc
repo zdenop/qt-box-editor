@@ -33,5 +33,6 @@
         <file>images/key_bindings.svg</file>
         <file>images/import.svg</file>
         <file>images/gnome-edit-find.svg</file>
+        <file>images/rectangle.svg</file>
     </qresource>
 </RCC>
