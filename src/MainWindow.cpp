@@ -47,6 +47,7 @@ MainWindow::MainWindow() {
           SLOT(setCurrentIndex(int)));
 
   shortCutsDialog = 0;
+  setAcceptDrops(true);
   createActions();
   createMenus();
   createToolBars();
@@ -1016,4 +1017,22 @@ void MainWindow::writeSettings() {
 void MainWindow::zoomRatioChanged(qreal ratio)
 {
     _zoom->setText(QString("%1%").arg(qRound(ratio * 100)));
+}
+
+void MainWindow::dragEnterEvent(QDragEnterEvent* event)
+{
+    if (event->mimeData()->hasFormat("text/uri-list"))
+        event->acceptProposedAction();
+}
+
+void MainWindow::dropEvent(QDropEvent* event)
+{
+    QList<QUrl> urls = event->mimeData()->urls();
+    if (urls.count()) {
+        QString fname = urls[0].toLocalFile();
+        if (event->mimeData()->hasImage()) {
+            addChild(fname);
+        }
+        event->acceptProposedAction();
+    }
 }

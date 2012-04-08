@@ -65,6 +65,8 @@ class MainWindow : public QMainWindow {
 
     void addChild(const QString& imageFileName);
     SettingsDialog* runSettingsDialog;
+    void dragEnterEvent(QDragEnterEvent*);
+    void dropEvent(QDropEvent* event);
 
   public slots:
     void checkForUpdate();
