@@ -428,6 +428,103 @@ bool ChildWidget::save(const QString& fileName) {
   return true;
 }
 
+bool ChildWidget::splitToFeatureBF(const QString& fileName) {
+    // Todo(zdenop): there must be a smarter way how to do this
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QString normBoxes = "", boldBoxes = "", italicBoxes = "", boldItaBoxes = "";
+    QString underBoxes = "";
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QString letter = model->index(row, 0).data().toString();
+        int left = model->index(row, 1).data().toInt();
+        int bottom = model->index(row, 2).data().toInt();
+        int right = model->index(row, 3).data().toInt();
+        int top = model->index(row, 4).data().toInt();
+        int page = model->index(row, 5).data().toInt();
+        bool italic = model->index(row, 6).data().toBool();
+        bool bold = model->index(row, 7).data().toBool();
+        bool underline = model->index(row, 8).data().toBool();
+
+        if (bold && !italic) {
+          boldBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                              + right + " " + (imageHeight - top) + " " + page;
+        } else if (italic && !bold) {
+          italicBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                              + right + " " + (imageHeight - top) + " " + page;
+        } else if (italic && bold) {
+        boldItaBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                + right + " " + (imageHeight - top) + " " + page;
+        } else if (underline) {
+          underBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                  + right + " " + (imageHeight - top) + " " + page;
+        } else {
+          normBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                  + right + " " + (imageHeight - top) + " " + page;
+        }
+
+    } // end of for
+
+    // find path + name + ext:
+
+    int dotCount = QFileInfo(fileName).fileName().count(".");
+    QStringList results = QFileInfo(fileName).fileName().split(".");
+    QString path, base, ext;
+    path = QFileInfo(fileName).path() + QDir::separator();
+
+    if (dotCount < 3){
+        base = QFileInfo(fileName).baseName();
+        ext = QFileInfo(fileName).completeSuffix();
+    } else  {
+        for (int dot = 0; dot < (dotCount - 1); ++dot) {
+            base += results[dot];
+            if (dot < (dotCount - 2))
+                    base += ".";
+        }
+        ext = results[(dotCount - 1)] + "." + results[dotCount];
+    }
+
+    if (normBoxes.size()) {
+        saveString(path + base + "normal." + ext, normBoxes);
+    }
+
+    if (boldBoxes.size()) {
+        saveString(path + base + "bold." + ext, boldBoxes);
+    }
+
+    if (italicBoxes.size()) {
+        saveString(path + base + "italic." + ext, italicBoxes);
+    }
+
+    if (boldItaBoxes.size()) {
+        saveString(path + base + "bolditalic." + ext, boldItaBoxes);
+    }
+
+    if (underBoxes.size()) {
+        saveString(path + base + "underline." + ext, underBoxes);
+    }
+
+    QApplication::restoreOverrideCursor();
+    return true;
+}
+
+bool ChildWidget::saveString(const QString& fileName, const QString& qData) {
+    QFile file(fileName);
+
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+      QMessageBox::warning(
+        this,
+        SETTING_APPLICATION,
+        tr("Cannot write file %1:\n%2.").arg(fileName).arg(file.errorString()));
+      return false;
+    }
+
+    QTextStream out(&file);
+    out.setCodec("UTF-8");
+    out << qData;
+    file.close();
+    return true;
+}
+
 bool ChildWidget::importSPLToChild(const QString& fileName) {
   QFile file(fileName);
 

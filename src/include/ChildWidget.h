@@ -86,6 +86,8 @@ class ChildWidget : public QSplitter {
     }
 
     bool save(const QString& fileName);
+    bool splitToFeatureBF(const QString& fileName);
+    bool saveString(const QString& fileName, const QString& qData);
     bool importSPLToChild(const QString& fileName);
     bool importTextToChild(const QString& fileName);
     bool exportTxt(const int& eType, const QString& fileName);

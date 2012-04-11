@@ -168,10 +168,29 @@ void MainWindow::save() {
     statusBar()->showMessage(tr("File saved"), 2000);
 }
 
+/**
+ * @brief MainWindow::splitToFeatureBF
+ * create infividual box file per feature e.g.:
+ * eng.timesnormal.exp001.box
+ * eng.timesbold.exp001.box
+ * eng.timesitalic.exp001.box
+ * eng.timesbolditalic.exp001.box
+ * eng.timesunderline.exp001.box
+ * if input filename is eng.times.exp001.box
+ */
+void MainWindow::splitToFeatureBF() {
+    QString fileName = activeChild()->currentBoxFile();
+
+    if (activeChild() && activeChild()->splitToFeatureBF(fileName))
+      statusBar()->showMessage(tr("File saved"), 2000);
+}
+
+/**
+ * @brief MainWindow::saveAs
+ * Make a copy but do not update title of tab etc.
+ * because there is not correcponding image file
+ */
 void MainWindow::saveAs() {
-  // Make a copy but do not update title of tab etc.
-  // because theere is not correcponding image file
-  // or should be SaveAs image?
   QString currentFileName = activeChild()->currentBoxFile();
   QString fileName = QFileDialog::getSaveFileName(this,
                      tr("Save a copy of box file..."),
@@ -538,6 +557,7 @@ void MainWindow::handleClose(int i) {
 
 void MainWindow::updateMenus() {
   saveAsAct->setEnabled((activeChild()) != 0);
+  splitToFeatureBFAct->setEnabled((activeChild()) != 0);
   importPLSymAct->setEnabled((activeChild()) != 0);
   importTextSymAct->setEnabled((activeChild()) != 0);
   symbolPerLineAct->setEnabled((activeChild()) != 0);
@@ -655,6 +675,12 @@ void MainWindow::createActions() {
   saveAct->setStatusTip(tr("Save the document to disk"));
   saveAct->setEnabled(false);
   connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+
+  splitToFeatureBFAct = new QAction(tr("&Split to boxfiles"), this);
+  splitToFeatureBFAct->setStatusTip(
+      tr("Create individual boxfile for regular, bold, italic and underline boxes."));
+  splitToFeatureBFAct->setEnabled(false);
+  connect(splitToFeatureBFAct, SIGNAL(triggered()), this, SLOT(splitToFeatureBF()));
 
   saveAsAct = new QAction(QIcon(":/images/fileopenas.png"),
                           tr("Save &As"), this);
@@ -884,6 +910,7 @@ void MainWindow::createMenus() {
   fileMenu->addAction(saveAct);
   fileMenu->addAction(saveAsAct);
   fileMenu->addSeparator();
+  fileMenu->addAction(splitToFeatureBFAct);
   importMenu = fileMenu->addMenu(tr("&Import..."));
   importMenu->addAction(importPLSymAct);
   importMenu->addAction(importTextSymAct);

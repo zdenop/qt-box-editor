@@ -79,6 +79,7 @@ class MainWindow : public QMainWindow {
     void open();
     void openRecentFile();
     void save();
+    void splitToFeatureBF();
     void saveAs();
     void importPLSym();
     void importTextSym();
@@ -156,6 +157,7 @@ class MainWindow : public QMainWindow {
 
     QAction* openAct;
     QAction* saveAct;
+    QAction* splitToFeatureBFAct;
     QAction* saveAsAct;
     QAction* importPLSymAct;
     QAction* importTextSymAct;
