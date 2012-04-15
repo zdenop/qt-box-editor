@@ -808,7 +808,8 @@ void ChildWidget::setItalic(bool v) {
 
     foreach(index, indexes)
     {
-        letterFont = index.data(Qt::FontRole).value<QFont>();
+        letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                                 Qt::FontRole).value<QFont>();
         letterFont.setItalic(v);
         model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
                        Qt::FontRole);
@@ -823,7 +824,8 @@ void ChildWidget::setBolded(bool v) {
 
     foreach(index, indexes)
     {
-        letterFont = index.data(Qt::FontRole).value<QFont>();
+        letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                                 Qt::FontRole).value<QFont>();
         letterFont.setBold(v);
         model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
                        Qt::FontRole);
@@ -838,8 +840,8 @@ void ChildWidget::setUnderline(bool v) {
 
     foreach(index, indexes)
     {
-        letterFont = index.data(Qt::FontRole).value<QFont>();
-        // TODO take font always from column 0!!!!
+        letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                                 Qt::FontRole).value<QFont>();
         letterFont.setUnderline(v);
         model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
                        Qt::FontRole);
@@ -1372,54 +1374,31 @@ void ChildWidget::removeSelectionRects() {
 }
 
 void ChildWidget::drawSelectionRects() {
-  // TODO(zdenop): there has to be smarter way how to implement this
-
-  QModelIndex index;
   QModelIndexList indexes = table->selectionModel()->selection().indexes();
 
   if (!indexes.empty()) {
       removeSelectionRects();
-
       text2->setVisible(false);
       imageSelectionRect->setVisible(false);
 
-      if (indexes.last().row() - indexes.first().row()) {
-          // if there is selection of more row do not show text
-          // TODO: first rectangle is not always visible. Why???
-          foreach(index, indexes)
-          {
-              int left = model->index(index.row(), 1).data().toInt();
-              int bottom = model->index(index.row(), 2).data().toInt();
-              int right = model->index(index.row(), 3).data().toInt();
-              int top = model->index(index.row(), 4).data().toInt();
-              // TODO addrectable per row and not per indexes.
-              rectItem << imageScene->addRect(QRectF(QPoint(left, top),
-                                  QPointF(right, bottom)), QPen(rectColor));
-
-              /*
-              QString letter = model->index(index.row(), 0).data().toString();
-              rectItem << imageScene->addText(letter, tableFont);
-              rectItem.last()->setPos(QPoint(left, top - 16 * 2 - 15));
-              */
-          }
-      } else { // only one row is used -> use "old way":rectable + text
-          index = indexes.first();
-          QString letter = model->index(index.row(), 0).data().toString();
-          int left = model->index(index.row(), 1).data().toInt();
-          int bottom = model->index(index.row(), 2).data().toInt();
-          int right = model->index(index.row(), 3).data().toInt();
-          int top = model->index(index.row(), 4).data().toInt();
-          imageSelectionRect->setRect(QRectF(QPoint(left, top),
-                                             QPointF(right, bottom)));
-          imageSelectionRect->setVisible(true);
-          imageView->ensureVisible(imageSelectionRect);
-
-          if (symbolShown == true) { // selected only one line?
+      for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
+          int left = model->index(i, 1).data().toInt();
+          int bottom = model->index(i, 2).data().toInt();
+          int right = model->index(i, 3).data().toInt();
+          int top = model->index(i, 4).data().toInt();
+          rectItem << imageScene->addRect(QRectF(QPoint(left, top),
+                              QPointF(right, bottom)), QPen(rectColor));
+          rectItem.last()->setZValue(1);
+          imageView->ensureVisible(rectItem.last());
+          if ((symbolShown == true) &&
+                  (indexes.first().row() == indexes.last().row())) { // selected only one line?
+              QString letter = model->index(i, 0).data().toString();
               text2->setPlainText(letter);
               // TODO(zdenop): get font metrics and calculate better placement
               // (e.g. visible in case of narrow margin)
               text2->setPos(QPoint(left, top - 16 * 2 - 15));
               text2->setVisible(true);
+              imageView->ensureVisible(text2);
             } else {
               text2->setVisible(false);
           }
