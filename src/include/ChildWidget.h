@@ -170,11 +170,8 @@ class ChildWidget : public QSplitter {
     QGraphicsScene* imageScene;
     QGraphicsView* imageView;
     QGraphicsItem* imageItem;
-    QGraphicsRectItem* imageSelectionRect;
     QGraphicsRectItem* rectangle;
     QVector<QGraphicsRectItem *> rectItem;
-    //QSet<QGraphicsItem *> rectItem;
-    //QList<QGraphicsItem *> rectItem;
     QGraphicsTextItem* text2;
 
     QTableView* table;

@@ -246,7 +246,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
 
   setCurrentBoxFile(boxFileName);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
-  imageSelectionRect->setParentItem(imageItem);
+  //imageSelectionRect->setParentItem(imageItem);
   modified = false;
   emit modifiedChanged();
   connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
@@ -865,10 +865,6 @@ void ChildWidget::setSelectionRect() {
   text2->setDefaultTextColor(Qt::red);
   text2->setZValue(1);
   text2->setPos(QPoint(0, 0));
-
-  imageSelectionRect = imageScene->addRect(0, 0, 0, 0, QPen(rectColor),
-                       rectFillColor);
-  imageSelectionRect->setZValue(1);
 }
 
 void ChildWidget::getZoom() {
@@ -887,13 +883,13 @@ void ChildWidget::setZoom(float scale) {
 
 void ChildWidget::zoomIn() {
   imageView->scale(1.2, 1.2);
-  imageView->ensureVisible(imageSelectionRect);
+  imageView->ensureVisible(rectItem.last());
   getZoom();
 }
 
 void ChildWidget::zoomOut() {
   imageView->scale(1 / 1.2, 1 / 1.2);
-  imageView->ensureVisible(imageSelectionRect);
+  imageView->ensureVisible(rectItem.last());
   getZoom();
 }
 
@@ -918,7 +914,7 @@ void ChildWidget::zoomToHeight() {
   float zoomFactor = viewHeight / imageHeight;
 
   setZoom(zoomFactor);
-  imageView->ensureVisible(imageSelectionRect);
+  imageView->ensureVisible(rectItem.last());
 }
 
 void ChildWidget::zoomToWidth() {
@@ -926,19 +922,19 @@ void ChildWidget::zoomToWidth() {
   float zoomFactor = viewWidth / imageWidth;
 
   setZoom(zoomFactor);
-  imageView->ensureVisible(imageSelectionRect);
+  imageView->ensureVisible(rectItem.last());
 }
 
 void ChildWidget::zoomOriginal() {
   setZoom(1);
-  imageView->ensureVisible(imageSelectionRect);
+  imageView->ensureVisible(rectItem.last());
 }
 
 void ChildWidget::zoomToSelection() {
-  imageView->fitInView(imageSelectionRect, Qt::KeepAspectRatio);
+  imageView->fitInView(rectItem.last(), Qt::KeepAspectRatio);
   imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
-  imageView->ensureVisible(imageSelectionRect);
-  imageView->centerOn(imageSelectionRect);
+  imageView->ensureVisible(rectItem.last());
+  imageView->centerOn(rectItem.last());
   getZoom();
 }
 
@@ -1379,7 +1375,6 @@ void ChildWidget::drawSelectionRects() {
   if (!indexes.empty()) {
       removeSelectionRects();
       text2->setVisible(false);
-      imageSelectionRect->setVisible(false);
 
       for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
           int left = model->index(i, 1).data().toInt();
@@ -1405,7 +1400,6 @@ void ChildWidget::drawSelectionRects() {
       }
 
   } else {
-    imageSelectionRect->setVisible(false);
     text2->setVisible(false);
   }
 
@@ -1448,6 +1442,7 @@ QString ChildWidget::strippedName(const QString& fullFileName) {
 }
 
 void ChildWidget::sbValueChanged(int sbdValue) {
+
   QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
   QModelIndex index = selectedIndexes.first();
 
@@ -1473,10 +1468,9 @@ void ChildWidget::sbValueChanged(int sbdValue) {
     break;
   }
 
-  imageSelectionRect->setRect(QRectF(QPoint(left, top),
+  rectItem.first()->setRect(QRectF(QPoint(left, top),
                                      QPointF(right, bottom)));
-  imageSelectionRect->setVisible(true);
-  imageView->ensureVisible(imageSelectionRect);
+  imageView->ensureVisible(rectItem.first());
 }
 
 void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
