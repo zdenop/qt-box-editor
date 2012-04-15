@@ -57,9 +57,9 @@ ChildWidget::ChildWidget(QWidget* parent)
     SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
     this, SLOT(emitBoxChanged()));
   table->setSelectionModel(selectionModel);
-  // table->verticalHeader()->hide();
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
-  table->setSelectionMode(QAbstractItemView::SingleSelection);
+  table->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
   table->hideColumn(5);
   table->hideColumn(6);
   table->hideColumn(7);
@@ -802,44 +802,49 @@ bool ChildWidget::isDrawBoxes() {
 }
 
 void ChildWidget::setItalic(bool v) {
-  QModelIndex index = selectionModel->currentIndex();
-
-  if (index.isValid()) {
+    QModelIndexList indexes = table->selectionModel()->selection().indexes();
+    QModelIndex index;
     QFont letterFont;
-    letterFont.setItalic(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                   Qt::FontRole);
-    model->setData(model->index(index.row(), 6, QModelIndex()), v);
-  }
+
+    foreach(index, indexes)
+    {
+        letterFont = index.data(Qt::FontRole).value<QFont>();
+        letterFont.setItalic(v);
+        model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                       Qt::FontRole);
+        model->setData(model->index(index.row(), 6, QModelIndex()), v);
+    }
 }
 
 void ChildWidget::setBolded(bool v) {
-  QModelIndex index = selectionModel->currentIndex();
-
-  if (index.isValid()) {
+    QModelIndexList indexes = table->selectionModel()->selection().indexes();
+    QModelIndex index;
     QFont letterFont;
-    /* TODO: switching between italic bold <-> bold/italics is strange
-    if (isItalic() && !isBold())
-      letterFont.setStyle(QFont::StyleOblique);
-    else
-    */
-    letterFont.setBold(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                   Qt::FontRole);
-    model->setData(model->index(index.row(), 7, QModelIndex()), v);
-  }
+
+    foreach(index, indexes)
+    {
+        letterFont = index.data(Qt::FontRole).value<QFont>();
+        letterFont.setBold(v);
+        model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                       Qt::FontRole);
+        model->setData(model->index(index.row(), 7, QModelIndex()), v);
+    }
 }
 
 void ChildWidget::setUnderline(bool v) {
-  QModelIndex index = selectionModel->currentIndex();
-
-  if (index.isValid()) {
+    QModelIndexList indexes = table->selectionModel()->selection().indexes();
+    QModelIndex index;
     QFont letterFont;
-    letterFont.setUnderline(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                   Qt::FontRole);
-    model->setData(model->index(index.row(), 8, QModelIndex()), v);
-  }
+
+    foreach(index, indexes)
+    {
+        letterFont = index.data(Qt::FontRole).value<QFont>();
+        // TODO take font always from column 0!!!!
+        letterFont.setUnderline(v);
+        model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                       Qt::FontRole);
+        model->setData(model->index(index.row(), 8, QModelIndex()), v);
+    }
 }
 
 void ChildWidget::setSelectionRect() {
@@ -1359,31 +1364,67 @@ void ChildWidget::emitBoxChanged() {
   emit boxChanged();
 }
 
+void ChildWidget::removeSelectionRects() {
+    foreach( QGraphicsItem *item, rectItem ) {
+        imageScene->removeItem(item);
+        }
+    rectItem.clear();
+}
+
 void ChildWidget::drawSelectionRects() {
-  QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+  // TODO(zdenop): there has to be smarter way how to implement this
 
-  if (!selectedIndexes.empty()) {
-    QModelIndex index = selectedIndexes.first();
-    QString letter = model->index(index.row(), 0).data().toString();
-    int left = model->index(index.row(), 1).data().toInt();
-    int bottom = model->index(index.row(), 2).data().toInt();
-    int right = model->index(index.row(), 3).data().toInt();
-    int top = model->index(index.row(), 4).data().toInt();
-    imageSelectionRect->setRect(QRectF(QPoint(left, top),
-                                       QPointF(right, bottom)));
-    imageSelectionRect->setVisible(true);
-    imageView->ensureVisible(imageSelectionRect);
+  QModelIndex index;
+  QModelIndexList indexes = table->selectionModel()->selection().indexes();
 
+  if (!indexes.empty()) {
+      removeSelectionRects();
 
-    if (symbolShown == true) {
-      text2->setPlainText(letter);
-      // TODO(zdenop): get font metrics and calculate better placement
-      // (e.g. visible in case of narrow margin)
-      text2->setPos(QPoint(left, top - 16 * 2 - 15));
-      text2->setVisible(true);
-    } else {
       text2->setVisible(false);
-    }
+      imageSelectionRect->setVisible(false);
+
+      if (indexes.last().row() - indexes.first().row()) {
+          // if there is selection of more row do not show text
+          // TODO: first rectangle is not always visible. Why???
+          foreach(index, indexes)
+          {
+              int left = model->index(index.row(), 1).data().toInt();
+              int bottom = model->index(index.row(), 2).data().toInt();
+              int right = model->index(index.row(), 3).data().toInt();
+              int top = model->index(index.row(), 4).data().toInt();
+              // TODO addrectable per row and not per indexes.
+              rectItem << imageScene->addRect(QRectF(QPoint(left, top),
+                                  QPointF(right, bottom)), QPen(rectColor));
+
+              /*
+              QString letter = model->index(index.row(), 0).data().toString();
+              rectItem << imageScene->addText(letter, tableFont);
+              rectItem.last()->setPos(QPoint(left, top - 16 * 2 - 15));
+              */
+          }
+      } else { // only one row is used -> use "old way":rectable + text
+          index = indexes.first();
+          QString letter = model->index(index.row(), 0).data().toString();
+          int left = model->index(index.row(), 1).data().toInt();
+          int bottom = model->index(index.row(), 2).data().toInt();
+          int right = model->index(index.row(), 3).data().toInt();
+          int top = model->index(index.row(), 4).data().toInt();
+          imageSelectionRect->setRect(QRectF(QPoint(left, top),
+                                             QPointF(right, bottom)));
+          imageSelectionRect->setVisible(true);
+          imageView->ensureVisible(imageSelectionRect);
+
+          if (symbolShown == true) { // selected only one line?
+              text2->setPlainText(letter);
+              // TODO(zdenop): get font metrics and calculate better placement
+              // (e.g. visible in case of narrow margin)
+              text2->setPos(QPoint(left, top - 16 * 2 - 15));
+              text2->setVisible(true);
+            } else {
+              text2->setVisible(false);
+          }
+      }
+
   } else {
     imageSelectionRect->setVisible(false);
     text2->setVisible(false);

@@ -148,6 +148,7 @@ class ChildWidget : public QSplitter {
     void moveSymbolRow(int direction);
     QList<QTableWidgetItem*> takeRow(int row);
     void setRow(int row, const QList<QTableWidgetItem*>& rowItems);
+    void removeSelectionRects();
 
   protected:
     void directType(QKeyEvent* event);
@@ -171,6 +172,9 @@ class ChildWidget : public QSplitter {
     QGraphicsItem* imageItem;
     QGraphicsRectItem* imageSelectionRect;
     QGraphicsRectItem* rectangle;
+    QVector<QGraphicsRectItem *> rectItem;
+    //QSet<QGraphicsItem *> rectItem;
+    //QList<QGraphicsItem *> rectItem;
     QGraphicsTextItem* text2;
 
     QTableView* table;

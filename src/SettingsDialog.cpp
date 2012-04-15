@@ -287,6 +287,7 @@ QString SettingsDialog::getLangName(QString lang) {
     map["cat"] = QObject::tr("Catalan; Valencian");
     map["cha"] = QObject::tr("Chamorro");
     map["che"] = QObject::tr("Chechen");
+    map["chr"] = QObject::tr("Cherokee");
     map["nya"] = QObject::tr("Chichewa; Chewa; Nyanja");
     map["zho"] = QObject::tr("Chinese");
     map["chv"] = QObject::tr("Chuvash");
@@ -443,7 +444,6 @@ QString SettingsDialog::getLangName(QString lang) {
     map["yor"] = QObject::tr("Yoruba");
     map["zha"] = QObject::tr("Zhuang, Chuang");
     map["zul"] = QObject::tr("Zulu");
-
     // custom definition
     map["chi_tra"] = QObject::tr("Chinese (Traditional)");
     map["chi_sim"] = QObject::tr("Chinese (Simplified)");
@@ -452,7 +452,6 @@ QString SettingsDialog::getLangName(QString lang) {
     map["slk-frak"] = QObject::tr("Slovak (Fraktur)");
     map["swe-frak"] = QObject::tr("Swedish (Fraktur)");
     // xxxx
-    map["chr"] = QObject::tr("Cherokee");
     map["enm"] = QObject::tr("Middle English");
     map["frk"] = QObject::tr("Frankish");
     map["frm"] = QObject::tr("Middle French");
