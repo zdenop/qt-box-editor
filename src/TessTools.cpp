@@ -67,11 +67,17 @@ QString TessTools::makeBoxes(QImage& qImage) {
       return "";
   }
 
+  // workaroung if datapath/TESSDATA_PREFIX is set...
+  #ifdef _WIN32
+  QString envQString = "TESSDATA_PREFIX=" + getDataPath() ;
+  QByteArray byteArrayWin = envQString.toUtf8();
+  const char * env = byteArrayWin.data();
+  putenv(env);
+  #else
   QByteArray byteArray1 = getDataPath().toUtf8();
   const char * datapath = byteArray1.data();
-
-  // workaroung if datapath/TESSDATA_PREFIX is set...
   setenv("TESSDATA_PREFIX", datapath, 1);
+  #endif
 
   if (api.Init(NULL, apiLang)) {
     msg("Could not initialize tesseract.\n");
@@ -105,7 +111,7 @@ PIX* TessTools::qImage2PIX(QImage& qImage) {
   int height = qImage.height();
   int depth = qImage.depth();
   int wpl = qImage.bytesPerLine() / 4;
-  
+
   pixs = pixCreate(width, height, depth);
   pixSetWpl(pixs, wpl);
   pixSetColormap(pixs, NULL);

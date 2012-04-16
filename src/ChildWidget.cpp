@@ -269,7 +269,7 @@ bool ChildWidget::qCreateBoxes(const QString &boxFileName, QImage& image) {
     TessTools tt;
     QString str = tt.makeBoxes(image);
     if (str == "")
-        return false;
+      return false;
     QTextStream boxdata(&str);
     if (!fillTableData(boxdata))
       return false;
@@ -429,100 +429,100 @@ bool ChildWidget::save(const QString& fileName) {
 }
 
 bool ChildWidget::splitToFeatureBF(const QString& fileName) {
-    // Todo(zdenop): there must be a smarter way how to do this
+  // Todo(zdenop): there must be a smarter way how to do this
 
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    QString normBoxes = "", boldBoxes = "", italicBoxes = "", boldItaBoxes = "";
-    QString underBoxes = "";
-    for (int row = 0; row < model->rowCount(); ++row) {
-        QString letter = model->index(row, 0).data().toString();
-        int left = model->index(row, 1).data().toInt();
-        int bottom = model->index(row, 2).data().toInt();
-        int right = model->index(row, 3).data().toInt();
-        int top = model->index(row, 4).data().toInt();
-        int page = model->index(row, 5).data().toInt();
-        bool italic = model->index(row, 6).data().toBool();
-        bool bold = model->index(row, 7).data().toBool();
-        bool underline = model->index(row, 8).data().toBool();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  QString normBoxes = "", boldBoxes = "", italicBoxes = "", boldItaBoxes = "";
+  QString underBoxes = "";
+  for (int row = 0; row < model->rowCount(); ++row) {
+    QString letter = model->index(row, 0).data().toString();
+    int left = model->index(row, 1).data().toInt();
+    int bottom = model->index(row, 2).data().toInt();
+    int right = model->index(row, 3).data().toInt();
+    int top = model->index(row, 4).data().toInt();
+    int page = model->index(row, 5).data().toInt();
+    bool italic = model->index(row, 6).data().toBool();
+    bool bold = model->index(row, 7).data().toBool();
+    bool underline = model->index(row, 8).data().toBool();
 
-        if (bold && !italic) {
-          boldBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                              + right + " " + (imageHeight - top) + " " + page;
-        } else if (italic && !bold) {
-          italicBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                              + right + " " + (imageHeight - top) + " " + page;
-        } else if (italic && bold) {
-        boldItaBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                + right + " " + (imageHeight - top) + " " + page;
-        } else if (underline) {
-          underBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                  + right + " " + (imageHeight - top) + " " + page;
-        } else {
-          normBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                  + right + " " + (imageHeight - top) + " " + page;
-        }
-
-    } // end of for
-
-    // find path + name + ext:
-
-    int dotCount = QFileInfo(fileName).fileName().count(".");
-    QStringList results = QFileInfo(fileName).fileName().split(".");
-    QString path, base, ext;
-    path = QFileInfo(fileName).path() + QDir::separator();
-
-    if (dotCount < 3){
-        base = QFileInfo(fileName).baseName();
-        ext = QFileInfo(fileName).completeSuffix();
-    } else  {
-        for (int dot = 0; dot < (dotCount - 1); ++dot) {
-            base += results[dot];
-            if (dot < (dotCount - 2))
-                    base += ".";
-        }
-        ext = results[(dotCount - 1)] + "." + results[dotCount];
+    if (bold && !italic) {
+      boldBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                   + right + " " + (imageHeight - top) + " " + page;
+    } else if (italic && !bold) {
+      italicBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                     + right + " " + (imageHeight - top) + " " + page;
+    } else if (italic && bold) {
+      boldItaBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                      + right + " " + (imageHeight - top) + " " + page;
+    } else if (underline) {
+      underBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                    + right + " " + (imageHeight - top) + " " + page;
+    } else {
+      normBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
+                   + right + " " + (imageHeight - top) + " " + page;
     }
 
-    if (normBoxes.size()) {
-        saveString(path + base + "normal." + ext, normBoxes);
-    }
+  } // end of for
 
-    if (boldBoxes.size()) {
-        saveString(path + base + "bold." + ext, boldBoxes);
-    }
+  // find path + name + ext:
 
-    if (italicBoxes.size()) {
-        saveString(path + base + "italic." + ext, italicBoxes);
-    }
+  int dotCount = QFileInfo(fileName).fileName().count(".");
+  QStringList results = QFileInfo(fileName).fileName().split(".");
+  QString path, base, ext;
+  path = QFileInfo(fileName).path() + QDir::separator();
 
-    if (boldItaBoxes.size()) {
-        saveString(path + base + "bolditalic." + ext, boldItaBoxes);
+  if (dotCount < 3) {
+    base = QFileInfo(fileName).baseName();
+    ext = QFileInfo(fileName).completeSuffix();
+  } else  {
+    for (int dot = 0; dot < (dotCount - 1); ++dot) {
+      base += results[dot];
+      if (dot < (dotCount - 2))
+        base += ".";
     }
+    ext = results[(dotCount - 1)] + "." + results[dotCount];
+  }
 
-    if (underBoxes.size()) {
-        saveString(path + base + "underline." + ext, underBoxes);
-    }
+  if (normBoxes.size()) {
+    saveString(path + base + "normal." + ext, normBoxes);
+  }
 
-    QApplication::restoreOverrideCursor();
-    return true;
+  if (boldBoxes.size()) {
+    saveString(path + base + "bold." + ext, boldBoxes);
+  }
+
+  if (italicBoxes.size()) {
+    saveString(path + base + "italic." + ext, italicBoxes);
+  }
+
+  if (boldItaBoxes.size()) {
+    saveString(path + base + "bolditalic." + ext, boldItaBoxes);
+  }
+
+  if (underBoxes.size()) {
+    saveString(path + base + "underline." + ext, underBoxes);
+  }
+
+  QApplication::restoreOverrideCursor();
+  return true;
 }
 
 bool ChildWidget::saveString(const QString& fileName, const QString& qData) {
-    QFile file(fileName);
+  QFile file(fileName);
 
-    if (!file.open(QFile::WriteOnly | QFile::Text)) {
-      QMessageBox::warning(
-        this,
-        SETTING_APPLICATION,
-        tr("Cannot write file %1:\n%2.").arg(fileName).arg(file.errorString()));
-      return false;
-    }
+  if (!file.open(QFile::WriteOnly | QFile::Text)) {
+    QMessageBox::warning(
+      this,
+      SETTING_APPLICATION,
+      tr("Cannot write file %1:\n%2.").arg(fileName).arg(file.errorString()));
+    return false;
+  }
 
-    QTextStream out(&file);
-    out.setCodec("UTF-8");
-    out << qData;
-    file.close();
-    return true;
+  QTextStream out(&file);
+  out.setCodec("UTF-8");
+  out << qData;
+  file.close();
+  return true;
 }
 
 bool ChildWidget::importSPLToChild(const QString& fileName) {
@@ -802,51 +802,48 @@ bool ChildWidget::isDrawBoxes() {
 }
 
 void ChildWidget::setItalic(bool v) {
-    QModelIndexList indexes = table->selectionModel()->selection().indexes();
-    QModelIndex index;
-    QFont letterFont;
+  QModelIndexList indexes = table->selectionModel()->selection().indexes();
+  QModelIndex index;
+  QFont letterFont;
 
-    foreach(index, indexes)
-    {
-        letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
-                                 Qt::FontRole).value<QFont>();
-        letterFont.setItalic(v);
-        model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                       Qt::FontRole);
-        model->setData(model->index(index.row(), 6, QModelIndex()), v);
-    }
+  foreach(index, indexes) {
+    letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                             Qt::FontRole).value<QFont>();
+    letterFont.setItalic(v);
+    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                   Qt::FontRole);
+    model->setData(model->index(index.row(), 6, QModelIndex()), v);
+  }
 }
 
 void ChildWidget::setBolded(bool v) {
-    QModelIndexList indexes = table->selectionModel()->selection().indexes();
-    QModelIndex index;
-    QFont letterFont;
+  QModelIndexList indexes = table->selectionModel()->selection().indexes();
+  QModelIndex index;
+  QFont letterFont;
 
-    foreach(index, indexes)
-    {
-        letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
-                                 Qt::FontRole).value<QFont>();
-        letterFont.setBold(v);
-        model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                       Qt::FontRole);
-        model->setData(model->index(index.row(), 7, QModelIndex()), v);
-    }
+  foreach(index, indexes) {
+    letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                             Qt::FontRole).value<QFont>();
+    letterFont.setBold(v);
+    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                   Qt::FontRole);
+    model->setData(model->index(index.row(), 7, QModelIndex()), v);
+  }
 }
 
 void ChildWidget::setUnderline(bool v) {
-    QModelIndexList indexes = table->selectionModel()->selection().indexes();
-    QModelIndex index;
-    QFont letterFont;
+  QModelIndexList indexes = table->selectionModel()->selection().indexes();
+  QModelIndex index;
+  QFont letterFont;
 
-    foreach(index, indexes)
-    {
-        letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
-                                 Qt::FontRole).value<QFont>();
-        letterFont.setUnderline(v);
-        model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                       Qt::FontRole);
-        model->setData(model->index(index.row(), 8, QModelIndex()), v);
-    }
+  foreach(index, indexes) {
+    letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                             Qt::FontRole).value<QFont>();
+    letterFont.setUnderline(v);
+    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                   Qt::FontRole);
+    model->setData(model->index(index.row(), 8, QModelIndex()), v);
+  }
 }
 
 void ChildWidget::setSelectionRect() {
@@ -947,23 +944,23 @@ void ChildWidget::showSymbol() {
 }
 
 void ChildWidget::drawRectangle() {
-    if (!m_DrawRectangle) {
-        m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
-                                            imageWidth, imageHeight);
+  if (!m_DrawRectangle) {
+    m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
+                                        imageWidth, imageHeight);
+  }
+  int ret = m_DrawRectangle->exec();
+  if (ret) {
+    QRect newCoords = m_DrawRectangle->getRectangle();
+    if (rectangle) {
+      imageScene->removeItem(rectangle);
     }
-    int ret = m_DrawRectangle->exec();
-    if (ret) {
-      QRect newCoords = m_DrawRectangle->getRectangle();
-      if (rectangle) {
-         imageScene->removeItem(rectangle);
-      }
-      rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
-                              newCoords.width(), newCoords.height(),
-                              QPen(QColor(255, 0, 0, 200)));
-      rectangle->setZValue(1);
-      rectangle->setRect(QRectF(newCoords));
-      rectangle->setVisible(true);
-    }
+    rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
+                                    newCoords.width(), newCoords.height(),
+                                    QPen(QColor(255, 0, 0, 200)));
+    rectangle->setZValue(1);
+    rectangle->setRect(QRectF(newCoords));
+    rectangle->setVisible(true);
+  }
 }
 
 void ChildWidget::drawBoxes() {
@@ -1363,41 +1360,41 @@ void ChildWidget::emitBoxChanged() {
 }
 
 void ChildWidget::removeSelectionRects() {
-    foreach( QGraphicsItem *item, rectItem ) {
-        imageScene->removeItem(item);
-        }
-    rectItem.clear();
+  foreach(QGraphicsItem *item, rectItem) {
+    imageScene->removeItem(item);
+  }
+  rectItem.clear();
 }
 
 void ChildWidget::drawSelectionRects() {
   QModelIndexList indexes = table->selectionModel()->selection().indexes();
 
   if (!indexes.empty()) {
-      removeSelectionRects();
-      text2->setVisible(false);
+    removeSelectionRects();
+    text2->setVisible(false);
 
-      for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
-          int left = model->index(i, 1).data().toInt();
-          int bottom = model->index(i, 2).data().toInt();
-          int right = model->index(i, 3).data().toInt();
-          int top = model->index(i, 4).data().toInt();
-          rectItem << imageScene->addRect(QRectF(QPoint(left, top),
-                              QPointF(right, bottom)), QPen(rectColor));
-          rectItem.last()->setZValue(1);
-          imageView->ensureVisible(rectItem.last());
-          if ((symbolShown == true) &&
-                  (indexes.first().row() == indexes.last().row())) { // selected only one line?
-              QString letter = model->index(i, 0).data().toString();
-              text2->setPlainText(letter);
-              // TODO(zdenop): get font metrics and calculate better placement
-              // (e.g. visible in case of narrow margin)
-              text2->setPos(QPoint(left, top - 16 * 2 - 15));
-              text2->setVisible(true);
-              imageView->ensureVisible(text2);
-            } else {
-              text2->setVisible(false);
-          }
+    for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
+      int left = model->index(i, 1).data().toInt();
+      int bottom = model->index(i, 2).data().toInt();
+      int right = model->index(i, 3).data().toInt();
+      int top = model->index(i, 4).data().toInt();
+      rectItem << imageScene->addRect(QRectF(QPoint(left, top),
+                                             QPointF(right, bottom)), QPen(rectColor));
+      rectItem.last()->setZValue(1);
+      imageView->ensureVisible(rectItem.last());
+      if ((symbolShown == true) &&
+          (indexes.first().row() == indexes.last().row())) { // selected only one line?
+        QString letter = model->index(i, 0).data().toString();
+        text2->setPlainText(letter);
+        // TODO(zdenop): get font metrics and calculate better placement
+        // (e.g. visible in case of narrow margin)
+        text2->setPos(QPoint(left, top - 16 * 2 - 15));
+        text2->setVisible(true);
+        imageView->ensureVisible(text2);
+      } else {
+        text2->setVisible(false);
       }
+    }
 
   } else {
     text2->setVisible(false);
@@ -1469,7 +1466,7 @@ void ChildWidget::sbValueChanged(int sbdValue) {
   }
 
   rectItem.first()->setRect(QRectF(QPoint(left, top),
-                                     QPointF(right, bottom)));
+                                   QPointF(right, bottom)));
   imageView->ensureVisible(rectItem.first());
 }
 

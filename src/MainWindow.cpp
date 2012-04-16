@@ -1057,9 +1057,7 @@ void MainWindow::dropEvent(QDropEvent* event)
     QList<QUrl> urls = event->mimeData()->urls();
     if (urls.count()) {
         QString fname = urls[0].toLocalFile();
-        if (event->mimeData()->hasImage()) {
-            addChild(fname);
-        }
+        addChild(fname);
         event->acceptProposedAction();
     }
 }
