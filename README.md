@@ -1,12 +1,12 @@
 QT Box Editor
 =============
 
-Project homepage: [github.com](https://github.com/zdenop/qt-box-editor)
+Project homepage: [zdenop.github.com/qt-box-editor](http://zdenop.github.com/qt-box-editor/)
 
 Screenshots: [wiki](https://github.com/zdenop/qt-box-editor/wiki)
 
 Download current (devel) source: [tar.gz](https://github.com/zdenop/qt-box-editor/tarball/master) or [zip](https://github.com/zdenop/qt-box-editor/zipball/master)
-Download wind32 static build or source[stable](https://github.com/zdenop/qt-box-editor/downloads)
+Download wind32 static build or [source](https://github.com/zdenop/qt-box-editor/downloads)
 
 Licence: [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0)
 

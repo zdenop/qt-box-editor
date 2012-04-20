@@ -1,3 +1,12 @@
+1.07
+- implement Drag&Drop for opening images
+- create box file if not exists (requires tesseract traineddata)
+- multirow change of font style (bold/italic/underlined)
+- export to multiple box files based on font style (bold/italic/underlined)
+- draw rectangle based on bounding box
+- fixes for table size, font style change, line recognition in text export,
+  row moving
+
 1.06
 - changes of box size is visible on image immediately
 - implemented find dialog
