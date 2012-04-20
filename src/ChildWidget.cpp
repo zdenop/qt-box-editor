@@ -446,26 +446,30 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
     bool underline = model->index(row, 8).data().toBool();
 
     if (bold && !italic) {
-      boldBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                   + right + " " + (imageHeight - top) + " " + page;
+        boldBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
+                .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+                .arg(page);
     } else if (italic && !bold) {
-      italicBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                     + right + " " + (imageHeight - top) + " " + page;
+      italicBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
+              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+              .arg(page);
     } else if (italic && bold) {
-      boldItaBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                      + right + " " + (imageHeight - top) + " " + page;
+      boldItaBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
+              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+              .arg(page);
     } else if (underline) {
-      underBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                    + right + " " + (imageHeight - top) + " " + page;
+      underBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
+              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+              .arg(page);
     } else {
-      normBoxes += letter + " " + left + " " + (imageHeight - bottom) + " "
-                   + right + " " + (imageHeight - top) + " " + page;
+      normBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
+              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+              .arg(page);
     }
 
   } // end of for
 
   // find path + name + ext:
-
   int dotCount = QFileInfo(fileName).fileName().count(".");
   QStringList results = QFileInfo(fileName).fileName().split(".");
   QString path, base, ext;
