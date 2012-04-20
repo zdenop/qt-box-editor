@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Qt-box-editor by zdenop</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/zdenop/qt-box-editor">Fork On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/zdenop/qt-box-editor/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/zdenop/qt-box-editor/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Qt-box-editor</h1>
+          <p>QT4 editor of tesseract-ocr box files</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/zdenop">zdenop</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h3>Welcome to QT Box Editor</h3>
+
+<p><a href="http://zdenop.github.com/qt-box-editor">QT Box Editor</a> is multi-platform visual editor for <a href="http://code.google.com/p/tesseract-ocr/">tesseract-ocr</a> <a href="http://code.google.com/p/tesseract-ocr/wiki/TrainingTesseract3">box files</a> (used for OCR training) based on <a href="http://qt.nokia.com/products/">QT4 library</a>.</p>
+
+<p><img src="https://github.com/zdenop/qt-box-editor/wiki/qt-be_v1.07.png" alt="QT Box Editor version 1.07"></p>
+
+<h3>Code</h3>
+
+<p>Source code is available in <a href="https://github.com/zdenop/qt-box-editor">GitHub repository</a> under <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a>. Windows binary version can be found in <a href="https://github.com/zdenop/qt-box-editor/downloads">download area</a>.</p>
+
+<h2>Input (image + boxfile)</h2>
+
+<p>Well this is boxfile editor, so it is expected that you have some image and relevant box file. QT Box Editor can work with following image format:</p>
+
+<ul>
+<li>tif, tiff</li>
+<li>png</li>
+<li>jpg, jpeg</li>
+<li>bmp</li>
+</ul><p>Multipage tif is not supported yet. It is strongly suggested to use tif with compression or png due to image quality and space. If you are interesting in good result, strictly follow instruction mention on Tesseract training page plus use image with 300 DPI (at least). Also try to avoid big files (10-12 pt for font size is ok, checking a lot of text can cause you oversaw errors).</p>
+
+<p>You can open image file in menu (<em>File-&gt;Open</em>) or just use <em>Drag&amp;Drop</em>. Based on image filename QT Box Editor will search for box file.</p>
+
+<p>You can create box file outside of application (useful if you want to use additional parameters or check for possible error). From version 1.07 QT Box Editor is able to generate box file during opening image. But first you need to set-up (<em>Edit-&gt;Settings...</em> or Ctrl+T) path to tesseract language files. If they are located in “C:/usr/projects/BuildFolder/tesseract-ocr/tessdata”, than enter “C:/usr/projects/BuildFolder/tesseract-ocr/” (application will anyway remove “tessdata” if you select “C:/usr/projects/BuildFolder/tesseract-ocr/tessdata”) and click on ”_Check_” button. If QT Box Editor is able to find language data, it will enter them to combobox, so you can choose, which one will be used in tesseract.</p>
+
+<p><strong>Note</strong>: On windows QT Box Editor was linked against tesseract 3.02 library and leptonica 1.68. If you build application from source make sure you use tesseract 3.01 or 3.02 version.</p>
+
+<h2>Editing</h2>
+
+<p>QT Box Editor workspace has several part:</p>
+
+<ul>
+<li>table editor with box data (left side)- this is the place where you can modified data</li>
+<li>several toolbars with most used functionalities and menu (with all functions) </li>
+<li>image viewer (right side) - this is the place where your data are shown</li>
+<li>statusbar with following information:
+
+<ul>
+<li>UTF-8 codes of symbol(s) of selected box</li>
+<li>box size</li>
+<li>zoom factor</li>
+</ul>
+</li>
+</ul><p>If you press <em>F1</em> - dialogue with available shortcuts will be displayed. It is also available via menu <em>Help-&gt;Shortcut list</em>.</p>
+
+<h3>Table operations</h3>
+
+<p>In table you can see box file information. If you click into cell (single box feature) your information will be visualized in viewer part: box rectangle will be drawn together with symbol/letter (if option/button “_Show symbol_” is on). This give you opportunity to check box information (size of box and where symbol match to its image).</p>
+
+<p>If something is wrong just start typing (in correct table cell) and than this the <em>Enter</em> or <em>Tab</em> key.</p>
+
+<p>You can also set font type (bold, italics, underlined) if need. This action works on multiple rows. Just select rows (one cell from row is enough) by mouse or keyboard and click desired button (or use shortcut or use menu). <em>Ctrl</em> and <em>Shift</em> key can help you to make selection.</p>
+
+<p>There is implemented “<em>Find_” function (_Edit-&gt;Find</em> or <em>Ctrl+F</em>) to search for selected symbol.</p>
+
+<h3>Advanced table operations</h3>
+
+<p>If you use training based on real scan usualy your image is not ideal and tesseract is not able create good box file (e.g. some symbols do not have box, box is split into several parts, there are boxes for noise etc.).</p>
+
+<p>For this case there is toolbar that help you to operate with whole box information (rows):</p>
+
+<ul>
+<li>move row position - useful if boxes are not ordered properly e.g. in case of wrapped image scan</li>
+<li>jump to row position</li>
+<li>add, join, split, and remove box</li>
+</ul><p>In these actions there is no support for multirow selection (yet). Even if you select more rows it will act on last selected.</p>
+
+<p><strong>Warning</strong>: There is no Undo implemented in QT Box Editor yet, so you have to be careful and save box file wisely.</p>
+
+<h2>Visualization</h2>
+
+<p>QT Box Editor is visual editor to help editor understand what he/she is doing. Box rectangle is drawn based on table selection automatically .</p>
+
+<p>When you first time open box file you need to check quality of generated boxes. If you want to see all boxes, just use function “<em>Show boxes_” (_View-&gt;Show boxes</em> or <em>Ctrl+H</em>).</p>
+
+<p>To get best view you need to zoom in/out. Application offers several zooming option (by step, to fit width, height, selected box.</p>
+
+<p>You can select box also in viewer - just click on image box location and correct box will be selected in table editor (box must exists). Multibox selection from viewer is not supported (it is supported only in table editor).</p>
+
+<p>Color and font can be adjusted in Settings dialogue.</p>
+
+<h2>At the end...</h2>
+
+<p>If your image has several types of fonts you have problem - you do not follow tesseract training instruction. But there is workaround: mark symbol as bold, italics or underlined and use menu function: “Spilt to boxfiles” (File-&gt;Split to boxfiles). This will create several boxfiles. E.g. if your (main) box filename is ‘calc.arial.exp0.box’ it will create (if you used that styles):</p>
+
+<ul>
+<li>calc.arialnormal.exp0.box</li>
+<li>calc.arialitalic.exp0.box</li>
+<li>calc.arialbold.exp0.box</li>
+<li>calc.arialbolditalic.exp0.box</li>
+<li>calc.arialunderline.exp0.box</li>
+</ul><p>Then you need to create copies (or symlinks on linux) of main image and you can run training with this commands:</p>
+
+<ul>
+<li>  tesseract calc.arialnormal.exp0.tif calc.arialnormal.exp0 box.train</li>
+<li>  tesseract calc.arialitalic.exp0.tif calc.arialitalic.exp0 box.train</li>
+<li>  tesseract calc.arialbold.exp0.tif calc.arialbold.exp0 box.train</li>
+<li>  tesseract calc.arialbolditalic.exp0.tif calc.arialbolditalic.exp0 box.train</li>
+<li>  tesseract calc.arialunderline.exp0.tif calc.arialunderline.exp0 box.train</li>
+</ul><p>Creating copies/symlinks is important because based on input image tesseract search for box files and second argument is used for output filename (tr file).</p>
+
+<p>You will get a lot several warnings like this:</p>
+
+<pre><code>APPLY_BOXES: Unlabelled word at :Bounding box=(128,1555)-&gt;(255,1582)
+</code></pre>
+
+<p>This is because there are not box data for part of image (e.g. calc.arialnormal.exp0 miss all box data for bold, italic and underlined symbols). If you want to avoid this warnings you need to remove (clear) in image editor (e.g. gimp) not boxed symbols.</p>
+
+<p>If you get error message like this:</p>
+
+<pre><code>APPLY_BOXES: boxfile line 16/$ ((1943,2674),(2037,2758)): FAILURE! Couldn't find a matching blob
+</code></pre>
+
+<p>you should check that region. You can visualize it by function “Draw Rectangle...” (<em>Edit-&gt;Draw Rectangle...</em> or <em>Ctrl+R</em>). New dialogue will be opened with 4 field where you can enter this coordinates (bounding box).</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
