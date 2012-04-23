@@ -946,24 +946,31 @@ void ChildWidget::showSymbol() {
   drawSelectionRects();
 }
 
-void ChildWidget::drawRectangle() {
-  if (!m_DrawRectangle) {
-    m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
-                                        imageWidth, imageHeight);
-  }
-  int ret = m_DrawRectangle->exec();
-  if (ret) {
-    QRect newCoords = m_DrawRectangle->getRectangle();
-    if (rectangle) {
-      imageScene->removeItem(rectangle);
+void ChildWidget::drawRectangle(bool checked) {
+    if (checked) {
+      if (!m_DrawRectangle) {
+        m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
+                                            imageWidth, imageHeight);
+      }
+      int ret = m_DrawRectangle->exec();
+      if (ret) {
+        QRect newCoords = m_DrawRectangle->getRectangle();
+        if (rectangle) {
+          imageScene->removeItem(rectangle);
+        }
+        rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
+                                        newCoords.width(), newCoords.height(),
+                                        QPen(QColor(255, 0, 0, 255)),
+                                        QBrush(QColor(255, 0, 0, 100)) );
+        rectangle->setZValue(1);
+        rectangle->setRect(QRectF(newCoords));
+        rectangle->setVisible(true);
+      }
+    } else {
+        if (rectangle) {
+          imageScene->removeItem(rectangle);
+        }
     }
-    rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
-                                    newCoords.width(), newCoords.height(),
-                                    QPen(QColor(255, 0, 0, 200)));
-    rectangle->setZValue(1);
-    rectangle->setRect(QRectF(newCoords));
-    rectangle->setVisible(true);
-  }
 }
 
 void ChildWidget::drawBoxes() {

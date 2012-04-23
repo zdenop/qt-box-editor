@@ -454,9 +454,9 @@ void MainWindow::find() {
   }
 }
 
-void MainWindow::drawRect() {
+void MainWindow::drawRect(bool checked) {
     if (activeChild()) {
-        activeChild()->drawRectangle();
+        activeChild()->drawRectangle(checked);
     }
 }
 
@@ -872,8 +872,9 @@ void MainWindow::createActions() {
 
   drawRectAct = new QAction(QIcon(":/images/rectangle.svg"),
                         tr("Draw &Rectangle…"), this);
+  drawRectAct->setCheckable(true);
   drawRectAct->setShortcut(tr("Ctrl+R"));
-  connect(drawRectAct, SIGNAL(triggered()), this, SLOT(drawRect()));
+  connect(drawRectAct, SIGNAL(triggered(bool)), this, SLOT(drawRect(bool)));
 
   settingsAct = new QAction(tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));

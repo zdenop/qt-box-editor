@@ -112,7 +112,7 @@ class MainWindow : public QMainWindow {
     void moveTo();
     void goToRow();
     void find();
-    void drawRect();
+    void drawRect(bool checked);
     void slotSettings();
     void shortCutList();
     void about();

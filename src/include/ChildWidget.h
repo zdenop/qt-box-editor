@@ -113,7 +113,7 @@ class ChildWidget : public QSplitter {
     void drawBoxes();
     void copyFromCell();
     void pasteToCell();
-    void drawRectangle();
+    void drawRectangle(bool checked);
 
   public slots:
     void sbValueChanged(int sbdValue);
