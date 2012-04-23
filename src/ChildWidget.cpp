@@ -246,7 +246,6 @@ bool ChildWidget::loadImage(const QString& fileName) {
 
   setCurrentBoxFile(boxFileName);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
-  //imageSelectionRect->setParentItem(imageItem);
   modified = false;
   emit modifiedChanged();
   connect(model, SIGNAL(itemChanged(QStandardItem*)), this,
@@ -974,11 +973,11 @@ void ChildWidget::drawBoxes() {
       int top = model->index(row, 4).data().toInt();
       int width = model->index(row, 3).data().toInt() - left;
       int height = model->index(row, 2).data().toInt() - top;
-      imageScene->addRect(left, top, width, height, QPen(boxColor));
+      boxesItem << imageScene->addRect(left, top, width, height, QPen(boxColor));
       boxesVisible = true;
     }
   } else {
-    deleteBoxes(imageScene->items());
+    removeMyItems(boxesItem);
     boxesVisible = false;
   }
 }
@@ -1104,16 +1103,6 @@ void ChildWidget::directType(QKeyEvent* event) {
     }
   }
   event->accept();
-  drawSelectionRects();
-}
-
-void ChildWidget::deleteBoxes(const QList<QGraphicsItem*> &items) {
-  foreach(QGraphicsItem * item, items) {
-    qint32 type = static_cast<qint32>(item->type());
-    if (type == 3)   // delete only rectagles
-      imageScene->removeItem(item);
-  }
-  setSelectionRect();   // initialize removed selection rectangle
   drawSelectionRects();
 }
 
@@ -1363,18 +1352,18 @@ void ChildWidget::emitBoxChanged() {
   emit boxChanged();
 }
 
-void ChildWidget::removeSelectionRects() {
-  foreach(QGraphicsItem *item, rectItem) {
-    imageScene->removeItem(item);
-  }
-  rectItem.clear();
+void ChildWidget::removeMyItems(QVector<QGraphicsRectItem *> &graphicsItems) {
+    foreach(QGraphicsItem *item, graphicsItems) {
+      imageScene->removeItem(item);
+    }
+    graphicsItems.clear();
 }
 
 void ChildWidget::drawSelectionRects() {
   QModelIndexList indexes = table->selectionModel()->selection().indexes();
 
   if (!indexes.empty()) {
-    removeSelectionRects();
+    removeMyItems(rectItem);
     text2->setVisible(false);
 
     for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
