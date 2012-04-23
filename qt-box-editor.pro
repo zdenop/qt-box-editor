@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.07
+VERSION = 1.08dev
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -12,8 +12,8 @@ INCLUDEPATH += ./ \
     src
 
 QT += network \
-    svg
-    # testlib
+    svg \
+    testlib
 
 CONFIG += release
 
@@ -60,10 +60,10 @@ win32: {
     CONFIG += static release embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti -static
-    QTPLUGIN += qsvg # image formats
-    DEFINES += _COMPOSE_STATIC_
+    #QTPLUGIN += qsvg # image formats
+    #DEFINES += _COMPOSE_STATIC_
     DEFINES += WINDOWS __BLOB_T_DEFINED
-    QMAKE_LFLAGS += -static-libgcc # -static
+    #QMAKE_LFLAGS += -static-libgcc # -static
     RC_FILE = resources/win.rc
     INCLUDEPATH +=  win32-external/include/tesseract/ \
                     win32-external/include/leptonica/

@@ -39,6 +39,12 @@ DrawRectangle::DrawRectangle(QWidget* parent, QString title, int maxWidth,
   ui->spinBox_y1->setMaximum(maxHeight);
   ui->spinBox_y2->setMaximum(maxHeight);
 
+  ui->spinBox_x1->setFocus();
+  // workaround selectAll() do not work...
+  ui->spinBox_x1->stepUp();
+  ui->spinBox_x1->stepDown();
+
+
 }
 
 DrawRectangle::~DrawRectangle()
@@ -52,6 +58,9 @@ DrawRectangle::~DrawRectangle()
 QRect DrawRectangle::getRectangle() const
 {
     QRect coords;
+    ui->spinBox_x1->setFocus();
+    ui->spinBox_x1->selectAll();
+
     coords.setCoords(ui->spinBox_x1->value(),
                      ui->spinBox_y1->maximum() - ui->spinBox_y1->value(),
                      ui->spinBox_x2->value(),
