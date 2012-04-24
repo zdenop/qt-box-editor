@@ -234,7 +234,6 @@ bool ChildWidget::loadImage(const QString& fileName) {
   imageHeight = image.height();
   imageWidth = image.width();
   setCurrentImageFile(fileName);
-
   QString boxFileName = QFileInfo(fileName).path() + QDir::separator()
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
@@ -255,7 +254,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
   return true;
 }
 
-bool ChildWidget::qCreateBoxes(const QString &boxFileName, QImage& image) {
+bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& image) {
   switch (QMessageBox::question(
             this,
             tr("Missing file"),

@@ -33,6 +33,7 @@
 #include <QStringList>
 #include <QMessageBox>
 #include <QDir>
+#include <QDebug>
 #include <QFile>
 
 const char *TessTools::kTrainedDataSuffix = "traineddata";
@@ -46,7 +47,7 @@ TessTools::~TessTools() {
 /*!
  * Create tesseract box data from QImage
  */
-QString TessTools::makeBoxes(QImage& qImage) {
+QString TessTools::makeBoxes(const QImage& qImage) {
   PIX   *pixs;
 
   if ((pixs = qImage2PIX(qImage)) == NULL) {
@@ -102,15 +103,15 @@ QString TessTools::makeBoxes(QImage& qImage) {
  * input: QImage
  * result: PIX
  */
-PIX* TessTools::qImage2PIX(QImage& qImage) {
+PIX* TessTools::qImage2PIX(const QImage& qImage) {
   PIX * pixs;
   l_uint32 *lines;
 
-  qImage = qImage.rgbSwapped();
-  int width = qImage.width();
-  int height = qImage.height();
-  int depth = qImage.depth();
-  int wpl = qImage.bytesPerLine() / 4;
+  QImage myImage = qImage.rgbSwapped();
+  int width = myImage.width();
+  int height = myImage.height();
+  int depth = myImage.depth();
+  int wpl = myImage.bytesPerLine() / 4;
 
   pixs = pixCreate(width, height, depth);
   pixSetWpl(pixs, wpl);
@@ -119,11 +120,19 @@ PIX* TessTools::qImage2PIX(QImage& qImage) {
 
   for (int y = 0; y < height; y++) {
     lines = datas + y * wpl;
-    QByteArray a((const char*)qImage.scanLine(y), qImage.bytesPerLine());
+    QByteArray a((const char*)myImage.scanLine(y), myImage.bytesPerLine());
     for (int j = 0; j < a.size(); j++) {
       *((l_uint8 *)lines + j) = a[j];
     }
   }
+
+  const qreal toDPM = 1.0 / 0.0254;
+  int resolutionX = myImage.dotsPerMeterX() / toDPM;
+  int resolutionY = myImage.dotsPerMeterY() / toDPM;
+
+  if (resolutionX < 300) resolutionX = 300;
+  if (resolutionY < 300) resolutionY = 300;
+  pixSetResolution(pixs, resolutionX, resolutionY);
 
   return pixEndianByteSwapNew(pixs);
 }
@@ -149,6 +158,13 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
     format = QImage::Format_RGB32;
 
   QImage result((uchar*)datas, width, height, bytesPerLine, format);
+
+  // Set resolution
+  l_int32 	xres, yres;
+  pixGetResolution(pixImage, &xres, &yres);
+  const qreal toDPM = 1.0 / 0.0254;
+  result.setDotsPerMeterX(xres * toDPM);
+  result.setDotsPerMeterY(yres * toDPM);
 
   // Handle pallete
   QVector<QRgb> _bwCT;

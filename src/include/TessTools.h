@@ -34,8 +34,8 @@ class TessTools {
 public:
   TessTools();
   ~TessTools();
-  QString makeBoxes(QImage& qImage);
-  static PIX* qImage2PIX(QImage& qImage);
+  QString makeBoxes(const QImage &qImage);
+  static PIX* qImage2PIX(const QImage &qImage);
   static QImage PIX2qImage(PIX *pixImage);
   QList<QString> getLanguages(QString datapath);
 
