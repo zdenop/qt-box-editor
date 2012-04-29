@@ -5,7 +5,7 @@
 * Created:     2010-01-06
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2012, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -882,13 +882,17 @@ void ChildWidget::setZoom(float scale) {
 
 void ChildWidget::zoomIn() {
   imageView->scale(1.2, 1.2);
-  imageView->ensureVisible(rectItem.last());
+  if (rectItem.size()) {
+    imageView->ensureVisible(rectItem.last());
+  }
   getZoom();
 }
 
 void ChildWidget::zoomOut() {
   imageView->scale(1 / 1.2, 1 / 1.2);
-  imageView->ensureVisible(rectItem.last());
+  if (rectItem.size()) {
+    imageView->ensureVisible(rectItem.last());
+  }
   getZoom();
 }
 
@@ -913,7 +917,9 @@ void ChildWidget::zoomToHeight() {
   float zoomFactor = viewHeight / imageHeight;
 
   setZoom(zoomFactor);
-  imageView->ensureVisible(rectItem.last());
+  if (rectItem.size()) {
+    imageView->ensureVisible(rectItem.last());
+  }
 }
 
 void ChildWidget::zoomToWidth() {
@@ -921,18 +927,24 @@ void ChildWidget::zoomToWidth() {
   float zoomFactor = viewWidth / imageWidth;
 
   setZoom(zoomFactor);
-  imageView->ensureVisible(rectItem.last());
+  if (rectItem.size()) {
+    imageView->ensureVisible(rectItem.last());
+  }
 }
 
 void ChildWidget::zoomOriginal() {
   setZoom(1);
-  imageView->ensureVisible(rectItem.last());
+  if (rectItem.size()) {
+    imageView->ensureVisible(rectItem.last());
+  }
 }
 
 void ChildWidget::zoomToSelection() {
   imageView->fitInView(rectItem.last(), Qt::KeepAspectRatio);
   imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
-  imageView->ensureVisible(rectItem.last());
+  if (rectItem.size()) {
+    imageView->ensureVisible(rectItem.last());
+  }
   imageView->centerOn(rectItem.last());
   getZoom();
 }
