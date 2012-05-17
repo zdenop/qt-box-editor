@@ -22,6 +22,7 @@
 
 #include <baseapi.h>
 #include <allheaders.h>
+#include <strngs.h>
 #include "TessTools.h"
 #include "src/include/Settings.h"
 #include <locale.h>
