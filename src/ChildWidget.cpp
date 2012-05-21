@@ -217,6 +217,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   widgetWidth = parent->size().width();
   modified = false;
   boxesVisible = false;
+  drawnRectangle = false;
   symbolShown = true;
   directTypingMode = false;
   f_dialog = 0;
@@ -540,7 +541,7 @@ bool ChildWidget::importSPLToChild(const QString& fileName) {
 
   QTextStream in(&file);
   in.setCodec("UTF-8");
-  // TODO(zdenop): ask for format of imput file
+  // TODO(zdenop): ask for format of input file
   // format_1: 1 line = 1 symbol
   // format_2: 1 letter = 1 symbol
 
@@ -804,6 +805,10 @@ bool ChildWidget::isDrawBoxes() {
   return boxesVisible;
 }
 
+bool ChildWidget::isDrawRect() {
+    return drawnRectangle;
+}
+
 void ChildWidget::setItalic(bool v) {
   QModelIndexList indexes = table->selectionModel()->selection().indexes();
   QModelIndex index;
@@ -975,12 +980,19 @@ void ChildWidget::drawRectangle(bool checked) {
                                         QPen(QColor(255, 0, 0, 255)),
                                         QBrush(QColor(255, 0, 0, 100)) );
         rectangle->setZValue(1);
-        rectangle->setRect(QRectF(newCoords));
         rectangle->setVisible(true);
+        drawnRectangle = true;
       }
     } else {
         if (rectangle) {
+          // I can not call rectangle->prepareGeometryChange();
+          // http://www.qtcentre.org/threads/28749-Qt-4.6-GraphicsView-items-remove-problem
           imageScene->removeItem(rectangle);
+          // Workaround
+          QRectF isCoords = imageScene->sceneRect();
+          imageScene->update(isCoords);
+
+          drawnRectangle = false;
         }
     }
 }
@@ -993,8 +1005,8 @@ void ChildWidget::drawBoxes() {
       int width = model->index(row, 3).data().toInt() - left;
       int height = model->index(row, 2).data().toInt() - top;
       boxesItem << imageScene->addRect(left, top, width, height, QPen(boxColor));
-      boxesVisible = true;
     }
+    boxesVisible = true;
   } else {
     removeMyItems(boxesItem);
     boxesVisible = false;

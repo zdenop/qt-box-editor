@@ -607,6 +607,8 @@ void MainWindow::updateCommandActions() {
                             ? activeChild()->isShowSymbol() : false);
   drawBoxesAct->setChecked((activeChild())
                            ? activeChild()->isDrawBoxes() : false);
+  drawRectAct->setChecked((activeChild())
+                           ? activeChild()->isDrawRect() : false);
   moveUpAct->setEnabled(enable);
   moveDownAct->setEnabled(enable);
   moveToAct->setEnabled(enable);
@@ -881,7 +883,7 @@ void MainWindow::createActions() {
   connect(findAct, SIGNAL(triggered()), this, SLOT(find()));
 
   drawRectAct = new QAction(QIcon(":/images/rectangle.svg"),
-                        tr("Draw &Rectangle…"), this);
+                        tr("Draw/Hide &Rectangle…"), this);
   drawRectAct->setCheckable(true);
   drawRectAct->setShortcut(tr("Ctrl+R"));
   connect(drawRectAct, SIGNAL(triggered(bool)), this, SLOT(drawRect(bool)));

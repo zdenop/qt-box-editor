@@ -94,9 +94,7 @@ class ChildWidget : public QSplitter {
     bool isShowSymbol();
     bool isDirectTypingMode();
     bool isDrawBoxes();
-    bool symbolShown;
-    bool boxesVisible;
-    bool directTypingMode;
+    bool isDrawRect();
 
     QString userFriendlyCurrentFile();
     QString getSymbolHexCode();
@@ -159,6 +157,10 @@ private:
     void undoJoin(UndoItem& ui);
     void undoSplit(UndoItem& ui);
     void undoMoveBack(UndoItem& ui);
+    bool symbolShown;
+    bool boxesVisible;
+    bool drawnRectangle;
+    bool directTypingMode;
 
   private slots:
     void documentWasModified();
@@ -216,7 +218,7 @@ private:
     int imageHeight;
     int imageWidth;
     int widgetWidth;
-    
+
     QStack<UndoItem> m_undostack;
 };
 
