@@ -5,7 +5,8 @@
 * Created:     2010-01-04
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2012, Zdenko Podobny
+* (C) Copyright 2012, Zohar Gofer (Undo action)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -460,6 +461,13 @@ void MainWindow::drawRect(bool checked) {
     }
 }
 
+void MainWindow::undo()
+{
+    if (activeChild()) {
+        activeChild()->undo();
+    }
+}
+
 void MainWindow::slotSettings() {
   runSettingsDialog = new SettingsDialog(this);
   runSettingsDialog->exec();
@@ -534,7 +542,8 @@ void MainWindow::about() {
   abouttext.append(tr("<p>Project page: <a href=%1>%2</a></p>").
                    arg(PROJECT_URL).arg(PROJECT_URL_NAME));
   abouttext.append(tr("<p>Copyright 2010 Marcel Kolodziejczyk<br/>"));
-  abouttext.append(tr("Copyright 2011 Zdenko Podobný</p>"));
+  abouttext.append(tr("Copyright 2012 Zohar Gofer<br/>"));
+  abouttext.append(tr("Copyright 2011-2012 Zdenko Podobný</p>"));
   abouttext.append(tr("<p>This software is released under "
                       "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a></p>"));
   QMessageBox::about(this, tr("About application"), abouttext);
@@ -578,6 +587,7 @@ void MainWindow::updateMenus() {
   showSymbolAct->setEnabled(activeChild() != 0);
   goToRowAct->setEnabled(activeChild() != 0);
   findAct->setEnabled(activeChild() != 0);
+  undoAct->setEnabled(activeChild() != 0);
   drawRectAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
   DirectTypingAct->setEnabled(activeChild() != 0);
@@ -876,6 +886,12 @@ void MainWindow::createActions() {
   drawRectAct->setShortcut(tr("Ctrl+R"));
   connect(drawRectAct, SIGNAL(triggered(bool)), this, SLOT(drawRect(bool)));
 
+  undoAct = new QAction(QIcon(":/images/undo.png"),
+                        tr("&Undo"), this);
+  //undoAct->setCheckable(true);
+  undoAct->setShortcut(tr("Ctrl+Z"));
+  connect(undoAct, SIGNAL(triggered()), this, SLOT(undo()));
+
   settingsAct = new QAction(tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
   settingsAct->setToolTip(tr("Programm settings"));
@@ -944,6 +960,7 @@ void MainWindow::createMenus() {
   editMenu->addAction(moveToAct);
   editMenu->addAction(goToRowAct);
   editMenu->addAction(findAct);
+  editMenu->addAction(undoAct);
   editMenu->addSeparator();
   editMenu->addAction(DirectTypingAct);
   editMenu->addAction(drawRectAct);
@@ -997,6 +1014,7 @@ void MainWindow::createToolBars() {
   editToolBar->addAction(underlineAct);
   editToolBar->addSeparator();
   editToolBar->addAction(findAct);
+  editToolBar->addAction(undoAct);
 }
 
 void MainWindow::createStatusBar() {

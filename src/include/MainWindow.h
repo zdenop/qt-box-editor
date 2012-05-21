@@ -5,7 +5,8 @@
 * Created:         2010-01-04
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2012, Zdenko Podobny
+* (C) Copyright 2012, Zohar Gofer (Undo action)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -113,6 +114,7 @@ class MainWindow : public QMainWindow {
     void goToRow();
     void find();
     void drawRect(bool checked);
+    void undo();
     void slotSettings();
     void shortCutList();
     void about();
@@ -199,6 +201,7 @@ class MainWindow : public QMainWindow {
     QAction* goToRowAct;
     QAction* findAct;
     QAction* drawRectAct;
+    QAction* undoAct;
     QAction* checkForUpdateAct;
     QAction* shortCutListAct;
     QAction* aboutAct;

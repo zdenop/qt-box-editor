@@ -34,5 +34,6 @@
         <file>images/import.svg</file>
         <file>images/gnome-edit-find.svg</file>
         <file>images/rectangle.svg</file>
+        <file>images/undo.png</file>
     </qresource>
 </RCC>

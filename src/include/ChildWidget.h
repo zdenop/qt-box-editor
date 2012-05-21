@@ -5,7 +5,8 @@
 * Created:         2010-01-06
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2012, Zdenko Podobny
+* (C) Copyright 2012, Zohar Gofer (Undo action)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -30,6 +31,7 @@
 #include <QtCore/QSettings>
 #include <QtCore/QTextStream>
 #include <QtCore/qmath.h>
+#include <QtCore/QStack>
 #include <QtGui/QAbstractItemView>
 #include <QtGui/QApplication>
 #include <QtGui/QClipboard>
@@ -56,6 +58,25 @@ class QGraphicsItem;
 class QGraphicsRectItem;
 class FindDialog;
 class DrawRectangle;
+
+enum undoOperation
+{
+    euoAdd=1,
+    euoDelete=2,
+    euoChange=4,
+    euoJoin=8,
+    euoSplit=16,
+    euoRelace=32
+};
+
+struct UndoItem
+{
+    undoOperation m_eop;
+    int m_origrow;
+    int m_extrarow;
+    QVariant m_vdata[9];
+    QVariant m_vextradata[9];
+};
 
 class ChildWidget : public QSplitter {
     Q_OBJECT
@@ -121,6 +142,7 @@ class ChildWidget : public QSplitter {
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();
+    void undo();
 
     void moveUp();
     void moveDown();
@@ -129,6 +151,14 @@ class ChildWidget : public QSplitter {
     void find();
     void findNext(const QString &symbol, Qt::CaseSensitivity mc);
     void findPrev(const QString &symbol, Qt::CaseSensitivity mc);
+
+private:
+    void undoDelete(UndoItem& ui);
+    void undoAdd(UndoItem& ui);
+    void undoEdit(UndoItem& ui);
+    void undoJoin(UndoItem& ui);
+    void undoSplit(UndoItem& ui);
+    void undoMoveBack(UndoItem& ui);
 
   private slots:
     void documentWasModified();
@@ -149,7 +179,8 @@ class ChildWidget : public QSplitter {
     void removeMyItems(QVector<QGraphicsRectItem *> &graphicsItems);
 
   protected:
-    void directType(QKeyEvent* event);
+
+   void directType(QKeyEvent* event);
     virtual void mousePressEvent(QMouseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
     void closeEvent(QCloseEvent* event);
@@ -185,6 +216,8 @@ class ChildWidget : public QSplitter {
     int imageHeight;
     int imageWidth;
     int widgetWidth;
+    
+    QStack<UndoItem> m_undostack;
 };
 
 #endif  // SRC_INCLUDE_CHILDWIDGET_H_

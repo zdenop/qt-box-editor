@@ -6,6 +6,7 @@
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011-2012, Zdenko Podobny
+* (C) Copyright 2012, Zohar Gofer (Undo action)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -1054,34 +1055,43 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
 }
 
 void ChildWidget::moveSymbolRow(int direction) {
-  QModelIndex index = selectionModel->currentIndex();
+    QModelIndex index = selectionModel->currentIndex();
 
-  // check if any row is selected
-  if (index.row() < 0)
-    return;
+    int currentRow = index.row();
+    // check if any row is selected
+    if (currentRow < 0)
+        return;
 
-  // check where if we are if move is possible top/bottom
-  if (direction < 0 && index.row() == 0) {
-    return;
-  } else if (direction > 0 && index.row() == (model->rowCount() - 1)) {
-    return;
-  } else {
-    // add new row
-    model->insertRow(index.row() + direction);
-    int newRow = index.row() + direction;
-    // insertRow change row id!
-    int currentRow = table->currentIndex().row();
-    for (int i = 0; i < (model->columnCount() - 1); ++i) {
-      model->setData(model->index(newRow, i),
-                     model->index(currentRow, i).data());
+    // check where if we are if move is possible top/bottom
+    if (direction < 0 && currentRow == 0)
+    {
+        return;
     }
+    else if (direction > 0 && currentRow == model->rowCount())
+    {
+        return;
+    }
+    else
+    {
+        UndoItem ui;
+        ui.m_eop = euoRelace;
+        ui.m_origrow = currentRow;
+        ui.m_extrarow = currentRow + direction;
 
-    // activate new row
-    table->setCurrentIndex(model->index(newRow, 0));
-    // delete original row
-    model->removeRow(currentRow);
-    drawSelectionRects();
-  }
+        for(int j=0;j<9;j++)
+        {
+            ui.m_vdata[j] = model->index(currentRow, j).data();
+            ui.m_vextradata[j] = model->index(ui.m_extrarow, j).data();
+
+            model->setData(model->index(ui.m_extrarow, j),ui.m_vdata[j]);
+            model->setData(model->index(ui.m_origrow, j),ui.m_vextradata[j]);
+        }
+
+        m_undostack.push(ui);
+        // activate new row
+        table->setCurrentIndex(model->index(ui.m_extrarow, 0));
+        drawSelectionRects();
+    }
 }
 
 void ChildWidget::copyFromCell() {
@@ -1093,16 +1103,32 @@ void ChildWidget::pasteToCell() {
   const QClipboard* clipboard = QApplication::clipboard();
   QModelIndex index = selectionModel->currentIndex();
 
+  UndoItem ui;
+  ui.m_eop = euoChange;
+  ui.m_origrow = index.row();
+
+  for(int i=0;i<9;i++)
+      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
   // do not paste string to int fields
   if ((index.column() > 0 && index.column() < 5) &&
       (clipboard->text().toInt() > 0))
+  {
     model->setData(table->currentIndex(), clipboard->text().toInt());
+    m_undostack.push(ui);
+  }
 
   // paste string only to string field
   if (index.column() == 0)
+  {
     model->setData(table->currentIndex(), clipboard->text());
+    m_undostack.push(ui);
+  }
+
   if (directTypingMode)
     table->setCurrentIndex(model->index(index.row() + 1, 0));
+
+
   drawSelectionRects();
 }
 
@@ -1114,9 +1140,21 @@ void ChildWidget::directType(QKeyEvent* event) {
     if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
       // enter/return move to next row
       table->setCurrentIndex(model->index(index.row() + 1, 0));
-    } else {
+    }
+    else
+    {
       model->setData(model->index(index.row(), 0, QModelIndex()),
                      event->text());
+
+      UndoItem ui;
+      ui.m_eop = euoChange;
+      ui.m_origrow = index.row();
+
+      for(int i=0;i<9;i++)
+          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+      m_undostack.push(ui);
+
       table->setCurrentIndex(model->index(index.row() + 1, 0));
     }
   }
@@ -1152,6 +1190,12 @@ void ChildWidget::insertSymbol() {
                    model->index(index.row(), 8).data().toBool());
 
     table->setCurrentIndex(model->index(index.row() + 1, 0));
+
+    UndoItem ui;
+    ui.m_eop = euoAdd;
+    ui.m_origrow = index.row() + 1;
+    m_undostack.push(ui);
+
     drawSelectionRects();
   }
 }
@@ -1160,6 +1204,17 @@ void ChildWidget::splitSymbol() {
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid()) {
+
+      UndoItem ui;
+      ui.m_eop = euoSplit;
+      ui.m_origrow = index.row();
+      ui.m_extrarow = ui.m_origrow + 1;
+
+      for(int i=0;i<9;i++)
+          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+      m_undostack.push(ui);
+
     QModelIndex left = model->index(index.row(), 1);
     QModelIndex right = model->index(index.row(), 3);
     int width = right.data().toInt() - left.data().toInt();
@@ -1201,7 +1256,22 @@ void ChildWidget::joinSymbol() {
                         index.column());
 
   if (index.isValid() && next.isValid()) {
+
     int row = index.row();
+
+    UndoItem ui;
+    ui.m_eop = euoJoin;
+    ui.m_origrow = row;
+    ui.m_extrarow = row + 1;
+
+    for(int i=0;i<9;i++)
+    {
+        ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+        ui.m_vextradata[i] = model->index(ui.m_extrarow, i).data();
+    }
+
+    m_undostack.push(ui);
+
     model->setData(model->index(row, 0),
                    model->index(row, 0).data().toString() + model->index(row
                        + 1, 0).data().toString());
@@ -1240,8 +1310,21 @@ void ChildWidget::joinSymbol() {
 void ChildWidget::deleteSymbol() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid()) {
-    model->removeRow(index.row());
+  if (index.isValid())
+  {
+      UndoItem ui;
+      ui.m_eop = euoDelete;
+      ui.m_origrow = index.row();
+
+      for(int i=0;i<9;i++)
+          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+      m_undostack.push(ui);
+      model->removeRow(index.row());
+
+      table->setCurrentIndex(model->index(ui.m_origrow, 0));
+      table->setFocus();
+      drawSelectionRects();
   }
 }
 
@@ -1250,7 +1333,7 @@ void ChildWidget::moveUp() {
 }
 
 void ChildWidget::moveDown() {
-  moveSymbolRow(2);
+  moveSymbolRow(1);
 }
 
 void ChildWidget::moveTo() {
@@ -1274,7 +1357,7 @@ void ChildWidget::moveTo() {
   }
 
   if ((destRow - sourceRow) > 0)
-    moveSymbolRow(destRow - sourceRow + 1);
+    moveSymbolRow(destRow - sourceRow);
   else
     moveSymbolRow(destRow - sourceRow);
 
@@ -1476,6 +1559,15 @@ void ChildWidget::sbValueChanged(int sbdValue) {
     break;
   }
 
+  UndoItem ui;
+  ui.m_eop = euoChange;
+  ui.m_origrow = index.row();
+
+  for(int i=0;i<9;i++)
+      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+  m_undostack.push(ui);
+
   rectItem.first()->setRect(QRectF(QPoint(left, top),
                                    QPointF(right, bottom)));
   imageView->ensureVisible(rectItem.first());
@@ -1510,4 +1602,110 @@ void ChildWidget::findPrev(const QString &symbol,
     --row;
   }
   QApplication::beep();
+}
+
+void ChildWidget::undo()
+{
+    if(m_undostack.isEmpty())
+        return;
+
+    UndoItem ui = m_undostack.pop();
+
+    switch(ui.m_eop)
+    {
+    case euoAdd:
+        //Item was added. Reverse is remove it.
+        undoDelete(ui);
+        break;
+    case euoDelete:
+        //Item was deleted. Reverse is put it back.
+        undoAdd(ui);
+        break;
+    case euoChange:
+        //Item was edited. Put back old values.
+        undoEdit(ui);
+        break;
+    case euoJoin:
+        //Two items joined. Split back.
+        undoSplit(ui);
+        break;
+    case euoSplit:
+        //Item split in two. Join back.
+        undoJoin(ui);
+        break;
+    case euoRelace:
+        //Two item changed places. Change places back.
+        undoMoveBack(ui);
+        break;
+    default:
+        //Nothing to dofor other cases. Report error.
+
+        QMessageBox::warning(
+          this,
+          SETTING_APPLICATION,
+                    "Invalid undo operation.");
+        break;
+    }
+}
+
+//Delete item as undo operation of add
+void ChildWidget::undoDelete(UndoItem& ui)
+{
+    model->removeRow(ui.m_origrow);
+
+    int rows = model->rowCount();
+
+    int newfocusrow = ui.m_origrow;
+
+    if(newfocusrow > rows)
+        newfocusrow = rows;
+
+    table->setCurrentIndex(model->index(newfocusrow, 0));
+    table->setFocus();
+    drawSelectionRects();
+}
+
+//Add back item as undo operation of delete
+void ChildWidget::undoAdd(UndoItem& ui)
+{
+    model->insertRow(ui.m_origrow);
+    undoEdit(ui);
+}
+
+//Put back edited values
+void ChildWidget::undoEdit(UndoItem& ui)
+{
+    for(int i=0;i<9;i++)
+        model->setData(model->index(ui.m_origrow, i),ui.m_vdata[i]);
+
+    table->setCurrentIndex(model->index(ui.m_origrow, 0));
+    table->setFocus();
+    drawSelectionRects();
+}
+
+//Re-join split rows
+void ChildWidget::undoJoin(UndoItem& ui)
+{
+    model->removeRow(ui.m_extrarow);
+    undoEdit(ui);
+}
+
+//Split back joined lines
+void ChildWidget::undoSplit(UndoItem& ui)
+{
+    model->insertRow(ui.m_extrarow);
+
+    for(int i=0;i<9;i++)
+        model->setData(model->index(ui.m_extrarow, i),ui.m_vextradata[i]);
+
+    undoEdit(ui);
+}
+
+//Put replaced rows back to original location
+void ChildWidget::undoMoveBack(UndoItem& ui)
+{
+    for(int i=0;i<9;i++)
+        model->setData(model->index(ui.m_extrarow, i),ui.m_vextradata[i]);
+
+    undoEdit(ui);
 }
