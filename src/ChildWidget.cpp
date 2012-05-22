@@ -1337,6 +1337,7 @@ void ChildWidget::deleteSymbol() {
       table->setCurrentIndex(model->index(ui.m_origrow, 0));
       table->setFocus();
       drawSelectionRects();
+      documentWasModified();
   }
 }
 
