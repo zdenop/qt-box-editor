@@ -112,7 +112,7 @@ class ChildWidget : public QSplitter {
     bool exportTxt(const int& eType, const QString& fileName);
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);
-    bool qCreateBoxes(const QString &boxFileName, const QImage &image);
+    bool qCreateBoxes(const QString &boxFileName, const QImage &img);
     bool fillTableData(QTextStream& boxdata);
     void setSelectionRect();
     void setBolded(bool v);

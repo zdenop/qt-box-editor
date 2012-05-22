@@ -33,7 +33,8 @@ MainWindow::MainWindow() {
   tabWidget->setMovable(true);
 #endif
 
-  connect(tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(handleClose(int)));
+  connect(tabWidget, SIGNAL(tabCloseRequested(int)), this,
+          SLOT(handleClose(int)));
   connect(tabWidget, SIGNAL(currentChanged(int)), this,
           SLOT(updateMenus()));
   connect(tabWidget, SIGNAL(currentChanged(int)), this,
@@ -180,10 +181,10 @@ void MainWindow::save() {
  * if input filename is eng.times.exp001.box
  */
 void MainWindow::splitToFeatureBF() {
-    QString fileName = activeChild()->currentBoxFile();
+  QString fileName = activeChild()->currentBoxFile();
 
-    if (activeChild() && activeChild()->splitToFeatureBF(fileName))
-      statusBar()->showMessage(tr("File saved"), 2000);
+  if (activeChild() && activeChild()->splitToFeatureBF(fileName))
+    statusBar()->showMessage(tr("File saved"), 2000);
 }
 
 /**
@@ -245,7 +246,7 @@ void MainWindow::importTextSym() {
 //               paragraphPerLine()
 void MainWindow::symbolPerLine() {
   QString currentFileName = activeChild()->currentBoxFile().replace(
-                              ".box",".txt");
+                              ".box", ".txt");
   QString fileName = QFileDialog::getSaveFileName(this,
                      tr("Export symbols to file..."),
                      currentFileName,
@@ -260,7 +261,7 @@ void MainWindow::symbolPerLine() {
 
 void MainWindow::rowPerLine() {
   QString currentFileName = activeChild()->currentBoxFile().replace(
-                              ".box",".txt");
+                              ".box", ".txt");
   QString fileName = QFileDialog::getSaveFileName(this,
                      tr("Export symbols to file..."),
                      currentFileName,
@@ -275,7 +276,7 @@ void MainWindow::rowPerLine() {
 
 void MainWindow::paragraphPerLine() {
   QString currentFileName = activeChild()->currentBoxFile().replace(
-                              ".box",".txt");
+                              ".box", ".txt");
   QString fileName = QFileDialog::getSaveFileName(this,
                      tr("Export symbols to file..."),
                      currentFileName,
@@ -456,16 +457,15 @@ void MainWindow::find() {
 }
 
 void MainWindow::drawRect(bool checked) {
-    if (activeChild()) {
-        activeChild()->drawRectangle(checked);
-    }
+  if (activeChild()) {
+    activeChild()->drawRectangle(checked);
+  }
 }
 
-void MainWindow::undo()
-{
-    if (activeChild()) {
-        activeChild()->undo();
-    }
+void MainWindow::undo() {
+  if (activeChild()) {
+    activeChild()->undo();
+  }
 }
 
 void MainWindow::slotSettings() {
@@ -545,7 +545,8 @@ void MainWindow::about() {
   abouttext.append(tr("Copyright 2012 Zohar Gofer<br/>"));
   abouttext.append(tr("Copyright 2011-2012 Zdenko Podobný</p>"));
   abouttext.append(tr("<p>This software is released under "
-                      "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\">Apache License 2.0</a></p>"));
+                      "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\"" \
+                      ">Apache License 2.0</a></p>"));
   QMessageBox::about(this, tr("About application"), abouttext);
 }
 
@@ -608,9 +609,9 @@ void MainWindow::updateCommandActions() {
   drawBoxesAct->setChecked((activeChild())
                            ? activeChild()->isDrawBoxes() : false);
   drawRectAct->setChecked((activeChild())
-                           ? activeChild()->isDrawRect() : false);
+                          ? activeChild()->isDrawRect() : false);
   DirectTypingAct->setChecked((activeChild())
-                          ? activeChild()->isDirectTypingMode() : false);
+                              ? activeChild()->isDirectTypingMode() : false);
   moveUpAct->setEnabled(enable);
   moveDownAct->setEnabled(enable);
   moveToAct->setEnabled(enable);
@@ -692,9 +693,11 @@ void MainWindow::createActions() {
 
   splitToFeatureBFAct = new QAction(tr("&Split to boxfiles"), this);
   splitToFeatureBFAct->setStatusTip(
-      tr("Create individual boxfile for regular, bold, italic and underline boxes."));
+    tr("Create individual boxfile for regular, bold, italic and " \
+       "underline boxes."));
   splitToFeatureBFAct->setEnabled(false);
-  connect(splitToFeatureBFAct, SIGNAL(triggered()), this, SLOT(splitToFeatureBF()));
+  connect(splitToFeatureBFAct, SIGNAL(triggered()), this,
+          SLOT(splitToFeatureBF()));
 
   saveAsAct = new QAction(QIcon(":/images/fileopenas.png"),
                           tr("Save &As"), this);
@@ -705,18 +708,18 @@ void MainWindow::createActions() {
   connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   importPLSymAct = new QAction(
-                             tr("I&mport file with one symbol per line"), this);
+    tr("I&mport file with one symbol per line"), this);
   importPLSymAct->setStatusTip(tr("Import symbols from text document"));
   importPLSymAct->setEnabled(false);
   connect(importPLSymAct, SIGNAL(triggered()), this, SLOT(importPLSym()));
 
   importTextSymAct = new QAction(QIcon(":/images/import.svg"),
-                             tr("Import &text file"), this);
+                                 tr("Import &text file"), this);
   importTextSymAct->setToolTip(tr("Import symbols from text document"));
   importTextSymAct->setEnabled(false);
   connect(importTextSymAct, SIGNAL(triggered()), this, SLOT(importTextSym()));
 
-  // TODO cez parameter?
+  // TODO(zdenop): implementation based on parameter?
   symbolPerLineAct = new QAction(tr("Symbol per line…"), this);
   symbolPerLineAct->setStatusTip(tr("Export symbols to text file."));
   symbolPerLineAct->setEnabled(false);
@@ -880,19 +883,18 @@ void MainWindow::createActions() {
   connect(goToRowAct, SIGNAL(triggered()), this, SLOT(goToRow()));
 
   findAct = new QAction(QIcon(":/images/gnome-edit-find.svg"),
-                           tr("&Find…"), this);
+                        tr("&Find…"), this);
   findAct->setShortcut(tr("Ctrl+F"));
   connect(findAct, SIGNAL(triggered()), this, SLOT(find()));
 
   drawRectAct = new QAction(QIcon(":/images/rectangle.svg"),
-                        tr("Draw/Hide &Rectangle…"), this);
+                            tr("Draw/Hide &Rectangle…"), this);
   drawRectAct->setCheckable(true);
   drawRectAct->setShortcut(tr("Ctrl+R"));
   connect(drawRectAct, SIGNAL(triggered(bool)), this, SLOT(drawRect(bool)));
 
   undoAct = new QAction(QIcon(":/images/undo.png"),
                         tr("&Undo"), this);
-  //undoAct->setCheckable(true);
   undoAct->setShortcut(tr("Ctrl+Z"));
   connect(undoAct, SIGNAL(triggered()), this, SLOT(undo()));
 
@@ -1064,23 +1066,20 @@ void MainWindow::writeSettings() {
   settings.endGroup();
 }
 
-void MainWindow::zoomRatioChanged(qreal ratio)
-{
-    _zoom->setText(QString("%1%").arg(qRound(ratio * 100)));
+void MainWindow::zoomRatioChanged(qreal ratio) {
+  _zoom->setText(QString("%1%").arg(qRound(ratio * 100)));
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent* event)
-{
-    if (event->mimeData()->hasFormat("text/uri-list"))
-        event->acceptProposedAction();
+void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
+  if (event->mimeData()->hasFormat("text/uri-list"))
+    event->acceptProposedAction();
 }
 
-void MainWindow::dropEvent(QDropEvent* event)
-{
-    QList<QUrl> urls = event->mimeData()->urls();
-    if (urls.count()) {
-        QString fname = urls[0].toLocalFile();
-        addChild(fname);
-        event->acceptProposedAction();
-    }
+void MainWindow::dropEvent(QDropEvent* event) {
+  QList<QUrl> urls = event->mimeData()->urls();
+  if (urls.count()) {
+    QString fname = urls[0].toLocalFile();
+    addChild(fname);
+    event->acceptProposedAction();
+  }
 }

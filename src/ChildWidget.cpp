@@ -256,18 +256,19 @@ bool ChildWidget::loadImage(const QString& fileName) {
   return true;
 }
 
-bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& image) {
+bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& img) {
   switch (QMessageBox::question(
             this,
             tr("Missing file"),
-            tr("Cannot load image, because there is no corresponding box file.\nCreate new?"),
+            tr("Cannot load image, because there is no corresponding box "\
+               "file.\nCreate new?"),
             QMessageBox::Yes |
             QMessageBox::No |
             QMessageBox::Cancel,
             QMessageBox::Cancel)) {
   case QMessageBox::Yes: {
     TessTools tt;
-    QString str = tt.makeBoxes(image);
+    QString str = tt.makeBoxes(img);
     if (str == "")
       return false;
     QTextStream boxdata(&str);
@@ -351,10 +352,10 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
 
   for (int col = 0; col < table->horizontalHeader()->count(); col++) {
     if (table->columnWidth(col) > 0)
-      tableVisibleWidth += table->columnWidth(col) + 1;  // add 1 pixel for table grid
+      tableVisibleWidth += table->columnWidth(col) + 1;  // 1 px for table grid
   }
-
-  tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();  // scrollbar
+  // scrollbar
+  tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();
   tableVisibleWidth += table->frameWidth()*2;
 
   QList<int> splitterSizes;
@@ -446,28 +447,27 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
     bool underline = model->index(row, 8).data().toBool();
 
     if (bold && !italic) {
-        boldBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
-                .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
-                .arg(page);
+      boldBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
+                   .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+                   .arg(page);
     } else if (italic && !bold) {
       italicBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
-              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
-              .arg(page);
+                     .arg(imageHeight - bottom).arg(right)
+                     .arg(imageHeight - top).arg(page);
     } else if (italic && bold) {
       boldItaBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
-              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
-              .arg(page);
+                      .arg(imageHeight - bottom).arg(right)
+                      .arg(imageHeight - top).arg(page);
     } else if (underline) {
       underBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
-              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
-              .arg(page);
+                    .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+                    .arg(page);
     } else {
       normBoxes += QString("%1 %2 %3 %4 %5 %6\n").arg(letter).arg(left)
-              .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
-              .arg(page);
+                   .arg(imageHeight - bottom).arg(right).arg(imageHeight - top)
+                   .arg(page);
     }
-
-  } // end of for
+  }
 
   // find path + name + ext:
   int dotCount = QFileInfo(fileName).fileName().count(".");
@@ -553,9 +553,8 @@ bool ChildWidget::importSPLToChild(const QString& fileName) {
     if (!line.isEmpty()) {
       if (row > model->rowCount()) {
         QMessageBox::warning(this, SETTING_APPLICATION,
-                             tr("There are more symbols in import file than boxes!"
-                                " Rest of symbols are ignored").arg(fileName).arg(
-                               file.errorString()));
+                             tr("There are more symbols in import file than " \
+                                "boxes!\nRest of symbols are ignored."));
         file.close();
         QApplication::restoreOverrideCursor();
         return true;
@@ -649,7 +648,8 @@ bool ChildWidget::importTextToChild(const QString& fileName) {
   }
   if (symbols.size() != model->rowCount()) {
     QMessageBox::warning(this, SETTING_APPLICATION,
-                         tr("Number of symbols in import file differ with number of boxes!"));
+                         tr("Number of symbols in import file differ with " \
+                            "number of boxes!"));
   }
 
   for (int i = 0; i < symbols.size(); ++i) {
@@ -721,8 +721,10 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
       if (((left - right_prev) >= wordSpace) && (right_prev != -1)) {
         // new word
         out << " ";
-      } else if (((left - right_prev) <= (2 * (left - right))) && (right_prev != -1)) {
-        // new line -> if negative difference is bigger than double of letter width
+      } else if (((left - right_prev) <= (2 * (left - right))) &&
+                 (right_prev != -1)) {
+        // new line -> if negative difference is bigger than double of letter
+        // width
         out << "\n";
       }
     }
@@ -733,7 +735,8 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
         out << " ";
 
       if (((left - right_prev) <= (2 * (left - right))) && (right_prev != -1)) {
-        // new line -> if negative difference is bigger than double of letter width
+        // new line -> if negative difference is bigger than double of letter
+        // width
         if (line_end_prev == 0)  // first line
           line_end_prev = right;
         if ((left - line_start_prev >= paraIndent) ||  // distance from left
@@ -806,7 +809,7 @@ bool ChildWidget::isDrawBoxes() {
 }
 
 bool ChildWidget::isDrawRect() {
-    return drawnRectangle;
+  return drawnRectangle;
 }
 
 void ChildWidget::setItalic(bool v) {
@@ -964,37 +967,37 @@ void ChildWidget::showSymbol() {
 }
 
 void ChildWidget::drawRectangle(bool checked) {
-    if (checked) {
-      if (!m_DrawRectangle) {
-        m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
-                                            imageWidth, imageHeight);
-      }
-      int ret = m_DrawRectangle->exec();
-      if (ret) {
-        QRect newCoords = m_DrawRectangle->getRectangle();
-        if (rectangle) {
-          imageScene->removeItem(rectangle);
-        }
-        rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
-                                        newCoords.width(), newCoords.height(),
-                                        QPen(QColor(255, 0, 0, 255)),
-                                        QBrush(QColor(255, 0, 0, 100)) );
-        rectangle->setZValue(1);
-        rectangle->setVisible(true);
-        drawnRectangle = true;
-      }
-    } else {
-        if (rectangle) {
-          // I can not call rectangle->prepareGeometryChange();
-          // http://www.qtcentre.org/threads/28749-Qt-4.6-GraphicsView-items-remove-problem
-          imageScene->removeItem(rectangle);
-          // Workaround
-          QRectF isCoords = imageScene->sceneRect();
-          imageScene->update(isCoords);
-
-          drawnRectangle = false;
-        }
+  if (checked) {
+    if (!m_DrawRectangle) {
+      m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
+                                          imageWidth, imageHeight);
     }
+    int ret = m_DrawRectangle->exec();
+    if (ret) {
+      QRect newCoords = m_DrawRectangle->getRectangle();
+      if (rectangle) {
+        imageScene->removeItem(rectangle);
+      }
+      rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
+                                      newCoords.width(), newCoords.height(),
+                                      QPen(QColor(255, 0, 0, 255)),
+                                      QBrush(QColor(255, 0, 0, 100)));
+      rectangle->setZValue(1);
+      rectangle->setVisible(true);
+      drawnRectangle = true;
+    }
+  } else {
+    if (rectangle) {
+      // I can not call rectangle->prepareGeometryChange();
+      // http://www.qtcentre.org/threads/28749-Qt-4.6-GraphicsView-items-remove-problem
+      imageScene->removeItem(rectangle);
+      // Workaround
+      QRectF isCoords = imageScene->sceneRect();
+      imageScene->update(isCoords);
+
+      drawnRectangle = false;
+    }
+  }
 }
 
 void ChildWidget::drawBoxes() {
@@ -1004,7 +1007,8 @@ void ChildWidget::drawBoxes() {
       int top = model->index(row, 4).data().toInt();
       int width = model->index(row, 3).data().toInt() - left;
       int height = model->index(row, 2).data().toInt() - top;
-      boxesItem << imageScene->addRect(left, top, width, height, QPen(boxColor));
+      boxesItem << imageScene->addRect(left, top, width, height,
+                                       QPen(boxColor));
     }
     boxesVisible = true;
   } else {
@@ -1067,43 +1071,37 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
 }
 
 void ChildWidget::moveSymbolRow(int direction) {
-    QModelIndex index = selectionModel->currentIndex();
+  QModelIndex index = selectionModel->currentIndex();
 
-    int currentRow = index.row();
-    // check if any row is selected
-    if (currentRow < 0)
-        return;
+  int currentRow = index.row();
+  // check if any row is selected
+  if (currentRow < 0)
+    return;
 
-    // check where if we are if move is possible top/bottom
-    if (direction < 0 && currentRow == 0)
-    {
-        return;
+  // check where if we are if move is possible top/bottom
+  if (direction < 0 && currentRow == 0) {
+    return;
+  } else if (direction > 0 && currentRow == model->rowCount()) {
+    return;
+  } else {
+    UndoItem ui;
+    ui.m_eop = euoRelace;
+    ui.m_origrow = currentRow;
+    ui.m_extrarow = currentRow + direction;
+
+    for (int j = 0; j < 9; j++) {
+      ui.m_vdata[j] = model->index(currentRow, j).data();
+      ui.m_vextradata[j] = model->index(ui.m_extrarow, j).data();
+
+      model->setData(model->index(ui.m_extrarow, j), ui.m_vdata[j]);
+      model->setData(model->index(ui.m_origrow, j), ui.m_vextradata[j]);
     }
-    else if (direction > 0 && currentRow == model->rowCount())
-    {
-        return;
-    }
-    else
-    {
-        UndoItem ui;
-        ui.m_eop = euoRelace;
-        ui.m_origrow = currentRow;
-        ui.m_extrarow = currentRow + direction;
 
-        for(int j=0;j<9;j++)
-        {
-            ui.m_vdata[j] = model->index(currentRow, j).data();
-            ui.m_vextradata[j] = model->index(ui.m_extrarow, j).data();
-
-            model->setData(model->index(ui.m_extrarow, j),ui.m_vdata[j]);
-            model->setData(model->index(ui.m_origrow, j),ui.m_vextradata[j]);
-        }
-
-        m_undostack.push(ui);
-        // activate new row
-        table->setCurrentIndex(model->index(ui.m_extrarow, 0));
-        drawSelectionRects();
-    }
+    m_undostack.push(ui);
+    // activate new row
+    table->setCurrentIndex(model->index(ui.m_extrarow, 0));
+    drawSelectionRects();
+  }
 }
 
 void ChildWidget::copyFromCell() {
@@ -1119,20 +1117,18 @@ void ChildWidget::pasteToCell() {
   ui.m_eop = euoChange;
   ui.m_origrow = index.row();
 
-  for(int i=0;i<9;i++)
-      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+  for (int i = 0; i < 9; i++)
+    ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
   // do not paste string to int fields
   if ((index.column() > 0 && index.column() < 5) &&
-      (clipboard->text().toInt() > 0))
-  {
+      (clipboard->text().toInt() > 0)) {
     model->setData(table->currentIndex(), clipboard->text().toInt());
     m_undostack.push(ui);
   }
 
   // paste string only to string field
-  if (index.column() == 0)
-  {
+  if (index.column() == 0) {
     model->setData(table->currentIndex(), clipboard->text());
     m_undostack.push(ui);
   }
@@ -1147,7 +1143,7 @@ void ChildWidget::pasteToCell() {
 void ChildWidget::directType(QKeyEvent* event) {
   QModelIndex index = selectionModel->currentIndex();
   if (!event->text().toAscii().trimmed().isEmpty() &&
-          (event->key() !=  Qt::Key_Delete))  {
+      (event->key() !=  Qt::Key_Delete))  {
     // enter only text
     if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
       // enter/return move to next row
@@ -1160,8 +1156,8 @@ void ChildWidget::directType(QKeyEvent* event) {
       ui.m_eop = euoChange;
       ui.m_origrow = index.row();
 
-      for(int i=0;i<9;i++)
-          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+      for (int i = 0; i < 9; i++)
+        ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
       m_undostack.push(ui);
       table->setCurrentIndex(model->index(index.row() + 1, 0));
@@ -1213,16 +1209,15 @@ void ChildWidget::splitSymbol() {
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid()) {
+    UndoItem ui;
+    ui.m_eop = euoSplit;
+    ui.m_origrow = index.row();
+    ui.m_extrarow = ui.m_origrow + 1;
 
-      UndoItem ui;
-      ui.m_eop = euoSplit;
-      ui.m_origrow = index.row();
-      ui.m_extrarow = ui.m_origrow + 1;
+    for (int i = 0; i < 9; i++)
+      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
-      for(int i=0;i<9;i++)
-          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
-
-      m_undostack.push(ui);
+    m_undostack.push(ui);
 
     QModelIndex left = model->index(index.row(), 1);
     QModelIndex right = model->index(index.row(), 3);
@@ -1265,7 +1260,6 @@ void ChildWidget::joinSymbol() {
                         index.column());
 
   if (index.isValid() && next.isValid()) {
-
     int row = index.row();
 
     UndoItem ui;
@@ -1273,10 +1267,9 @@ void ChildWidget::joinSymbol() {
     ui.m_origrow = row;
     ui.m_extrarow = row + 1;
 
-    for(int i=0;i<9;i++)
-    {
-        ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
-        ui.m_vextradata[i] = model->index(ui.m_extrarow, i).data();
+    for (int i = 0; i < 9; i++) {
+      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+      ui.m_vextradata[i] = model->index(ui.m_extrarow, i).data();
     }
 
     m_undostack.push(ui);
@@ -1319,23 +1312,22 @@ void ChildWidget::joinSymbol() {
 void ChildWidget::deleteSymbol() {
   QModelIndex index = selectionModel->currentIndex();
 
-  if (index.isValid())
-  {
-      UndoItem ui;
-      ui.m_eop = euoDelete;
-      ui.m_origrow = index.row();
+  if (index.isValid()) {
+    UndoItem ui;
+    ui.m_eop = euoDelete;
+    ui.m_origrow = index.row();
 
-      for(int i=0;i<9;i++)  // TODO(zdenop): replace 9 with columns count
-          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+    for (int i = 0; i < 9; i++)  // TODO(zdenop): replace 9 with columns count
+      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
-      m_undostack.push(ui);
-      model->removeRow(index.row());
+    m_undostack.push(ui);
+    model->removeRow(index.row());
 
-      table->setCurrentIndex(model->index(ui.m_origrow, 0));
-      table->setFocus();
+    table->setCurrentIndex(model->index(ui.m_origrow, 0));
+    table->setFocus();
 
-      drawSelectionRects();
-      documentWasModified();
+    drawSelectionRects();
+    documentWasModified();
   }
 }
 
@@ -1465,10 +1457,10 @@ void ChildWidget::emitBoxChanged() {
 }
 
 void ChildWidget::removeMyItems(QVector<QGraphicsRectItem *> &graphicsItems) {
-    foreach(QGraphicsItem *item, graphicsItems) {
-      imageScene->removeItem(item);
-    }
-    graphicsItems.clear();
+  foreach(QGraphicsItem *item, graphicsItems) {
+    imageScene->removeItem(item);
+  }
+  graphicsItems.clear();
 }
 
 void ChildWidget::drawSelectionRects() {
@@ -1484,11 +1476,13 @@ void ChildWidget::drawSelectionRects() {
       int right = model->index(i, 3).data().toInt();
       int top = model->index(i, 4).data().toInt();
       rectItem << imageScene->addRect(QRectF(QPoint(left, top),
-                                             QPointF(right, bottom)), QPen(rectColor));
+                                             QPointF(right, bottom)),
+                                      QPen(rectColor));
       rectItem.last()->setZValue(1);
       imageView->ensureVisible(rectItem.last());
       if ((symbolShown == true) &&
-          (indexes.first().row() == indexes.last().row())) { // selected only one line?
+          (indexes.first().row() == indexes.last().row())) {
+        // selected only one line?
         QString letter = model->index(i, 0).data().toString();
         text2->setPlainText(letter);
         // TODO(zdenop): get font metrics and calculate better placement
@@ -1504,7 +1498,6 @@ void ChildWidget::drawSelectionRects() {
   } else {
     text2->setVisible(false);
   }
-
 }
 
 void ChildWidget::closeEvent(QCloseEvent* event) {
@@ -1544,7 +1537,6 @@ QString ChildWidget::strippedName(const QString& fullFileName) {
 }
 
 void ChildWidget::sbValueChanged(int sbdValue) {
-
   QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
   QModelIndex index = selectedIndexes.first();
 
@@ -1574,8 +1566,8 @@ void ChildWidget::sbValueChanged(int sbdValue) {
   ui.m_eop = euoChange;
   ui.m_origrow = index.row();
 
-  for(int i=0;i<9;i++)
-      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+  for (int i = 0; i < 9; i++)
+    ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
   m_undostack.push(ui);
 
@@ -1615,108 +1607,100 @@ void ChildWidget::findPrev(const QString &symbol,
   QApplication::beep();
 }
 
-void ChildWidget::undo()
-{
-    if(m_undostack.isEmpty())
-        return;
+void ChildWidget::undo() {
+  if (m_undostack.isEmpty())
+    return;
 
-    UndoItem ui = m_undostack.pop();
+  UndoItem ui = m_undostack.pop();
 
-    switch(ui.m_eop)
-    {
-    case euoAdd:
-        //Item was added. Reverse is remove it.
-        undoDelete(ui);
-        break;
-    case euoDelete:
-        //Item was deleted. Reverse is put it back.
-        undoAdd(ui);
-        break;
-    case euoChange:
-        //Item was edited. Put back old values.
-        undoEdit(ui);
-        break;
-    case euoJoin:
-        //Two items joined. Split back.
-        undoSplit(ui);
-        break;
-    case euoSplit:
-        //Item split in two. Join back.
-        undoJoin(ui);
-        break;
-    case euoRelace:
-        //Two item changed places. Change places back.
-        undoMoveBack(ui);
-        break;
-    default:
-        //Nothing to dofor other cases. Report error.
-
-        QMessageBox::warning(
-          this,
-          SETTING_APPLICATION,
-                    "Invalid undo operation.");
-        break;
-    }
-}
-
-//Delete item as undo operation of add
-void ChildWidget::undoDelete(UndoItem& ui)
-{
-    model->removeRow(ui.m_origrow);
-
-    int rows = model->rowCount();
-
-    int newfocusrow = ui.m_origrow;
-
-    if(newfocusrow > rows)
-        newfocusrow = rows;
-
-    table->setCurrentIndex(model->index(newfocusrow, 0));
-    table->setFocus();
-    drawSelectionRects();
-}
-
-//Add back item as undo operation of delete
-void ChildWidget::undoAdd(UndoItem& ui)
-{
-    model->insertRow(ui.m_origrow);
+  switch (ui.m_eop) {
+  case euoAdd:
+    // Item was added. Reverse is remove it.
+    undoDelete(ui);
+    break;
+  case euoDelete:
+    // Item was deleted. Reverse is put it back.
+    undoAdd(ui);
+    break;
+  case euoChange:
+    // Item was edited. Put back old values.
     undoEdit(ui);
+    break;
+  case euoJoin:
+    // Two items joined. Split back.
+    undoSplit(ui);
+    break;
+  case euoSplit:
+    // Item split in two. Join back.
+    undoJoin(ui);
+    break;
+  case euoRelace:
+    // Two item changed places. Change places back.
+    undoMoveBack(ui);
+    break;
+  default:
+    // Nothing to dofor other cases. Report error.
+
+    QMessageBox::warning(
+      this,
+      SETTING_APPLICATION,
+      "Invalid undo operation.");
+    break;
+  }
 }
 
-//Put back edited values
-void ChildWidget::undoEdit(UndoItem& ui)
-{
-    for(int i=0;i<9;i++)
-        model->setData(model->index(ui.m_origrow, i),ui.m_vdata[i]);
+// Delete item as undo operation of add
+void ChildWidget::undoDelete(UndoItem& ui) {
+  model->removeRow(ui.m_origrow);
 
-    table->setCurrentIndex(model->index(ui.m_origrow, 0));
-    table->setFocus();
-    drawSelectionRects();
+  int rows = model->rowCount();
+
+  int newfocusrow = ui.m_origrow;
+
+  if (newfocusrow > rows)
+    newfocusrow = rows;
+
+  table->setCurrentIndex(model->index(newfocusrow, 0));
+  table->setFocus();
+  drawSelectionRects();
 }
 
-//Re-join split rows
-void ChildWidget::undoJoin(UndoItem& ui)
-{
-    model->removeRow(ui.m_extrarow);
-    undoEdit(ui);
+// Add back item as undo operation of delete
+void ChildWidget::undoAdd(UndoItem& ui) {
+  model->insertRow(ui.m_origrow);
+  undoEdit(ui);
 }
 
-//Split back joined lines
-void ChildWidget::undoSplit(UndoItem& ui)
-{
-    model->insertRow(ui.m_extrarow);
+// Put back edited values
+void ChildWidget::undoEdit(UndoItem& ui) {
+  for (int i = 0; i < 9; i++)
+    model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
 
-    for(int i=0;i<9;i++)
-        model->setData(model->index(ui.m_extrarow, i),ui.m_vextradata[i]);
-
-    undoEdit(ui);
+  table->setCurrentIndex(model->index(ui.m_origrow, 0));
+  table->setFocus();
+  drawSelectionRects();
 }
 
-//Put replaced rows back to original location
-void ChildWidget::undoMoveBack(UndoItem& ui)
-{
-    for(int i=0;i<9;i++)
-        model->setData(model->index(ui.m_extrarow, i),ui.m_vextradata[i]);
+// Re-join split rows
+void ChildWidget::undoJoin(UndoItem& ui) {
+  model->removeRow(ui.m_extrarow);
+  undoEdit(ui);
+}
 
-    undoEdit(ui);
+// Split back joined lines
+void ChildWidget::undoSplit(UndoItem& ui) {
+  model->insertRow(ui.m_extrarow);
+
+  for (int i = 0; i < 9; i++)
+    model->setData(model->index(ui.m_extrarow, i), ui.m_vextradata[i]);
+
+  undoEdit(ui);
+}
+
+// Put replaced rows back to original location
+void ChildWidget::undoMoveBack(UndoItem& ui) {
+  for (int i = 0; i < 9; i++)
+    model->setData(model->index(ui.m_extrarow, i), ui.m_vextradata[i]);
+
+  undoEdit(ui);
 }
