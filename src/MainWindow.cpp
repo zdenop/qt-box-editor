@@ -609,6 +609,8 @@ void MainWindow::updateCommandActions() {
                            ? activeChild()->isDrawBoxes() : false);
   drawRectAct->setChecked((activeChild())
                            ? activeChild()->isDrawRect() : false);
+  DirectTypingAct->setChecked((activeChild())
+                          ? activeChild()->isDirectTypingMode() : false);
   moveUpAct->setEnabled(enable);
   moveDownAct->setEnabled(enable);
   moveToAct->setEnabled(enable);
