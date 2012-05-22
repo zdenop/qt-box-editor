@@ -1146,15 +1146,13 @@ void ChildWidget::pasteToCell() {
 
 void ChildWidget::directType(QKeyEvent* event) {
   QModelIndex index = selectionModel->currentIndex();
-
-  if (event->text() != "") {
+  if (!event->text().toAscii().trimmed().isEmpty() &&
+          (event->key() !=  Qt::Key_Delete))  {
     // enter only text
     if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
       // enter/return move to next row
       table->setCurrentIndex(model->index(index.row() + 1, 0));
-    }
-    else
-    {
+    } else  {
       model->setData(model->index(index.row(), 0, QModelIndex()),
                      event->text());
 
@@ -1166,7 +1164,6 @@ void ChildWidget::directType(QKeyEvent* event) {
           ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
       m_undostack.push(ui);
-
       table->setCurrentIndex(model->index(index.row() + 1, 0));
     }
   }
@@ -1328,7 +1325,7 @@ void ChildWidget::deleteSymbol() {
       ui.m_eop = euoDelete;
       ui.m_origrow = index.row();
 
-      for(int i=0;i<9;i++)
+      for(int i=0;i<9;i++)  // TODO(zdenop): replace 9 with columns count
           ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
       m_undostack.push(ui);
@@ -1336,6 +1333,7 @@ void ChildWidget::deleteSymbol() {
 
       table->setCurrentIndex(model->index(ui.m_origrow, 0));
       table->setFocus();
+
       drawSelectionRects();
       documentWasModified();
   }
