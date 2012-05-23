@@ -7,6 +7,7 @@
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011-2012, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer (Undo action)
+* (C) Copyright 2012, Dmitri Silaev (Hall text effect)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -182,7 +183,7 @@ private:
 
   protected:
 
-   void directType(QKeyEvent* event);
+    void directType(QKeyEvent* event);
     virtual void mousePressEvent(QMouseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
     void closeEvent(QCloseEvent* event);
@@ -205,6 +206,8 @@ private:
     QVector<QGraphicsRectItem *> rectItem;
     QVector<QGraphicsRectItem *> boxesItem;
     QGraphicsTextItem* text2;
+    // Halo
+    QGraphicsTextItem* text2_s[4];
 
     QTableView* table;
 

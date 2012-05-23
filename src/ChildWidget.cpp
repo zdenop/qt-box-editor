@@ -7,6 +7,7 @@
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011-2012, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer (Undo action)
+* (C) Copyright 2012, Dmitri Silaev (Hall text effect)
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -33,6 +34,14 @@
 #include "dialogs/DrawRectangle.h"
 #include "include/DelegateEditors.h"
 #include "include/TessTools.h"
+
+int my_min(int arg1, int arg2) {
+  return((arg1 < arg2) ? arg1 : arg2);
+}
+
+int my_max(int arg1, int arg2) {
+  return((arg1 > arg2) ? arg1 : arg2);
+}
 
 ChildWidget::ChildWidget(QWidget* parent)
   : QSplitter(Qt::Horizontal, parent) {
@@ -871,8 +880,15 @@ void ChildWidget::setSelectionRect() {
 
   text2 = imageScene->addText(QString(""), tableFont);
   text2->setDefaultTextColor(Qt::red);
-  text2->setZValue(1);
+  text2->setZValue(2);
   text2->setPos(QPoint(0, 0));
+
+  for(int i = 0; i < 4; ++i) {
+    text2_s[i] = imageScene->addText(QString(""), tableFont);
+    text2_s[i]->setDefaultTextColor(Qt::white);
+    text2_s[i]->setZValue(1);
+    text2_s[i]->setPos(QPoint(0, 0));
+  }
 }
 
 void ChildWidget::getZoom() {
@@ -1244,16 +1260,6 @@ void ChildWidget::splitSymbol() {
   }
 }
 
-template<class T>
-inline T min(T arg1, T arg2) {
-  return((arg1 < arg2) ? arg1 : arg2);
-}
-
-template<class T>
-inline T max(T arg1, T arg2) {
-  return((arg1 > arg2) ? arg1 : arg2);
-}
-
 void ChildWidget::joinSymbol() {
   QModelIndex index = selectionModel->currentIndex(), next = model->index(
                         index.row() + 1,
@@ -1277,21 +1283,21 @@ void ChildWidget::joinSymbol() {
     model->setData(model->index(row, 0),
                    model->index(row, 0).data().toString() + model->index(row
                        + 1, 0).data().toString());
-    min(2, 3);
+    my_min(2, 3);
     model->setData(model->index(row, 1),
-                   min(model->index(row, 1).data().toInt(), model->index(row
+                   my_min(model->index(row, 1).data().toInt(), model->index(row
                        + 1, 1).data().toInt()));
     model->setData(model->index(row, 2),
-                   max(model->index(row, 2).data().toInt(), model->index(row
+                   my_max(model->index(row, 2).data().toInt(), model->index(row
                        + 1, 2).data().toInt()));
     model->setData(model->index(row, 3),
-                   max(model->index(row, 3).data().toInt(), model->index(row
+                   my_max(model->index(row, 3).data().toInt(), model->index(row
                        + 1, 3).data().toInt()));
     model->setData(model->index(row, 4),
-                   min(model->index(row, 4).data().toInt(), model->index(row
+                   my_min(model->index(row, 4).data().toInt(), model->index(row
                        + 1, 4).data().toInt()));
     model->setData(model->index(row, 5),
-                   min(model->index(row, 5).data().toInt(), model->index(row
+                   my_min(model->index(row, 5).data().toInt(), model->index(row
                        + 1, 5).data().toInt()));
     model->setData(model->index(row, 6),
                    model->index(row, 6).data().toBool() || model->index(row
@@ -1469,6 +1475,8 @@ void ChildWidget::drawSelectionRects() {
   if (!indexes.empty()) {
     removeMyItems(rectItem);
     text2->setVisible(false);
+    for(int j = 0; j < 4; ++j)
+      text2_s[j]->setVisible(false);
 
     for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
       int left = model->index(i, 1).data().toInt();
@@ -1490,13 +1498,27 @@ void ChildWidget::drawSelectionRects() {
         text2->setPos(QPoint(left, top - 16 * 2 - 15));
         text2->setVisible(true);
         imageView->ensureVisible(text2);
+
+        // Halo
+        for(int j = 0; j < 4; ++j)
+          text2_s[j]->setPlainText(letter);
+        text2_s[0]->setPos(text2->pos() + QPoint( 2,  2));
+        text2_s[1]->setPos(text2->pos() + QPoint(-2, -2));
+        text2_s[2]->setPos(text2->pos() + QPoint(-2,  2));
+        text2_s[3]->setPos(text2->pos() + QPoint( 2, -2));
+        for(int j = 0; j < 4; ++j)
+          text2_s[j]->setVisible(true);
       } else {
         text2->setVisible(false);
+        for(int j = 0; j < 4; ++j)
+          text2_s[j]->setVisible(false);
       }
     }
 
   } else {
     text2->setVisible(false);
+    for(int j = 0; j < 4; ++j)
+      text2_s[j]->setVisible(false);
   }
 }
 
