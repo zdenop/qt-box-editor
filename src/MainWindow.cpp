@@ -952,6 +952,8 @@ void MainWindow::createMenus() {
   updateRecentFileActions();
 
   editMenu = menuBar()->addMenu(tr("&Edit"));
+  editMenu->addAction(undoAct);
+  editMenu->addSeparator();
   editMenu->addAction(boldAct);
   editMenu->addAction(italicAct);
   editMenu->addAction(underlineAct);
@@ -966,7 +968,6 @@ void MainWindow::createMenus() {
   editMenu->addAction(moveToAct);
   editMenu->addAction(goToRowAct);
   editMenu->addAction(findAct);
-  editMenu->addAction(undoAct);
   editMenu->addSeparator();
   editMenu->addAction(DirectTypingAct);
   editMenu->addAction(drawRectAct);
@@ -1015,12 +1016,13 @@ void MainWindow::createToolBars() {
 
   editToolBar = addToolBar(tr("Edit"));
   editToolBar->setObjectName("editToolBar");
+  editToolBar->addAction(undoAct);
+  editToolBar->addSeparator();
   editToolBar->addAction(boldAct);
   editToolBar->addAction(italicAct);
   editToolBar->addAction(underlineAct);
   editToolBar->addSeparator();
   editToolBar->addAction(findAct);
-  editToolBar->addAction(undoAct);
 }
 
 void MainWindow::createStatusBar() {
