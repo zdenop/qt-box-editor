@@ -71,6 +71,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   table->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   table->hideColumn(5);
+  //TODO(zdenop): implement show/hide icon for columns (Issue #20)
   table->hideColumn(6);
   table->hideColumn(7);
   table->hideColumn(8);
