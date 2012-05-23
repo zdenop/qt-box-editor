@@ -1101,7 +1101,7 @@ void ChildWidget::moveSymbolRow(int direction) {
     return;
   } else {
     UndoItem ui;
-    ui.m_eop = euoRelace;
+    ui.m_eop = euoReplace;
     ui.m_origrow = currentRow;
     ui.m_extrarow = currentRow + direction;
 
@@ -1656,7 +1656,7 @@ void ChildWidget::undo() {
     // Item split in two. Join back.
     undoJoin(ui);
     break;
-  case euoRelace:
+  case euoReplace:
     // Two item changed places. Change places back.
     undoMoveBack(ui);
     break;
