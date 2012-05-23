@@ -1629,9 +1629,18 @@ void ChildWidget::findPrev(const QString &symbol,
   QApplication::beep();
 }
 
+bool ChildWidget::isUndoAvailable() {
+  return m_undostack.isEmpty() ? false : true;
+}
+
 void ChildWidget::undo() {
-  if (m_undostack.isEmpty())
+  if (m_undostack.isEmpty()) {
+    emit boxChanged();  // update toolbar/menu to disable undo action
+    // TODO(all): it is not working perfectly (are there some "ghost" undo
+    // actions?). Maybe we need to implement UndoStackView similar to
+    // http://doc-snapshot.qt-project.org/4.8/demos-undo.html
     return;
+  }
 
   UndoItem ui = m_undostack.pop();
 

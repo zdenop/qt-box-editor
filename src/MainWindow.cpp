@@ -597,6 +597,8 @@ void MainWindow::updateMenus() {
 void MainWindow::updateCommandActions() {
   bool enable = (activeChild()) ? activeChild()->isBoxSelected() : false;
 
+  undoAct->setEnabled((activeChild())
+                      ? activeChild()->isUndoAvailable() : false);
   boldAct->setEnabled(enable);
   boldAct->setChecked((activeChild()) ? activeChild()->isBold() : false);
   italicAct->setEnabled(enable);
