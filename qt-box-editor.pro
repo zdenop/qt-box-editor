@@ -70,8 +70,6 @@ win32: {
     LIBS += -ltesseract -llept -lws2_32 -Lwin32-external/lib
 }
 
-QMAKE_CXXFLAGS += -Wno-ignored-qualifiers
-
 unix: {
     INCLUDEPATH += /usr/include/leptonica /usr/local/include/tesseract/
     LIBS += -llept -ltesseract
