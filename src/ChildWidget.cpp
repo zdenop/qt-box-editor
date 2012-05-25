@@ -878,18 +878,6 @@ void ChildWidget::setSelectionRect() {
   }
 
   tableFont.setPointSize((tableFont.pointSize() * 2));
-
-  text2 = imageScene->addText(QString(""), tableFont);
-  text2->setDefaultTextColor(Qt::red);
-  text2->setZValue(2);
-  text2->setPos(QPoint(0, 0));
-
-  for(int i = 0; i < 4; ++i) {
-    text2_s[i] = imageScene->addText(QString(""), tableFont);
-    text2_s[i]->setDefaultTextColor(Qt::white);
-    text2_s[i]->setZValue(1);
-    text2_s[i]->setPos(QPoint(0, 0));
-  }
 }
 
 void ChildWidget::getZoom() {
@@ -1470,14 +1458,70 @@ void ChildWidget::removeMyItems(QVector<QGraphicsRectItem *> &graphicsItems) {
   graphicsItems.clear();
 }
 
+void ChildWidget::clearBalloons()
+{
+    for(int i = 0; i < balloons.size(); ++i)
+    {
+        imageScene->removeItem(balloons[i].symbol);
+        balloons[i].symbol->deleteLater();
+        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
+        {
+            imageScene->removeItem(balloons[i].halo[j]);
+            balloons[i].halo[j]->deleteLater();
+        }
+    }
+    balloons.clear();
+}
+
+void ChildWidget::updateBalloons()
+{
+    int idx = table->selectionModel()->selection().indexes().last().row();
+    int min_idx = my_max(idx - balloonCount/2, 0);
+    int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
+    QFont tableFont = table->font();
+    tableFont.setPointSize(2*tableFont.pointSize());
+    for(int i = min_idx; i <= max_idx; ++i)
+    {
+        balloons.push_back(BalloonSymbol());
+
+        QString letter = model->index(i, 0).data().toString();
+        int left = model->index(i, 1).data().toInt();
+        int top = model->index(i, 4).data().toInt();
+
+        balloons.back().symbol = imageScene->addText(letter, tableFont);
+        QGraphicsTextItem* curSymbol = balloons.back().symbol;
+        // TODO(zdenop): get font metrics and calculate better placement
+        // (e.g. visible in case of narrow margin)
+        curSymbol->setPos(QPoint(left, top - 16*2 - 15));
+        curSymbol->setDefaultTextColor(Qt::red);
+        curSymbol->setZValue(2);
+        curSymbol->setVisible(true);
+
+        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
+        {
+            balloons.back().halo[j] = imageScene->addText(letter, tableFont);
+            QGraphicsTextItem* curHalo = balloons.back().halo[j];
+            curHalo->setDefaultTextColor(Qt::white);
+            curHalo->setZValue(1);
+        }
+        balloons.back().halo[0]->setPos(curSymbol->pos() + QPoint( 2,  2));
+        balloons.back().halo[1]->setPos(curSymbol->pos() + QPoint(-2, -2));
+        balloons.back().halo[2]->setPos(curSymbol->pos() + QPoint(-2,  2));
+        balloons.back().halo[3]->setPos(curSymbol->pos() + QPoint( 2, -2));
+        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
+          balloons.back().halo[j]->setVisible(true);
+    }   // for i (idx)
+
+    // Make the first (OK?) balloon is visible
+    imageView->ensureVisible(balloons.front().symbol);
+}
+
 void ChildWidget::drawSelectionRects() {
   QModelIndexList indexes = table->selectionModel()->selection().indexes();
 
   if (!indexes.empty()) {
     removeMyItems(rectItem);
-    text2->setVisible(false);
-    for(int j = 0; j < 4; ++j)
-      text2_s[j]->setVisible(false);
+    clearBalloons();
 
     for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
       int left = model->index(i, 1).data().toInt();
@@ -1490,37 +1534,15 @@ void ChildWidget::drawSelectionRects() {
       rectItem.last()->setZValue(1);
       imageView->ensureVisible(rectItem.last());
       if ((symbolShown == true) &&
-          (indexes.first().row() == indexes.last().row())) {
-        // selected only one line?
-        QString letter = model->index(i, 0).data().toString();
-        text2->setPlainText(letter);
-        // TODO(zdenop): get font metrics and calculate better placement
-        // (e.g. visible in case of narrow margin)
-        text2->setPos(QPoint(left, top - 16 * 2 - 15));
-        text2->setVisible(true);
-        imageView->ensureVisible(text2);
-
-        // Halo
-        for(int j = 0; j < 4; ++j)
-          text2_s[j]->setPlainText(letter);
-        text2_s[0]->setPos(text2->pos() + QPoint( 2,  2));
-        text2_s[1]->setPos(text2->pos() + QPoint(-2, -2));
-        text2_s[2]->setPos(text2->pos() + QPoint(-2,  2));
-        text2_s[3]->setPos(text2->pos() + QPoint( 2, -2));
-        for(int j = 0; j < 4; ++j)
-          text2_s[j]->setVisible(true);
-      } else {
-        text2->setVisible(false);
-        for(int j = 0; j < 4; ++j)
-          text2_s[j]->setVisible(false);
-      }
+          (indexes.first().row() == indexes.last().row()))
+          // selected only one line?
+        updateBalloons();
+      else
+        clearBalloons();
     }
 
-  } else {
-    text2->setVisible(false);
-    for(int j = 0; j < 4; ++j)
-      text2_s[j]->setVisible(false);
-  }
+  } else
+    clearBalloons();
 }
 
 void ChildWidget::closeEvent(QCloseEvent* event) {

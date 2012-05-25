@@ -79,6 +79,17 @@ struct UndoItem
     QVariant m_vextradata[9];
 };
 
+// Overhead symbol displayed in Show symbol mode
+struct BalloonSymbol
+{
+    // Symbol itself
+    QGraphicsTextItem* symbol;
+
+    // Halo components
+    static const int haloCompCount = 4;
+    QGraphicsTextItem* halo[haloCompCount];
+};
+
 class ChildWidget : public QSplitter {
     Q_OBJECT
 
@@ -152,7 +163,7 @@ class ChildWidget : public QSplitter {
     void findNext(const QString &symbol, Qt::CaseSensitivity mc);
     void findPrev(const QString &symbol, Qt::CaseSensitivity mc);
 
-private:
+  private:
     void undoDelete(UndoItem& ui);
     void undoAdd(UndoItem& ui);
     void undoEdit(UndoItem& ui);
@@ -163,6 +174,9 @@ private:
     bool boxesVisible;
     bool drawnRectangle;
     bool directTypingMode;
+
+    void clearBalloons();
+    void updateBalloons();
 
   private slots:
     void documentWasModified();
@@ -206,9 +220,6 @@ private:
     QGraphicsRectItem* rectangle;
     QVector<QGraphicsRectItem *> rectItem;
     QVector<QGraphicsRectItem *> boxesItem;
-    QGraphicsTextItem* text2;
-    // Halo
-    QGraphicsTextItem* text2_s[4];
 
     QTableView* table;
 
@@ -224,6 +235,11 @@ private:
     int widgetWidth;
 
     QStack<UndoItem> m_undostack;
+
+    // Overhead symbols
+    // NOTE: Temp const, to be replaced by user-adjusted setting
+    static const int balloonCount = 13;
+    QVector<BalloonSymbol> balloons;
 };
 
 #endif  // SRC_INCLUDE_CHILDWIDGET_H_
