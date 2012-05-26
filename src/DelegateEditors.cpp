@@ -67,8 +67,13 @@ void SpinBoxDelegate::updateEditorGeometry(QWidget *editor,
  * CheckboxDelegate
  ********************************/
 CheckboxDelegate::CheckboxDelegate(QObject* parent)
-    : QItemDelegate(parent)
-{
+    : QItemDelegate(parent) {
+}
+
+QWidget* CheckboxDelegate::createEditor(QWidget* /*parent*/, const QStyleOptionViewItem& /*option*/,
+                      const QModelIndex& /*index*/) const {
+    // NOTE: This prevents standard bool editor from appearing on double click
+    return NULL;
 }
 
 void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const

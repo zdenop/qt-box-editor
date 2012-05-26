@@ -69,6 +69,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   table->setSelectionModel(selectionModel);
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
   table->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
 
   table->hideColumn(5);
   table->hideColumn(6);
@@ -227,6 +228,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   addWidget(imageView);
   setStretchFactor(indexOf(table), 0);
   setStretchFactor(indexOf(imageView), 1);
+  connect(this, SIGNAL(splitterMoved(int,int)), this, SLOT(updateColWidthsOnSplitter(int,int)));
 
   setSelectionRect();
   widgetWidth = parent->size().width();
@@ -238,6 +240,10 @@ ChildWidget::ChildWidget(QWidget* parent)
   f_dialog = 0;
   m_DrawRectangle = 0;
   rectangle = 0;
+}
+
+void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
+  table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
 
 bool ChildWidget::loadImage(const QString& fileName) {
@@ -356,7 +362,6 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
     }
   } while (!line.isEmpty());
 
-  table->resizeColumnsToContents();
   table->resizeRowsToContents();
   table->setCornerButtonEnabled(true);
   table->setWordWrap(true);
@@ -377,9 +382,7 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
   splitterSizes << tableVisibleWidth;
   splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
 
-  table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   setSizes(splitterSizes);
-  table->horizontalHeader()->setStretchLastSection(true);
 
   QApplication::restoreOverrideCursor();
   return true;
@@ -827,8 +830,7 @@ void ChildWidget::setShowFontColumns(bool v) {
   table->setColumnHidden(6, !v);
   table->setColumnHidden(7, !v);
   table->setColumnHidden(8, !v);
-  table->resizeColumnsToContents();
-  table->horizontalHeader()->setStretchLastSection(true);
+  table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
 
 bool ChildWidget::isDrawBoxes() {

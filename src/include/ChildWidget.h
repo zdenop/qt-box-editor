@@ -150,6 +150,8 @@ class ChildWidget : public QSplitter {
     void drawRectangle(bool checked);
 
   public slots:
+    void updateColWidthsOnSplitter(int pos, int index);
+
     void sbValueChanged(int sbdValue);
     void insertSymbol();
     void splitSymbol();
