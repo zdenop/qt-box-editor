@@ -228,7 +228,8 @@ ChildWidget::ChildWidget(QWidget* parent)
   addWidget(imageView);
   setStretchFactor(indexOf(table), 0);
   setStretchFactor(indexOf(imageView), 1);
-  connect(this, SIGNAL(splitterMoved(int,int)), this, SLOT(updateColWidthsOnSplitter(int,int)));
+  connect(this, SIGNAL(splitterMoved(int,int)), this,
+          SLOT(updateColWidthsOnSplitter(int,int)));
 
   setSelectionRect();
   widgetWidth = parent->size().width();
@@ -242,6 +243,25 @@ ChildWidget::ChildWidget(QWidget* parent)
   rectangle = 0;
 }
 
+void ChildWidget::calculateTableWidth(){
+    // set optimum size of table
+    table->resizeColumnsToContents();
+    int tableVisibleWidth = 0;
+    tableVisibleWidth += table->verticalHeader()->sizeHint().width();
+
+    for (int col = 0; col < table->horizontalHeader()->count(); col++) {
+      if (table->columnWidth(col) > 0)
+        tableVisibleWidth += table->columnWidth(col) + 1;  // 1 px for table grid
+    }
+    // scrollbar
+    tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();
+    tableVisibleWidth += table->frameWidth()*2;
+
+    QList<int> splitterSizes;
+    splitterSizes << tableVisibleWidth;
+    splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
+    setSizes(splitterSizes);
+}
 void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
   table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
@@ -365,24 +385,7 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
   table->resizeRowsToContents();
   table->setCornerButtonEnabled(true);
   table->setWordWrap(true);
-
-  // set optimum size of table
-  int tableVisibleWidth = 0;
-  tableVisibleWidth += table->verticalHeader()->sizeHint().width();
-
-  for (int col = 0; col < table->horizontalHeader()->count(); col++) {
-    if (table->columnWidth(col) > 0)
-      tableVisibleWidth += table->columnWidth(col) + 1;  // 1 px for table grid
-  }
-  // scrollbar
-  tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();
-  tableVisibleWidth += table->frameWidth()*2;
-
-  QList<int> splitterSizes;
-  splitterSizes << tableVisibleWidth;
-  splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
-
-  setSizes(splitterSizes);
+  calculateTableWidth();
 
   QApplication::restoreOverrideCursor();
   return true;
@@ -830,6 +833,7 @@ void ChildWidget::setShowFontColumns(bool v) {
   table->setColumnHidden(6, !v);
   table->setColumnHidden(7, !v);
   table->setColumnHidden(8, !v);
+  calculateTableWidth();
   table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
 

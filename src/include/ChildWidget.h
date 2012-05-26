@@ -200,6 +200,7 @@ class ChildWidget : public QSplitter {
     void moveSymbolRow(int direction);
     QList<QTableWidgetItem*> takeRow(int row);
     void removeMyItems(QVector<QGraphicsRectItem *> &graphicsItems);
+    void calculateTableWidth();
 
   protected:
 
