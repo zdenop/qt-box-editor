@@ -36,7 +36,6 @@ class SpinBoxDelegate : public QItemDelegate {
 
   public:
     explicit SpinBoxDelegate(QObject *parent = 0);
-    static void setQObjectProperties(QObject&, const QVariantMap&);
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const;
 
@@ -50,6 +49,23 @@ class SpinBoxDelegate : public QItemDelegate {
   signals:
     void sbd_valueChanged(int sbdValue);
     void sbd_editingFinished();
+};
+
+class CheckboxDelegate : public QItemDelegate
+{
+    Q_OBJECT
+
+public:
+    CheckboxDelegate(QObject* parent = 0);
+    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                          const QModelIndex& index) const;
+    bool editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option,
+                             const QModelIndex& index);
+
+    void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+
+signals:
+  void toggled(bool checked);
 };
 
 #endif  // SRC_INCLUDE_DELEGATEEDITORS_H_

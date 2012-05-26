@@ -69,25 +69,31 @@ ChildWidget::ChildWidget(QWidget* parent)
   table->setSelectionModel(selectionModel);
   table->setSelectionBehavior(QAbstractItemView::SelectItems);
   table->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
 
   table->hideColumn(5);
-  //TODO(zdenop): implement show/hide icon for columns (Issue #20)
   table->hideColumn(6);
   table->hideColumn(7);
   table->hideColumn(8);
   table->installEventFilter(this);  // installs event filter
 
-  // SpinBoxDelegate delegate;
-  SpinBoxDelegate *delegate = new SpinBoxDelegate;
+  SpinBoxDelegate* sbDelegate = new SpinBoxDelegate;
   // TODO(zdenop): setMaximum for delegates after changing box
-  table->setItemDelegateForColumn(1, delegate);
-  table->setItemDelegateForColumn(2, delegate);
-  table->setItemDelegateForColumn(3, delegate);
-  table->setItemDelegateForColumn(4, delegate);
-  connect(delegate, SIGNAL(sbd_valueChanged(int)), this,
+  table->setItemDelegateForColumn(1, sbDelegate);
+  table->setItemDelegateForColumn(2, sbDelegate);
+  table->setItemDelegateForColumn(3, sbDelegate);
+  table->setItemDelegateForColumn(4, sbDelegate);
+  connect(sbDelegate, SIGNAL(sbd_valueChanged(int)), this,
           SLOT(sbValueChanged(int)));
-  connect(delegate, SIGNAL(sbd_editingFinished()), this,
+  connect(sbDelegate, SIGNAL(sbd_editingFinished()), this,
           SLOT(drawSelectionRects()));
+
+  CheckboxDelegate* cbDelegate = new CheckboxDelegate;
+  table->setItemDelegateForColumn(6, cbDelegate);
+  table->setItemDelegateForColumn(7, cbDelegate);
+  table->setItemDelegateForColumn(8, cbDelegate);
+  connect(cbDelegate, SIGNAL(toggled(bool)), this,
+          SLOT(cbFontToggleProxy(bool)));
 
   // Font for table
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -222,6 +228,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   addWidget(imageView);
   setStretchFactor(indexOf(table), 0);
   setStretchFactor(indexOf(imageView), 1);
+  connect(this, SIGNAL(splitterMoved(int,int)), this, SLOT(updateColWidthsOnSplitter(int,int)));
 
   setSelectionRect();
   widgetWidth = parent->size().width();
@@ -233,6 +240,10 @@ ChildWidget::ChildWidget(QWidget* parent)
   f_dialog = 0;
   m_DrawRectangle = 0;
   rectangle = 0;
+}
+
+void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
+  table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
 
 bool ChildWidget::loadImage(const QString& fileName) {
@@ -351,7 +362,6 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
     }
   } while (!line.isEmpty());
 
-  table->resizeColumnsToContents();
   table->resizeRowsToContents();
   table->setCornerButtonEnabled(true);
   table->setWordWrap(true);
@@ -372,9 +382,7 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
   splitterSizes << tableVisibleWidth;
   splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
 
-  table->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   setSizes(splitterSizes);
-  table->horizontalHeader()->setStretchLastSection(true);
 
   QApplication::restoreOverrideCursor();
   return true;
@@ -810,8 +818,19 @@ bool ChildWidget::isDirectTypingMode() {
   return directTypingMode;
 }
 
+bool ChildWidget::isFontColumnsShown() {
+  return (!table->isColumnHidden(6));
+}
+
 void ChildWidget::setDirectTypingMode(bool v) {
   directTypingMode = v;
+}
+
+void ChildWidget::setShowFontColumns(bool v) {
+  table->setColumnHidden(6, !v);
+  table->setColumnHidden(7, !v);
+  table->setColumnHidden(8, !v);
+  table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
 
 bool ChildWidget::isDrawBoxes() {
@@ -1200,6 +1219,7 @@ void ChildWidget::insertSymbol() {
                    model->index(index.row(), 8).data().toBool());
 
     table->setCurrentIndex(model->index(index.row() + 1, 0));
+    table->setFocus();
 
     UndoItem ui;
     ui.m_eop = euoAdd;
@@ -1579,6 +1599,27 @@ void ChildWidget::setCurrentBoxFile(const QString& fileName) {
 
 QString ChildWidget::strippedName(const QString& fullFileName) {
   return QFileInfo(fullFileName).fileName();
+}
+
+void ChildWidget::cbFontToggleProxy(bool checked)
+{
+    QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+    QModelIndex index = selectedIndexes.first();
+    int col = index.column();
+    switch(col)
+    {
+    case 6 :
+        setItalic(checked);
+        break;
+    case 7 :
+        setBolded(checked);
+        break;
+    case 8 :
+        setUnderline(checked);
+        break;
+    default :
+        break;
+    }
 }
 
 void ChildWidget::sbValueChanged(int sbdValue) {

@@ -106,6 +106,7 @@ class ChildWidget : public QSplitter {
     bool isUnderLine();
     bool isShowSymbol();
     bool isDirectTypingMode();
+    bool isFontColumnsShown();
     bool isDrawBoxes();
     bool isDrawRect();
 
@@ -134,6 +135,7 @@ class ChildWidget : public QSplitter {
     void getZoom();
     void setZoom(float scale);
     void setDirectTypingMode(bool v);
+    void setShowFontColumns(bool v);
     void zoomOriginal();
     void zoomIn();
     void zoomOut();
@@ -148,12 +150,15 @@ class ChildWidget : public QSplitter {
     void drawRectangle(bool checked);
 
   public slots:
+    void updateColWidthsOnSplitter(int pos, int index);
+
     void sbValueChanged(int sbdValue);
     void insertSymbol();
     void splitSymbol();
     void joinSymbol();
     void deleteSymbol();
     void undo();
+    void cbFontToggleProxy(bool checked);
 
     void moveUp();
     void moveDown();
