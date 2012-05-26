@@ -1500,6 +1500,17 @@ void ChildWidget::updateBalloons()
     int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
     QFont tableFont = table->font();
     tableFont.setPointSize(2*tableFont.pointSize());
+
+    //calculate baseline for symbols based on selected symbol
+    int baseline = 0;
+    for(int i = min_idx; i <= max_idx; ++i) {
+        if (baseline == 0) {
+                baseline = model->index(i, 4).data().toInt();
+        } else {
+        baseline = my_min(baseline, model->index(i, 4).data().toInt());
+        }
+    }
+
     for(int i = min_idx; i <= max_idx; ++i)
     {
         balloons.push_back(BalloonSymbol());
@@ -1507,12 +1518,15 @@ void ChildWidget::updateBalloons()
         QString letter = model->index(i, 0).data().toString();
         int left = model->index(i, 1).data().toInt();
         int top = model->index(i, 4).data().toInt();
+        int botPrev = model->index(i-1, 2).data().toInt();
+        if (top > botPrev) {baseline = top;}  //new line?
 
         balloons.back().symbol = imageScene->addText(letter, tableFont);
         QGraphicsTextItem* curSymbol = balloons.back().symbol;
+        // TODO(zdenop): put offset to settings
         // TODO(zdenop): get font metrics and calculate better placement
         // (e.g. visible in case of narrow margin)
-        curSymbol->setPos(QPoint(left, top - 16*2 - 15));
+        curSymbol->setPos(QPoint(left, baseline - 16*2 - 15));
         curSymbol->setDefaultTextColor(Qt::red);
         curSymbol->setZValue(2);
         curSymbol->setVisible(true);
