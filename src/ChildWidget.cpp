@@ -1510,6 +1510,308 @@ void ChildWidget::updateBalloons()
         baseline = my_min(baseline, model->index(i, 4).data().toInt());
         }
     }
+<<<<<<< HEAD
+=======
+    balloons.clear();
+}
+
+void ChildWidget::updateBalloons()
+{
+    int idx = table->selectionModel()->selection().indexes().last().row();
+    int min_idx = my_max(idx - balloonCount/2, 0);
+    int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
+    QFont tableFont = table->font();
+    tableFont.setPointSize(2*tableFont.pointSize());
+
+    //calculate baseline for symbols based on selected symbol
+    int baseline = 0;
+    for(int i = min_idx; i <= max_idx; ++i) {
+        if (baseline == 0) {
+                baseline = model->index(i, 4).data().toInt();
+        } else {
+        baseline = my_min(baseline, model->index(i, 4).data().toInt());
+        }
+    }
+
+    for(int i = min_idx; i <= max_idx; ++i)
+    {
+        balloons.push_back(BalloonSymbol());
+
+        QString letter = model->index(i, 0).data().toString();
+        int left = model->index(i, 1).data().toInt();
+        int top = model->index(i, 4).data().toInt();
+        int botPrev = model->index(i-1, 2).data().toInt();
+        if (top > botPrev) {baseline = top;}  //new line?
+
+        balloons.back().symbol = imageScene->addText(letter, tableFont);
+        QGraphicsTextItem* curSymbol = balloons.back().symbol;
+        // TODO(zdenop): put offset to settings
+        // TODO(zdenop): get font metrics and calculate better placement
+        // (e.g. visible in case of narrow margin)
+        curSymbol->setPos(QPoint(left, baseline - 16*2 - 15));
+        curSymbol->setDefaultTextColor(Qt::red);
+        curSymbol->setZValue(2);
+        curSymbol->setVisible(true);
+
+        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
+        {
+            balloons.back().halo[j] = imageScene->addText(letter, tableFont);
+            QGraphicsTextItem* curHalo = balloons.back().halo[j];
+            curHalo->setDefaultTextColor(Qt::white);
+            curHalo->setZValue(1);
+        }
+        balloons.back().halo[0]->setPos(curSymbol->pos() + QPoint( 2,  2));
+        balloons.back().halo[1]->setPos(curSymbol->pos() + QPoint(-2, -2));
+        balloons.back().halo[2]->setPos(curSymbol->pos() + QPoint(-2,  2));
+        balloons.back().halo[3]->setPos(curSymbol->pos() + QPoint( 2, -2));
+        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
+          balloons.back().halo[j]->setVisible(true);
+    }   // for i (idx)
+
+    // Make the first (OK?) balloon is visible
+    imageView->ensureVisible(balloons.front().symbol);
+}
+
+void ChildWidget::drawSelectionRects() {
+  QModelIndexList indexes = table->selectionModel()->selection().indexes();
+
+  if (!indexes.empty()) {
+    removeMyItems(rectItem);
+    clearBalloons();
+
+    for (int i = indexes.first().row(); i < (indexes.last().row() + 1); i++) {
+      int left = model->index(i, 1).data().toInt();
+      int bottom = model->index(i, 2).data().toInt();
+      int right = model->index(i, 3).data().toInt();
+      int top = model->index(i, 4).data().toInt();
+      rectItem << imageScene->addRect(QRectF(QPoint(left, top),
+                                             QPointF(right, bottom)),
+                                      QPen(rectColor));
+      rectItem.last()->setZValue(1);
+      imageView->ensureVisible(rectItem.last());
+      if ((symbolShown == true) &&
+          (indexes.first().row() == indexes.last().row()))
+          // selected only one line?
+        updateBalloons();
+      else
+        clearBalloons();
+    }
+
+  } else
+    clearBalloons();
+}
+
+void ChildWidget::closeEvent(QCloseEvent* event) {
+  if (!maybeSave()) {
+    event->ignore();
+  }
+  if (f_dialog)
+    delete f_dialog;
+}
+
+bool ChildWidget::maybeSave() {
+  if (isModified()) {
+    QMessageBox::StandardButton ret;
+    ret = QMessageBox::warning(this, SETTING_APPLICATION,
+                               tr("'%1' has been modified.\n"
+                                  "Do you want to save your changes?").arg(
+                                 userFriendlyCurrentFile()), QMessageBox::Save
+                               | QMessageBox::Discard | QMessageBox::Cancel);
+    if (ret == QMessageBox::Save)
+      return save(boxFile);
+    else if (ret == QMessageBox::Cancel)
+      return false;
+  }
+  return true;
+}
+
+void ChildWidget::setCurrentImageFile(const QString& fileName) {
+  imageFile = QFileInfo(fileName).canonicalFilePath();
+}
+
+void ChildWidget::setCurrentBoxFile(const QString& fileName) {
+  boxFile = QFileInfo(fileName).canonicalFilePath();
+}
+
+QString ChildWidget::strippedName(const QString& fullFileName) {
+  return QFileInfo(fullFileName).fileName();
+}
+
+void ChildWidget::sbValueChanged(int sbdValue) {
+  QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+  QModelIndex index = selectedIndexes.first();
+
+  int left = model->index(index.row(), 1).data().toInt();
+  int bottom = model->index(index.row(), 2).data().toInt();
+  int right = model->index(index.row(), 3).data().toInt();
+  int top = model->index(index.row(), 4).data().toInt();
+
+  switch (index.column()) {
+  case 1:
+    left = sbdValue;
+    break;
+  case 2:
+    bottom = sbdValue;
+    break;
+  case 3:
+    right = sbdValue;
+    break;
+  case 4:
+    top = sbdValue;
+    break;
+  default :
+    break;
+  }
+
+  UndoItem ui;
+  ui.m_eop = euoChange;
+  ui.m_origrow = index.row();
+
+  for (int i = 0; i < 9; i++)
+    ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+  m_undostack.push(ui);
+
+  rectItem.first()->setRect(QRectF(QPoint(left, top),
+                                   QPointF(right, bottom)));
+  imageView->ensureVisible(rectItem.first());
+}
+
+void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
+  int row = table->currentIndex().row() + 1;
+  while (row < model->rowCount()) {
+    QString letter = model->index(row, 0).data().toString();
+    if (letter.contains(symbol, mc)) {
+      table->setCurrentIndex(model->index(row, 0));
+      table->setFocus();
+      drawSelectionRects();
+      return;
+    }
+    ++row;
+  }
+  QApplication::beep();
+}
+
+void ChildWidget::findPrev(const QString &symbol,
+                           Qt::CaseSensitivity mc) {
+  int row = table->currentIndex().row() - 1;
+  while (row >= 0) {
+    QString letter = model->index(row, 0).data().toString();
+    if (letter.contains(symbol, mc)) {
+      table->setCurrentIndex(model->index(row, 0));
+      table->setFocus();
+      drawSelectionRects();
+      return;
+    }
+    --row;
+  }
+  QApplication::beep();
+}
+
+bool ChildWidget::isUndoAvailable() {
+  return m_undostack.isEmpty() ? false : true;
+}
+
+void ChildWidget::undo() {
+  if (m_undostack.isEmpty()) {
+    emit boxChanged();  // update toolbar/menu to disable undo action
+    // TODO(all): it is not working perfectly (are there some "ghost" undo
+    // actions?). Maybe we need to implement UndoStackView similar to
+    // http://doc-snapshot.qt-project.org/4.8/demos-undo.html
+    return;
+  }
+
+  UndoItem ui = m_undostack.pop();
+
+  switch (ui.m_eop) {
+  case euoAdd:
+    // Item was added. Reverse is remove it.
+    undoDelete(ui);
+    break;
+  case euoDelete:
+    // Item was deleted. Reverse is put it back.
+    undoAdd(ui);
+    break;
+  case euoChange:
+    // Item was edited. Put back old values.
+    undoEdit(ui);
+    break;
+  case euoJoin:
+    // Two items joined. Split back.
+    undoSplit(ui);
+    break;
+  case euoSplit:
+    // Item split in two. Join back.
+    undoJoin(ui);
+    break;
+  case euoReplace:
+    // Two item changed places. Change places back.
+    undoMoveBack(ui);
+    break;
+  default:
+    // Nothing to dofor other cases. Report error.
+
+    QMessageBox::warning(
+      this,
+      SETTING_APPLICATION,
+      "Invalid undo operation.");
+    break;
+  }
+}
+
+// Delete item as undo operation of add
+void ChildWidget::undoDelete(UndoItem& ui) {
+  model->removeRow(ui.m_origrow);
+
+  int rows = model->rowCount();
+
+  int newfocusrow = ui.m_origrow;
+
+  if (newfocusrow > rows)
+    newfocusrow = rows;
+
+  table->setCurrentIndex(model->index(newfocusrow, 0));
+  table->setFocus();
+  drawSelectionRects();
+}
+
+// Add back item as undo operation of delete
+void ChildWidget::undoAdd(UndoItem& ui) {
+  model->insertRow(ui.m_origrow);
+  undoEdit(ui);
+}
+
+// Put back edited values
+void ChildWidget::undoEdit(UndoItem& ui) {
+  for (int i = 0; i < 9; i++)
+    model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
+
+  table->setCurrentIndex(model->index(ui.m_origrow, 0));
+  table->setFocus();
+  drawSelectionRects();
+}
+
+// Re-join split rows
+void ChildWidget::undoJoin(UndoItem& ui) {
+  model->removeRow(ui.m_extrarow);
+  undoEdit(ui);
+}
+
+// Split back joined lines
+void ChildWidget::undoSplit(UndoItem& ui) {
+  model->insertRow(ui.m_extrarow);
+
+  for (int i = 0; i < 9; i++)
+    model->setData(model->index(ui.m_extrarow, i), ui.m_vextradata[i]);
+
+  undoEdit(ui);
+}
+
+// Put replaced rows back to original location
+void ChildWidget::undoMoveBack(UndoItem& ui) {
+  for (int i = 0; i < 9; i++)
+    model->setData(model->index(ui.m_extrarow, i), ui.m_vextradata[i]);
+>>>>>>> f02d0acbcaf2ab308e8aef7bf8f431fe43eb23f1
 
     for(int i = min_idx; i <= max_idx; ++i)
     {
