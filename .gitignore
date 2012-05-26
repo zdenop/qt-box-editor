@@ -4,7 +4,7 @@
 temp*
 x_code*
 qt-box-editor-*
-qt-box-editor.pro.*
+qt-box-editor.pro*
 tests*
 old*
 Makefile

@@ -396,6 +396,12 @@ void MainWindow::directTypingMode(bool checked) {
   }
 }
 
+void MainWindow::showFontColumns(bool checked) {
+  if (activeChild()) {
+    activeChild()->setShowFontColumns(checked);
+  }
+}
+
 void MainWindow::drawBoxes() {
   if (activeChild()) {
     activeChild()->drawBoxes();
@@ -592,6 +598,7 @@ void MainWindow::updateMenus() {
   drawRectAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
   DirectTypingAct->setEnabled(activeChild() != 0);
+  showFontColumnsAct->setEnabled(activeChild() != 0);
 }
 
 void MainWindow::updateCommandActions() {
@@ -614,6 +621,8 @@ void MainWindow::updateCommandActions() {
                           ? activeChild()->isDrawRect() : false);
   DirectTypingAct->setChecked((activeChild())
                               ? activeChild()->isDirectTypingMode() : false);
+  showFontColumnsAct->setChecked((activeChild())
+                                 ? activeChild()->isFontColumnsShown() : false);
   moveUpAct->setEnabled(enable);
   moveDownAct->setEnabled(enable);
   moveToAct->setEnabled(enable);
@@ -676,6 +685,7 @@ void MainWindow::updateViewMenu() {
   viewMenu->addAction(zoomToSelectionAct);
   viewMenu->addSeparator();
   viewMenu->addAction(showSymbolAct);
+  viewMenu->addAction(showFontColumnsAct);
   viewMenu->addAction(drawBoxesAct);
 }
 
@@ -825,6 +835,12 @@ void MainWindow::createActions() {
   DirectTypingAct->setShortcut(tr("Ctrl+D"));
   connect(DirectTypingAct, SIGNAL(triggered(bool)), this,
           SLOT(directTypingMode(bool)));
+
+  showFontColumnsAct = new QAction(QIcon(""),
+                                tr("Show Font Columns"), this);
+  showFontColumnsAct->setCheckable(true);
+  connect(showFontColumnsAct, SIGNAL(triggered(bool)), this,
+          SLOT(showFontColumns(bool)));
 
   drawBoxesAct = new QAction(QIcon(":/images/drawRect.png"),
                              tr("S&how boxes"), this);
@@ -1014,6 +1030,7 @@ void MainWindow::createToolBars() {
   viewToolBar->addAction(showSymbolAct);
   viewToolBar->addAction(drawBoxesAct);
   viewToolBar->addAction(DirectTypingAct);
+  viewToolBar->addAction(showFontColumnsAct);
   viewToolBar->addAction(drawRectAct);
 
   editToolBar = addToolBar(tr("Edit"));

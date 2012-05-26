@@ -71,23 +71,28 @@ ChildWidget::ChildWidget(QWidget* parent)
   table->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   table->hideColumn(5);
-  //TODO(zdenop): implement show/hide icon for columns (Issue #20)
   table->hideColumn(6);
   table->hideColumn(7);
   table->hideColumn(8);
   table->installEventFilter(this);  // installs event filter
 
-  // SpinBoxDelegate delegate;
-  SpinBoxDelegate *delegate = new SpinBoxDelegate;
+  SpinBoxDelegate* sbDelegate = new SpinBoxDelegate;
   // TODO(zdenop): setMaximum for delegates after changing box
-  table->setItemDelegateForColumn(1, delegate);
-  table->setItemDelegateForColumn(2, delegate);
-  table->setItemDelegateForColumn(3, delegate);
-  table->setItemDelegateForColumn(4, delegate);
-  connect(delegate, SIGNAL(sbd_valueChanged(int)), this,
+  table->setItemDelegateForColumn(1, sbDelegate);
+  table->setItemDelegateForColumn(2, sbDelegate);
+  table->setItemDelegateForColumn(3, sbDelegate);
+  table->setItemDelegateForColumn(4, sbDelegate);
+  connect(sbDelegate, SIGNAL(sbd_valueChanged(int)), this,
           SLOT(sbValueChanged(int)));
-  connect(delegate, SIGNAL(sbd_editingFinished()), this,
+  connect(sbDelegate, SIGNAL(sbd_editingFinished()), this,
           SLOT(drawSelectionRects()));
+
+  CheckboxDelegate* cbDelegate = new CheckboxDelegate;
+  table->setItemDelegateForColumn(6, cbDelegate);
+  table->setItemDelegateForColumn(7, cbDelegate);
+  table->setItemDelegateForColumn(8, cbDelegate);
+  connect(cbDelegate, SIGNAL(toggled(bool)), this,
+          SLOT(cbFontToggleProxy(bool)));
 
   // Font for table
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -810,8 +815,20 @@ bool ChildWidget::isDirectTypingMode() {
   return directTypingMode;
 }
 
+bool ChildWidget::isFontColumnsShown() {
+  return (!table->isColumnHidden(6));
+}
+
 void ChildWidget::setDirectTypingMode(bool v) {
   directTypingMode = v;
+}
+
+void ChildWidget::setShowFontColumns(bool v) {
+  table->setColumnHidden(6, !v);
+  table->setColumnHidden(7, !v);
+  table->setColumnHidden(8, !v);
+  table->resizeColumnsToContents();
+  table->horizontalHeader()->setStretchLastSection(true);
 }
 
 bool ChildWidget::isDrawBoxes() {
@@ -1200,6 +1217,7 @@ void ChildWidget::insertSymbol() {
                    model->index(index.row(), 8).data().toBool());
 
     table->setCurrentIndex(model->index(index.row() + 1, 0));
+    table->setFocus();
 
     UndoItem ui;
     ui.m_eop = euoAdd;
@@ -1579,6 +1597,27 @@ void ChildWidget::setCurrentBoxFile(const QString& fileName) {
 
 QString ChildWidget::strippedName(const QString& fullFileName) {
   return QFileInfo(fullFileName).fileName();
+}
+
+void ChildWidget::cbFontToggleProxy(bool checked)
+{
+    QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+    QModelIndex index = selectedIndexes.first();
+    int col = index.column();
+    switch(col)
+    {
+    case 6 :
+        setItalic(checked);
+        break;
+    case 7 :
+        setBolded(checked);
+        break;
+    case 8 :
+        setUnderline(checked);
+        break;
+    default :
+        break;
+    }
 }
 
 void ChildWidget::sbValueChanged(int sbdValue) {
