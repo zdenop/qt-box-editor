@@ -228,7 +228,8 @@ ChildWidget::ChildWidget(QWidget* parent)
   addWidget(imageView);
   setStretchFactor(indexOf(table), 0);
   setStretchFactor(indexOf(imageView), 1);
-  connect(this, SIGNAL(splitterMoved(int,int)), this, SLOT(updateColWidthsOnSplitter(int,int)));
+  connect(this, SIGNAL(splitterMoved(int,int)), this,
+          SLOT(updateColWidthsOnSplitter(int,int)));
 
   setSelectionRect();
   widgetWidth = parent->size().width();
@@ -244,6 +245,25 @@ ChildWidget::ChildWidget(QWidget* parent)
   rubberBand = new QRubberBand(QRubberBand::Rectangle, imageView);
 }
 
+void ChildWidget::calculateTableWidth(){
+    // set optimum size of table
+    table->resizeColumnsToContents();
+    int tableVisibleWidth = 0;
+    tableVisibleWidth += table->verticalHeader()->sizeHint().width();
+
+    for (int col = 0; col < table->horizontalHeader()->count(); col++) {
+      if (table->columnWidth(col) > 0)
+        tableVisibleWidth += table->columnWidth(col) + 1;  // 1 px for table grid
+    }
+    // scrollbar
+    tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();
+    tableVisibleWidth += table->frameWidth()*2;
+
+    QList<int> splitterSizes;
+    splitterSizes << tableVisibleWidth;
+    splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
+    setSizes(splitterSizes);
+}
 void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
   table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
@@ -367,24 +387,7 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
   table->resizeRowsToContents();
   table->setCornerButtonEnabled(true);
   table->setWordWrap(true);
-
-  // set optimum size of table
-  int tableVisibleWidth = 0;
-  tableVisibleWidth += table->verticalHeader()->sizeHint().width();
-
-  for (int col = 0; col < table->horizontalHeader()->count(); col++) {
-    if (table->columnWidth(col) > 0)
-      tableVisibleWidth += table->columnWidth(col) + 1;  // 1 px for table grid
-  }
-  // scrollbar
-  tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();
-  tableVisibleWidth += table->frameWidth()*2;
-
-  QList<int> splitterSizes;
-  splitterSizes << tableVisibleWidth;
-  splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
-
-  setSizes(splitterSizes);
+  calculateTableWidth();
 
   QApplication::restoreOverrideCursor();
   return true;
@@ -832,6 +835,7 @@ void ChildWidget::setShowFontColumns(bool v) {
   table->setColumnHidden(6, !v);
   table->setColumnHidden(7, !v);
   table->setColumnHidden(8, !v);
+  calculateTableWidth();
   table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
 
@@ -1575,6 +1579,17 @@ void ChildWidget::updateBalloons()
     int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
     QFont tableFont = table->font();
     tableFont.setPointSize(2*tableFont.pointSize());
+
+    //calculate baseline for symbols based on selected symbol
+    int baseline = 0;
+    for(int i = min_idx; i <= max_idx; ++i) {
+        if (baseline == 0) {
+                baseline = model->index(i, 4).data().toInt();
+        } else {
+        baseline = my_min(baseline, model->index(i, 4).data().toInt());
+        }
+    }
+
     for(int i = min_idx; i <= max_idx; ++i)
     {
         balloons.push_back(BalloonSymbol());
@@ -1582,12 +1597,15 @@ void ChildWidget::updateBalloons()
         QString letter = model->index(i, 0).data().toString();
         int left = model->index(i, 1).data().toInt();
         int top = model->index(i, 4).data().toInt();
+        int botPrev = model->index(i-1, 2).data().toInt();
+        if (top > botPrev) {baseline = top;}  //new line?
 
         balloons.back().symbol = imageScene->addText(letter, tableFont);
         QGraphicsTextItem* curSymbol = balloons.back().symbol;
+        // TODO(zdenop): put offset to settings
         // TODO(zdenop): get font metrics and calculate better placement
         // (e.g. visible in case of narrow margin)
-        curSymbol->setPos(QPoint(left, top - 16*2 - 15));
+        curSymbol->setPos(QPoint(left, baseline - 16*2 - 15));
         curSymbol->setDefaultTextColor(Qt::red);
         curSymbol->setZValue(2);
         curSymbol->setVisible(true);
@@ -1608,7 +1626,7 @@ void ChildWidget::updateBalloons()
     }   // for i (idx)
 
     // Make the first (OK?) balloon is visible
-    imageView->ensureVisible(balloons.front().symbol);
+    //imageView->ensureVisible(balloons.front().symbol);
 }
 
 void ChildWidget::drawSelectionRects() {

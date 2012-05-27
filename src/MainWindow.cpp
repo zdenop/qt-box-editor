@@ -836,7 +836,7 @@ void MainWindow::createActions() {
   connect(DirectTypingAct, SIGNAL(triggered(bool)), this,
           SLOT(directTypingMode(bool)));
 
-  showFontColumnsAct = new QAction(QIcon(""),
+  showFontColumnsAct = new QAction(QIcon(":/images/applications-fonts.svg"),
                                 tr("Show Font Columns"), this);
   showFontColumnsAct->setCheckable(true);
   connect(showFontColumnsAct, SIGNAL(triggered(bool)), this,

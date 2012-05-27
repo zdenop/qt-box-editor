@@ -1,3 +1,14 @@
+1.08
+- show/hide columns with font formating
+- char table col width management, Font column fixes
+- fixed MSVC build
+- multiple Balloon Symbols to increase proofreading
+- initial implementiation of undo for table operation: Add, Delete, Change, 
+  Join, Split, Replace (thanks to Z. Gofer)
+- Halo text effect for better readibility (thanks to D. Silaev)
+- fixes related to direct typing mode
+- fix segfault when zooming
+
 1.07
 - implement Drag&Drop for opening images
 - create box file if not exists (requires tesseract traineddata)
@@ -16,16 +27,19 @@
   * UTF code of symbol
   * size of box
   * zoom factor
-- export of symbols to txt file ( symbol per line, line by line, paragraph per line)
+- export of symbols to txt file ( symbol per line, line by line, paragraph per
+  line)
 - import of symbols from txt file
 - improved settings dialog for export/import
 
 1.04
-- direct typing mode (automatic moving to next symbol cell after key release event)
+- direct typing mode (automatic moving to next symbol cell after key release
+  event)
 - improved copy&paste in symbol table
 - new functions: "Go to", "Move to" for symbol table
 - toolbar for symbol table operations
-- fixed loading multipage box file (at the moment there is support only for first page, so other pages must be ignored)
+- fixed loading multipage box file (at the moment there is support only for
+  first page, so other pages must be ignored)
 - fixed check of new version on Windows build (proxy is still not supported)
 - used plastic theme
 
@@ -43,7 +57,8 @@
 - improved saving/restoring state of application
 
 1.01
-- fixed problem that application did not find box file if there where multiple dots in filename
+- fixed problem that application did not find box file if there where multiple
+  dots in filename
 - add support for tesseract v3.00 box files
 - Open file remembers last open directory
 - added Check for update (it did not work on windows)
