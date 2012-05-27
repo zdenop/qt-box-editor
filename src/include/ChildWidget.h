@@ -44,6 +44,7 @@
 #include <QtGui/QMessageBox>
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPixmap>
+#include <QtGui/QRubberBand>
 #include <QtGui/QSplitter>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QTableView>
@@ -205,7 +206,9 @@ class ChildWidget : public QSplitter {
   protected:
 
     void directType(QKeyEvent* event);
-    virtual void mousePressEvent(QMouseEvent* event);
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
     bool eventFilter(QObject* object, QEvent* event);
     void closeEvent(QCloseEvent* event);
     bool maybeSave();
@@ -246,6 +249,9 @@ class ChildWidget : public QSplitter {
     // NOTE: Temp const, to be replaced by user-adjusted setting
     static const int balloonCount = 13;
     QVector<BalloonSymbol> balloons;
+
+    QRubberBand* rubberBand;
+    QPoint rbOrigin;
 };
 
 #endif  // SRC_INCLUDE_CHILDWIDGET_H_
