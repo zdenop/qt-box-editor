@@ -1515,7 +1515,6 @@ void ChildWidget::updateBalloons()
         }
     }
 
-
     for(int i = min_idx; i <= max_idx; ++i)
     {
         balloons.push_back(BalloonSymbol());
@@ -1552,7 +1551,7 @@ void ChildWidget::updateBalloons()
     }   // for i (idx)
 
     // Make the first (OK?) balloon is visible
-    imageView->ensureVisible(balloons.front().symbol);
+    //imageView->ensureVisible(balloons.front().symbol);
 }
 
 void ChildWidget::drawSelectionRects() {
