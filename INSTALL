@@ -1,6 +1,6 @@
 REQUIREMENTS
 ============
-* QT4 (tested with QT-4.7.3, QT-4.8.1)
+* QT4 (tested with QT-4.7.3, QT-4.8.2)
 * leptonica library
 * tesseract 3.01 or 3.02 build as library
 
