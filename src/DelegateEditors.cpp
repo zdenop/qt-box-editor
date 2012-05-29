@@ -99,14 +99,14 @@ bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, con
         if (!checkRect.contains(static_cast<QMouseEvent*>(event)->pos()))
             return false;
     } else if (event->type() == QEvent::KeyPress) {
-        if (static_cast<QKeyEvent*>(event)->key() != Qt::Key_Space&& static_cast<QKeyEvent*>(event)->key() != Qt::Key_Select)
+        if (static_cast<QKeyEvent*>(event)->key() != Qt::Key_Space && static_cast<QKeyEvent*>(event)->key() != Qt::Key_Select)
             return false;
     } else {
         return false;
     }
 
     value = !value;
-    emit toggled(value);
+    emit toggled(value, index.column());
 
     return model->setData(index, value, Qt::EditRole);
 }

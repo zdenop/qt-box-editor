@@ -65,7 +65,7 @@ public:
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
 signals:
-  void toggled(bool checked);
+  void toggled(bool checked, int column);
 };
 
 #endif  // SRC_INCLUDE_DELEGATEEDITORS_H_
