@@ -87,7 +87,9 @@ struct BalloonSymbol
     QGraphicsTextItem* symbol;
 
     // Halo components
-    static const int haloCompCount = 4;
+    static const int haloCompCount = 8;
+    // TODO(all): Temp const, to be replaced by user-adjusted setting
+    static const int haloShift = 2;
     QGraphicsTextItem* halo[haloCompCount];
 };
 
@@ -159,7 +161,7 @@ class ChildWidget : public QSplitter {
     void joinSymbol();
     void deleteSymbol();
     void undo();
-    void cbFontToggleProxy(bool checked);
+    void cbFontToggleProxy(bool checked, int column);
 
     void moveUp();
     void moveDown();
@@ -187,6 +189,7 @@ class ChildWidget : public QSplitter {
   private slots:
     void documentWasModified();
     void emitBoxChanged();
+    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
     void drawSelectionRects();
 
   private:
@@ -200,7 +203,6 @@ class ChildWidget : public QSplitter {
 
     void moveSymbolRow(int direction);
     QList<QTableWidgetItem*> takeRow(int row);
-    void removeMyItems(QVector<QGraphicsRectItem *> &graphicsItems);
     void calculateTableWidth();
 
   protected:
@@ -227,12 +229,17 @@ class ChildWidget : public QSplitter {
     QGraphicsView* imageView;
     QGraphicsItem* imageItem;
     QGraphicsRectItem* rectangle;
-    QVector<QGraphicsRectItem *> rectItem;
-    QVector<QGraphicsRectItem *> boxesItem;
+
+    // Returns model item's associated bbox. "row" determines item's row number.
+    // If row = -1 then returns bbox of the last item in current selection
+    QGraphicsRectItem* modelItemBox(int row = -1);
+    QGraphicsRectItem* createModelItemBox(int row);
+    void updateModelItemBox(int row);
+    void deleteModelItemBox(int row);
 
     QTableView* table;
 
-    QAbstractItemModel* model;
+    QStandardItemModel* model;
     QItemSelectionModel* selectionModel;
 
     QString imageFile;
@@ -246,7 +253,7 @@ class ChildWidget : public QSplitter {
     QStack<UndoItem> m_undostack;
 
     // Overhead symbols
-    // NOTE: Temp const, to be replaced by user-adjusted setting
+    // TODO(all): Temp const, to be replaced by user-adjusted setting
     static const int balloonCount = 13;
     QVector<BalloonSymbol> balloons;
 
