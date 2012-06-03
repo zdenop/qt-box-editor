@@ -981,12 +981,14 @@ void ChildWidget::zoomOriginal() {
 }
 
 void ChildWidget::zoomToSelection() {
-  imageView->fitInView(modelItemBox(), Qt::KeepAspectRatio);
-  imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
-  if(selectionModel->hasSelection())
-    imageView->ensureVisible(modelItemBox());
-  imageView->centerOn(modelItemBox());
-  getZoom();
+  if(selectionModel->hasSelection()) {
+      imageView->fitInView(modelItemBox(), Qt::KeepAspectRatio);
+      imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
+      if(selectionModel->hasSelection())
+        imageView->ensureVisible(modelItemBox());
+      imageView->centerOn(modelItemBox());
+      getZoom();
+  }
 }
 
 void ChildWidget::showSymbol() {
@@ -1034,6 +1036,7 @@ void ChildWidget::drawRectangle(bool checked) {
 }
 
 QGraphicsRectItem* ChildWidget::modelItemBox(int row) {
+  //Warning: calling func has to check if there is selection!
   if(row == -1)
     row = table->selectionModel()->selectedRows().last().row();
   return model->index(row, 9).data().value<QGraphicsRectItem*>();
@@ -1150,7 +1153,8 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/)
     rubberBand->hide();
 
     // If a Ctrl+Click - toggle
-    if(!rubberBand->size().isValid() || rubberBand->size().width() == 0 && rubberBand->size().height() == 0)
+    if(!rubberBand->size().isValid() || (rubberBand->size().width() == 0 &&
+            rubberBand->size().height() == 0))
     {
         QPoint pos = imageView->mapToScene(rubberBand->pos()).toPoint();
         for(int row = 0; row < model->rowCount(); ++row)
@@ -1414,12 +1418,14 @@ void ChildWidget::joinSymbol() {
     if(indexes.empty())
         return;
     // On single selected item join with the next ...
-    if(indexes.size() == 1)
+    if(indexes.size() == 1) {
         // ... if selected is not the last
-        if(indexes.back().row() != model->rowCount() - 1)
+        if(indexes.back().row() != model->rowCount() - 1) {
             indexes.push_back(model->index(indexes.back().row() + 1, 0));
-        else
+        } else {
             return;
+        }
+    }
 
     QString letter = "";
     int left = INT_MAX;
