@@ -205,8 +205,7 @@ void SettingsDialog::saveSettings() {
   settings.setValue("Tesseract/Lang",
                     cbLang->itemData(cbLang->currentIndex()).toString());
 
-  // emit setTableFont(tableFont);
-  // TODO(zdenop): use font for open child windows
+  emit settingsChanged();
   emit accept();
 }
 

@@ -44,6 +44,9 @@ class SettingsDialog : public QDialog, public Ui::SettingsDialog {
     void initLangs();
     QString getLangName(QString lang);
 
+  signals:
+    void settingsChanged();
+
   private slots:
     void on_fontButton_clicked();
     void on_fontImageButton_clicked();

@@ -148,6 +148,7 @@ public:
   void copyFromCell();
   void pasteToCell();
   void drawRectangle(bool checked);
+  void readSettings();
 
 public slots:
   void updateColWidthsOnSplitter(int pos, int index);

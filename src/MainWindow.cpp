@@ -474,8 +474,16 @@ void MainWindow::undo() {
   }
 }
 
+void MainWindow::reReadSetting() {
+  for (int i = 0; i < tabWidget->count(); ++i) {
+    ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
+    child->readSettings();
+  }
+}
+
 void MainWindow::slotSettings() {
   runSettingsDialog = new SettingsDialog(this);
+  connect(runSettingsDialog, SIGNAL(settingsChanged()), this, SLOT(reReadSetting()));
   runSettingsDialog->exec();
 }
 

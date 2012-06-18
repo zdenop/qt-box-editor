@@ -99,54 +99,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   connect(cbDelegate, SIGNAL(toggled(bool, int)), this,
           SLOT(cbFontToggleProxy(bool, int)));
 
-  // Font for table
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                     SETTING_ORGANIZATION, SETTING_APPLICATION);
-  QFont tableFont = settings.value("GUI/Font").value<QFont>();
-
-  if (tableFont.family().isEmpty()) {
-    tableFont.setFamily(TABLE_FONT);
-    tableFont.setPointSize(TABLE_FONT_SIZE);
-  }
-  table->setFont(tableFont);
-
-  // Font for Image/ballons
-  if (settings.contains("GUI/UseTheSameFont") &&
-      settings.value("GUI/UseTheSameFont").toBool()) {
-    m_imageFont = tableFont;
-  } else {
-    m_imageFont = settings.value("GUI/ImageFont").value<QFont>();
-    if (m_imageFont.family().isEmpty()) {
-      m_imageFont.setFamily(TABLE_FONT);
-      m_imageFont.setPointSize(TABLE_FONT_SIZE);
-    }
-  }
-  m_imageFont.setPointSize(2*m_imageFont.pointSize());
-
-  if (settings.contains("GUI/Rectagle")) {
-    rectColor = settings.value("GUI/Rectagle").value<QColor>();
-  } else {
-    rectColor = Qt::red;
-  }
-
-  if (settings.contains("GUI/Rectagle_fill")) {
-    rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
-  } else {
-    rectFillColor = Qt::red;
-    rectFillColor.setAlpha(127);
-  }
-
-  if (settings.contains("GUI/Box")) {
-    boxColor = settings.value("GUI/Box").value<QColor>();
-  } else {
-    boxColor = Qt::green;
-  }
-
-  if (settings.contains("GUI/BackgroundColor")) {
-    backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
-  } else {
-    backgroundColor = (Qt::gray);
-  }
+  readSettings();
 
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
@@ -260,6 +213,57 @@ ChildWidget::ChildWidget(QWidget* parent)
   rectangle = 0;
 
   rubberBand = new QRubberBand(QRubberBand::Rectangle, imageView);
+}
+
+void ChildWidget::readSettings() {
+    // Font for table
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       SETTING_ORGANIZATION, SETTING_APPLICATION);
+    QFont tableFont = settings.value("GUI/Font").value<QFont>();
+
+    if (tableFont.family().isEmpty()) {
+      tableFont.setFamily(TABLE_FONT);
+      tableFont.setPointSize(TABLE_FONT_SIZE);
+    }
+    table->setFont(tableFont);
+
+    // Font for Image/ballons
+    if (settings.contains("GUI/UseTheSameFont") &&
+        settings.value("GUI/UseTheSameFont").toBool()) {
+      m_imageFont = tableFont;
+    } else {
+      m_imageFont = settings.value("GUI/ImageFont").value<QFont>();
+      if (m_imageFont.family().isEmpty()) {
+        m_imageFont.setFamily(TABLE_FONT);
+        m_imageFont.setPointSize(TABLE_FONT_SIZE);
+      }
+    }
+    m_imageFont.setPointSize(2*m_imageFont.pointSize());
+
+    if (settings.contains("GUI/Rectagle")) {
+      rectColor = settings.value("GUI/Rectagle").value<QColor>();
+    } else {
+      rectColor = Qt::red;
+    }
+
+    if (settings.contains("GUI/Rectagle_fill")) {
+      rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
+    } else {
+      rectFillColor = Qt::red;
+      rectFillColor.setAlpha(127);
+    }
+
+    if (settings.contains("GUI/Box")) {
+      boxColor = settings.value("GUI/Box").value<QColor>();
+    } else {
+      boxColor = Qt::green;
+    }
+
+    if (settings.contains("GUI/BackgroundColor")) {
+      backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
+    } else {
+      backgroundColor = (Qt::gray);
+    }
 }
 
 void ChildWidget::calculateTableWidth() {
