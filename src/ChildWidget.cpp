@@ -108,6 +108,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   imageView->setAutoFillBackground(true);
 
   readSettings();
+
   // Table toolbar
   QPushButton* upButton = new QPushButton();
   upButton->setIcon(QIcon(":/images/up.svg"));
@@ -236,7 +237,19 @@ void ChildWidget::readSettings() {
         m_imageFont.setPointSize(TABLE_FONT_SIZE);
       }
     }
-    m_imageFont.setPointSize(2*m_imageFont.pointSize());
+    m_imageFont.setPointSize(2 * m_imageFont.pointSize());
+
+    if (settings.contains("GUI/ImageFontOffset")) {
+      fontOffset = settings.value("GUI/ImageFontOffset").toInt();
+    } else {
+      fontOffset = 16 * 2 - 15;
+    }
+
+    if (settings.contains("GUI/ImageFontColor")) {
+      imageFontColor = settings.value("GUI/ImageFontColor").value<QColor>();
+    } else {
+      imageFontColor = Qt::red;
+    }
 
     if (settings.contains("GUI/Rectagle")) {
       rectColor = settings.value("GUI/Rectagle").value<QColor>();
@@ -1681,11 +1694,10 @@ void ChildWidget::updateBalloons() {
 
     balloons.back().symbol = imageScene->addText(letter, m_imageFont);
     QGraphicsTextItem* curSymbol = balloons.back().symbol;
-    // TODO(zdenop): put offset to settings
     // TODO(zdenop): get font metrics and calculate better placement
     // (e.g. visible in case of narrow margin)
-    curSymbol->setPos(QPoint(left, baseline - 16*2 - 15));
-    curSymbol->setDefaultTextColor(Qt::red);
+    curSymbol->setPos(QPoint(left, baseline - fontOffset));
+    curSymbol->setDefaultTextColor(imageFontColor);
     curSymbol->setZValue(4);
     curSymbol->setVisible(true);
 

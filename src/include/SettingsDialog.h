@@ -50,6 +50,7 @@ class SettingsDialog : public QDialog, public Ui::SettingsDialog {
   private slots:
     void on_fontButton_clicked();
     void on_fontImageButton_clicked();
+    void on_imageFontColorButton_clicked();
     void on_colorRectButton_clicked();
     void on_rectFillColorButton_clicked();
     void on_colorBoxButton_clicked();
@@ -64,6 +65,7 @@ class SettingsDialog : public QDialog, public Ui::SettingsDialog {
 
     QFont tableFont;
     QFont imageFont;
+    QColor imageFontColor;
     QColor rectColor;
     QColor rectFillColor;
     QColor boxColor;

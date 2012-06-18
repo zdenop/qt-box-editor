@@ -48,46 +48,38 @@
        <property name="currentIndex">
         <number>0</number>
        </property>
-       <widget class="QWidget" name="fontAndColorsSett">
+       <widget class="QWidget" name="FontSett">
         <attribute name="title">
-         <string>Font &amp;&amp; Colors</string>
+         <string>Fonts</string>
         </attribute>
         <widget class="QWidget" name="layoutWidget_1">
          <property name="geometry">
           <rect>
            <x>5</x>
            <y>5</y>
-           <width>386</width>
-           <height>335</height>
+           <width>385</width>
+           <height>281</height>
           </rect>
          </property>
-         <layout class="QVBoxLayout" name="fontAndColorsLayout">
+         <layout class="QVBoxLayout" name="fontLayout">
           <item>
-           <widget class="QGroupBox" name="fontGroupBox">
-            <property name="title">
-             <string>Font</string>
+           <widget class="QFrame" name="fontFrame">
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
             </property>
-            <layout class="QGridLayout" name="gridLayout_1">
-             <item row="0" column="1">
-              <widget class="QLabel" name="fontLabel">
-               <property name="text">
-                <string>Consolas, 12 pt</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QPushButton" name="fontButton">
-               <property name="maximumSize">
-                <size>
-                 <width>75</width>
-                 <height>26</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Change...</string>
-               </property>
-              </widget>
-             </item>
+            <property name="lineWidth">
+             <number>8</number>
+            </property>
+            <property name="midLineWidth">
+             <number>6</number>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>8</number>
+             </property>
              <item row="0" column="2">
               <spacer name="horizontalSpacer_7">
                <property name="orientation">
@@ -100,13 +92,6 @@
                 </size>
                </property>
               </spacer>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="fontImageLabel">
-               <property name="text">
-                <string>Consolas, 12 pt</string>
-               </property>
-              </widget>
              </item>
              <item row="1" column="2">
               <spacer name="horizontalSpacer_8">
@@ -121,10 +106,17 @@
                </property>
               </spacer>
              </item>
-             <item row="1" column="3">
-              <widget class="QPushButton" name="fontImageButton">
+             <item row="0" column="1">
+              <widget class="QLabel" name="fontLabel">
                <property name="text">
-                <string>Change...</string>
+                <string>Consolas, 12 pt</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLabel" name="fontImageLabel">
+               <property name="text">
+                <string>Consolas, 12 pt</string>
                </property>
               </widget>
              </item>
@@ -142,36 +134,145 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="1" colspan="2">
+             <item row="3" column="3" rowspan="2">
+              <widget class="QSpinBox" name="offsetSpinBox">
+               <property name="toolTip">
+                <string>How far should be displayed symbol from baseline.</string>
+               </property>
+               <property name="value">
+                <number>17</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="3">
+              <widget class="QPushButton" name="fontButton">
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>26</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>Change...</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" colspan="3">
               <widget class="QCheckBox" name="useSameFontCB">
                <property name="text">
                 <string>Use the same font for table and image</string>
                </property>
               </widget>
              </item>
+             <item row="3" column="1">
+              <widget class="QLabel" name="offsetLabel">
+               <property name="text">
+                <string>Image font offset:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="3">
+              <widget class="QPushButton" name="fontImageButton">
+               <property name="text">
+                <string>Change...</string>
+               </property>
+              </widget>
+             </item>
             </layout>
+            <zorder>fontLabel</zorder>
+            <zorder>fontImageLabel</zorder>
+            <zorder>fontTableLbl</zorder>
+            <zorder>fontImageLbl</zorder>
+            <zorder>offsetSpinBox</zorder>
+            <zorder>fontButton</zorder>
+            <zorder>useSameFontCB</zorder>
+            <zorder>offsetLabel</zorder>
+            <zorder>fontImageButton</zorder>
            </widget>
           </item>
           <item>
-           <widget class="QGroupBox" name="colorsGroupBox">
+           <spacer name="verticalSpacer">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::MinimumExpanding</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>44</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QWidget" name="ColorsSett">
+        <attribute name="title">
+         <string>Colors</string>
+        </attribute>
+        <widget class="QWidget" name="layoutWidget">
+         <property name="geometry">
+          <rect>
+           <x>0</x>
+           <y>10</y>
+           <width>391</width>
+           <height>270</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QFrame" name="colorsFrame">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="title">
-             <string>Colors</string>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
+            <layout class="QGridLayout" name="gridLayout">
              <item row="0" column="0">
+              <widget class="QLabel" name="imageFontColorLabel">
+               <property name="text">
+                <string>Image font:</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <spacer name="horizontalSpacer_9">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="0" column="2">
+              <widget class="QPushButton" name="imageFontColorButton">
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>26</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
               <widget class="QLabel" name="colorRectLabel">
                <property name="text">
                 <string>Selection rectangle:</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
+             <item row="1" column="1">
               <spacer name="horizontalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -187,7 +288,7 @@
                </property>
               </spacer>
              </item>
-             <item row="0" column="2">
+             <item row="1" column="2">
               <widget class="QPushButton" name="colorRectButton">
                <property name="maximumSize">
                 <size>
@@ -200,14 +301,14 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0">
+             <item row="2" column="0">
               <widget class="QLabel" name="colorBoxLabel">
                <property name="text">
                 <string>Selection fill:</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="1">
+             <item row="2" column="1">
               <spacer name="horizontalSpacer_3">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -223,7 +324,7 @@
                </property>
               </spacer>
              </item>
-             <item row="1" column="2">
+             <item row="2" column="2">
               <widget class="QPushButton" name="rectFillColorButton">
                <property name="maximumSize">
                 <size>
@@ -236,14 +337,14 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0">
+             <item row="3" column="0">
               <widget class="QLabel" name="colorBoxLabel_2">
                <property name="text">
                 <string>Boxes:</string>
                </property>
               </widget>
              </item>
-             <item row="2" column="1">
+             <item row="3" column="1">
               <spacer name="horizontalSpacer_4">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -259,7 +360,7 @@
                </property>
               </spacer>
              </item>
-             <item row="2" column="2">
+             <item row="3" column="2">
               <widget class="QPushButton" name="colorBoxButton">
                <property name="maximumSize">
                 <size>
@@ -272,20 +373,14 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="2">
-              <widget class="QPushButton" name="backgroundColorButton">
-               <property name="maximumSize">
-                <size>
-                 <width>75</width>
-                 <height>26</height>
-                </size>
-               </property>
+             <item row="4" column="0">
+              <widget class="QLabel" name="backgroundColorLabel">
                <property name="text">
-                <string/>
+                <string>Background:</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="4" column="1">
               <spacer name="horizontalSpacer_5">
                <property name="orientation">
                 <enum>Qt::Horizontal</enum>
@@ -301,10 +396,16 @@
                </property>
               </spacer>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="backgroundColorLabel">
+             <item row="4" column="2">
+              <widget class="QPushButton" name="backgroundColorButton">
+               <property name="maximumSize">
+                <size>
+                 <width>75</width>
+                 <height>26</height>
+                </size>
+               </property>
                <property name="text">
-                <string>Background:</string>
+                <string/>
                </property>
               </widget>
              </item>
@@ -312,17 +413,14 @@
            </widget>
           </item>
           <item>
-           <spacer name="verticalSpacer">
+           <spacer name="verticalSpacer_2">
             <property name="orientation">
              <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::MinimumExpanding</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
               <width>20</width>
-              <height>53</height>
+              <height>88</height>
              </size>
             </property>
            </spacer>
@@ -330,7 +428,7 @@
          </layout>
         </widget>
        </widget>
-       <widget class="QWidget" name="textSett">
+       <widget class="QWidget" name="TextSett">
         <attribute name="title">
          <string>Text settings</string>
         </attribute>
@@ -524,7 +622,7 @@ p, li { white-space: pre-wrap; }
          </property>
         </widget>
        </widget>
-       <widget class="QWidget" name="tab">
+       <widget class="QWidget" name="TesseractSett">
         <attribute name="title">
          <string>Tesseract</string>
         </attribute>
@@ -663,12 +761,12 @@ p, li { white-space: pre-wrap; }
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>188</x>
-     <y>131</y>
+     <x>232</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>45</x>
-     <y>104</y>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -679,12 +777,12 @@ p, li { white-space: pre-wrap; }
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>188</x>
-     <y>131</y>
+     <x>232</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
-     <x>352</x>
-     <y>104</y>
+     <x>354</x>
+     <y>91</y>
     </hint>
    </hints>
   </connection>
@@ -695,12 +793,28 @@ p, li { white-space: pre-wrap; }
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>188</x>
-     <y>131</y>
+     <x>232</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
-     <x>106</x>
-     <y>104</y>
+     <x>119</x>
+     <y>91</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SettingsDialog</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>209</x>
+     <y>346</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>209</x>
+     <y>184</y>
     </hint>
    </hints>
   </connection>

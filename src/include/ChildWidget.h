@@ -191,10 +191,12 @@ private slots:
   void drawSelectionRects();
 
 private:
+  int fontOffset;
   QColor rectColor;
   QColor rectFillColor;
   QColor boxColor;
   QColor backgroundColor;
+  QColor imageFontColor;
   QGraphicsItem* m_message;
   FindDialog *f_dialog;
   DrawRectangle *m_DrawRectangle;

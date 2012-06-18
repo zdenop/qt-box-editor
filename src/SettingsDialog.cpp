@@ -65,6 +65,10 @@ void SettingsDialog::on_fontImageButton_clicked() {
   }
 }
 
+void SettingsDialog::on_imageFontColorButton_clicked() {
+  chooseColor(imageFontColorButton, &imageFontColor);
+}
+
 void SettingsDialog::on_colorRectButton_clicked() {
   chooseColor(colorRectButton, &rectColor);
 }
@@ -100,11 +104,21 @@ void SettingsDialog::initSettings() {
    } else {
      imageFont = settings.value("GUI/ImageFont").value<QFont>();
    }
+
   if (settings.contains("GUI/UseTheSameFont")) {
      useSameFontCB->setChecked(settings.value("GUI/UseTheSameFont").toBool());
      fontImageButton->setDisabled(useSameFontCB->isChecked());
      fontImageLabel->setDisabled(useSameFontCB->isChecked());
      fontImageLbl->setDisabled(useSameFontCB->isChecked());
+  }
+
+  if (settings.contains("GUI/ImageFontOffset"))
+    offsetSpinBox->setValue(settings.value("GUI/ImageFontOffset").toInt());
+
+  if (settings.contains("GUI/ImageFontColor")) {
+    imageFontColor = settings.value("GUI/ImageFontColor").value<QColor>();
+  } else {
+    imageFontColor = Qt::red;
   }
 
   if (settings.contains("GUI/Rectagle")) {
@@ -149,6 +163,7 @@ void SettingsDialog::initSettings() {
   fontImageLabel->setText(imageFont.family().toAscii() +
                      tr(", %1 pt").arg(imageFont.pointSize()));
 
+  updateColorButton(imageFontColorButton, imageFontColor);
   updateColorButton(colorRectButton, rectColor);
   updateColorButton(rectFillColorButton, rectFillColor);
   updateColorButton(colorBoxButton, boxColor);
@@ -171,7 +186,9 @@ void SettingsDialog::saveSettings() {
 
   settings.setValue("GUI/Font", tableFont);
   settings.setValue("GUI/ImageFont", imageFont);
+  settings.setValue("GUI/ImageFontOffset", offsetSpinBox->value());
   settings.setValue("GUI/UseTheSameFont", useSameFontCB->isChecked());
+  settings.setValue("GUI/ImageFontColor", imageFontColor);
   settings.setValue("GUI/Rectagle", rectColor);
   settings.setValue("GUI/Rectagle_fill", rectFillColor);
   settings.setValue("GUI/Box", boxColor);
