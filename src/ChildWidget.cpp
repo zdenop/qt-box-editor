@@ -99,41 +99,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   connect(cbDelegate, SIGNAL(toggled(bool, int)), this,
           SLOT(cbFontToggleProxy(bool, int)));
 
-  // Font for table
-  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                     SETTING_ORGANIZATION, SETTING_APPLICATION);
-  QFont tableFont = settings.value("GUI/Font").value<QFont>();
-
-  if (tableFont.family().isEmpty()) {
-    tableFont.setFamily(TABLE_FONT);
-    tableFont.setPointSize(TABLE_FONT_SIZE);
-  }
-  table->setFont(tableFont);
-
-  if (settings.contains("GUI/Rectagle")) {
-    rectColor = settings.value("GUI/Rectagle").value<QColor>();
-  } else {
-    rectColor = Qt::red;
-  }
-
-  if (settings.contains("GUI/Rectagle_fill")) {
-    rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
-  } else {
-    rectFillColor = Qt::red;
-    rectFillColor.setAlpha(127);
-  }
-
-  if (settings.contains("GUI/Box")) {
-    boxColor = settings.value("GUI/Box").value<QColor>();
-  } else {
-    boxColor = Qt::green;
-  }
-
-  if (settings.contains("GUI/BackgroundColor")) {
-    backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
-  } else {
-    backgroundColor = (Qt::gray);
-  }
+  readSettings();
 
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
@@ -249,24 +215,75 @@ ChildWidget::ChildWidget(QWidget* parent)
   rubberBand = new QRubberBand(QRubberBand::Rectangle, imageView);
 }
 
-void ChildWidget::calculateTableWidth(){
-    // set optimum size of table
-    table->resizeColumnsToContents();
-    int tableVisibleWidth = 0;
-    tableVisibleWidth += table->verticalHeader()->sizeHint().width();
+void ChildWidget::readSettings() {
+    // Font for table
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                       SETTING_ORGANIZATION, SETTING_APPLICATION);
+    QFont tableFont = settings.value("GUI/Font").value<QFont>();
 
-    for (int col = 0; col < table->horizontalHeader()->count(); col++) {
-      if (table->columnWidth(col) > 0)
-        tableVisibleWidth += table->columnWidth(col) + 1;  // 1 px for table grid
+    if (tableFont.family().isEmpty()) {
+      tableFont.setFamily(TABLE_FONT);
+      tableFont.setPointSize(TABLE_FONT_SIZE);
     }
-    // scrollbar
-    tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();
-    tableVisibleWidth += table->frameWidth()*2;
+    table->setFont(tableFont);
 
-    QList<int> splitterSizes;
-    splitterSizes << tableVisibleWidth;
-    splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
-    setSizes(splitterSizes);
+    // Font for Image/ballons
+    if (settings.contains("GUI/UseTheSameFont") &&
+        settings.value("GUI/UseTheSameFont").toBool()) {
+      m_imageFont = tableFont;
+    } else {
+      m_imageFont = settings.value("GUI/ImageFont").value<QFont>();
+      if (m_imageFont.family().isEmpty()) {
+        m_imageFont.setFamily(TABLE_FONT);
+        m_imageFont.setPointSize(TABLE_FONT_SIZE);
+      }
+    }
+    m_imageFont.setPointSize(2*m_imageFont.pointSize());
+
+    if (settings.contains("GUI/Rectagle")) {
+      rectColor = settings.value("GUI/Rectagle").value<QColor>();
+    } else {
+      rectColor = Qt::red;
+    }
+
+    if (settings.contains("GUI/Rectagle_fill")) {
+      rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
+    } else {
+      rectFillColor = Qt::red;
+      rectFillColor.setAlpha(127);
+    }
+
+    if (settings.contains("GUI/Box")) {
+      boxColor = settings.value("GUI/Box").value<QColor>();
+    } else {
+      boxColor = Qt::green;
+    }
+
+    if (settings.contains("GUI/BackgroundColor")) {
+      backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
+    } else {
+      backgroundColor = (Qt::gray);
+    }
+}
+
+void ChildWidget::calculateTableWidth() {
+  // set optimum size of table
+  table->resizeColumnsToContents();
+  int tableVisibleWidth = 0;
+  tableVisibleWidth += table->verticalHeader()->sizeHint().width();
+
+  for (int col = 0; col < table->horizontalHeader()->count(); col++) {
+    if (table->columnWidth(col) > 0)
+      tableVisibleWidth += table->columnWidth(col) + 1;  // 1 px for table grid
+  }
+  // scrollbar
+  tableVisibleWidth += table->verticalScrollBar()->sizeHint().width();
+  tableVisibleWidth += table->frameWidth()*2;
+
+  QList<int> splitterSizes;
+  splitterSizes << tableVisibleWidth;
+  splitterSizes << widgetWidth - tableVisibleWidth - this->handleWidth();
+  setSizes(splitterSizes);
 }
 void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
   table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
@@ -902,14 +919,14 @@ void ChildWidget::setUnderline(bool v) {
 void ChildWidget::setSelectionRect() {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
-  QFont tableFont = settings.value("GUI/Font").value<QFont>();
+  QFont imageFont = settings.value("GUI/ImageFont").value<QFont>();
 
-  if (tableFont.family().isEmpty()) {
-    tableFont.setFamily(TABLE_FONT);
-    tableFont.setPointSize(TABLE_FONT_SIZE);
+  if (imageFont.family().isEmpty()) {
+    imageFont.setFamily(TABLE_FONT);
+    imageFont.setPointSize(TABLE_FONT_SIZE);
   }
 
-  tableFont.setPointSize((tableFont.pointSize() * 2));
+  imageFont.setPointSize((imageFont.pointSize() * 2));
 }
 
 void ChildWidget::getZoom() {
@@ -928,14 +945,14 @@ void ChildWidget::setZoom(float scale) {
 
 void ChildWidget::zoomIn() {
   imageView->scale(1.2, 1.2);
-  if(selectionModel->hasSelection())
+  if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
   getZoom();
 }
 
 void ChildWidget::zoomOut() {
   imageView->scale(1 / 1.2, 1 / 1.2);
-  if(selectionModel->hasSelection())
+  if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
   getZoom();
 }
@@ -961,7 +978,7 @@ void ChildWidget::zoomToHeight() {
   float zoomFactor = viewHeight / imageHeight;
 
   setZoom(zoomFactor);
-  if(selectionModel->hasSelection())
+  if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
 }
 
@@ -970,24 +987,24 @@ void ChildWidget::zoomToWidth() {
   float zoomFactor = viewWidth / imageWidth;
 
   setZoom(zoomFactor);
-  if(selectionModel->hasSelection())
+  if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
 }
 
 void ChildWidget::zoomOriginal() {
   setZoom(1);
-  if(selectionModel->hasSelection())
+  if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
 }
 
 void ChildWidget::zoomToSelection() {
-  if(selectionModel->hasSelection()) {
-      imageView->fitInView(modelItemBox(), Qt::KeepAspectRatio);
-      imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
-      if(selectionModel->hasSelection())
-        imageView->ensureVisible(modelItemBox());
-      imageView->centerOn(modelItemBox());
-      getZoom();
+  if (selectionModel->hasSelection()) {
+    imageView->fitInView(modelItemBox(), Qt::KeepAspectRatio);
+    imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
+    if (selectionModel->hasSelection())
+      imageView->ensureVisible(modelItemBox());
+    imageView->centerOn(modelItemBox());
+    getZoom();
   }
 }
 
@@ -1036,7 +1053,7 @@ void ChildWidget::drawRectangle(bool checked) {
 
 QGraphicsRectItem* ChildWidget::modelItemBox(int row) {
   //Warning: calling func has to check if there is selection!
-  if(row == -1)
+  if (row == -1)
     row = table->selectionModel()->selectedRows().last().row();
   return model->index(row, 9).data().value<QGraphicsRectItem*>();
 }
@@ -1047,7 +1064,7 @@ QGraphicsRectItem* ChildWidget::createModelItemBox(int row) {
   int right = model->index(row, 3).data().toInt();
   int top = model->index(row, 4).data().toInt();
   QGraphicsRectItem* rectItem =
-        imageScene->addRect(left, top, right - left, bottom - top, QPen(boxColor));
+    imageScene->addRect(left, top, right - left, bottom - top, QPen(boxColor));
   rectItem->setZValue(2);
   rectItem->hide();
 
@@ -1057,24 +1074,24 @@ QGraphicsRectItem* ChildWidget::createModelItemBox(int row) {
 }
 
 void ChildWidget::updateModelItemBox(int row) {
-    int left = model->index(row, 1).data().toInt();
-    int bottom = model->index(row, 2).data().toInt();
-    int right = model->index(row, 3).data().toInt();
-    int top = model->index(row, 4).data().toInt();
-    modelItemBox(row)->setRect(left, top, right - left, bottom - top);
+  int left = model->index(row, 1).data().toInt();
+  int bottom = model->index(row, 2).data().toInt();
+  int right = model->index(row, 3).data().toInt();
+  int top = model->index(row, 4).data().toInt();
+  modelItemBox(row)->setRect(left, top, right - left, bottom - top);
 }
 
 void ChildWidget::deleteModelItemBox(int row) {
-    QGraphicsRectItem* rectItem = modelItemBox(row);
-    imageScene->removeItem(rectItem);
-    delete rectItem;
+  QGraphicsRectItem* rectItem = modelItemBox(row);
+  imageScene->removeItem(rectItem);
+  delete rectItem;
 }
 
 void ChildWidget::drawBoxes() {
   boxesVisible = !boxesVisible;
-  for(int row = 0; row < model->rowCount(); ++row)
+  for (int row = 0; row < model->rowCount(); ++row)
     modelItemBox(row)->setVisible(boxesVisible);
-  if(boxesVisible)
+  if (boxesVisible)
     drawSelectionRects();
 }
 
@@ -1086,36 +1103,32 @@ void ChildWidget::mousePressEvent(QMouseEvent* event) {
   int zoomedOffset = offset / zoomFactor;
 
   // This handler is for left click events only
-  if(event->button() != Qt::LeftButton)
+  if (event->button() != Qt::LeftButton)
     return;
 
   // Rubber band
-  if(event->modifiers() == Qt::ControlModifier)
-  {
+  if (event->modifiers() == Qt::ControlModifier) {
     rbOrigin = imageView->mapFromParent(event->pos());
     rubberBand->setGeometry(QRect(rbOrigin, QSize()));
     rubberBand->show();
     grabMouse();
   }
   // BB click selection
-  else if(event->modifiers() == Qt::NoModifier)
-  {
-      for (int row = 0; row < model->rowCount(); ++row)
-      {
-          int left = model->index(row, 1).data().toInt();
-          int bottom = model->index(row, 2).data().toInt();
-          int right = model->index(row, 3).data().toInt();
-          int top = model->index(row, 4).data().toInt();
+  else if (event->modifiers() == Qt::NoModifier) {
+    for (int row = 0; row < model->rowCount(); ++row) {
+      int left = model->index(row, 1).data().toInt();
+      int bottom = model->index(row, 2).data().toInt();
+      int right = model->index(row, 3).data().toInt();
+      int top = model->index(row, 4).data().toInt();
 
-          if ((left <= (mouseCoordinates.x() - zoomedOffset) &&
-               (mouseCoordinates.x() - zoomedOffset) <= right) &&
-              (top <= mouseCoordinates.y()) &&
-              (mouseCoordinates.y() <= bottom))
-          {
-              table->setCurrentIndex(model->index(row, 0));
-              table->setFocus();
-          }
-       }
+      if ((left <= (mouseCoordinates.x() - zoomedOffset) &&
+           (mouseCoordinates.x() - zoomedOffset) <= right) &&
+          (top <= mouseCoordinates.y()) &&
+          (mouseCoordinates.y() <= bottom)) {
+        table->setCurrentIndex(model->index(row, 0));
+        table->setFocus();
+      }
+    }
   } // else (BB selection)
 }
 
@@ -1123,78 +1136,66 @@ void ChildWidget::mouseMoveEvent(QMouseEvent* event) {
   QPoint topleft;
   QPoint botright;
   QPoint rbCurPoint = imageView->mapFromParent(event->pos());
-  if(rbOrigin.x() > rbCurPoint.x())
-  {
-      topleft.setX(rbCurPoint.x());
-      botright.setX(rbOrigin.x());
+  if (rbOrigin.x() > rbCurPoint.x()) {
+    topleft.setX(rbCurPoint.x());
+    botright.setX(rbOrigin.x());
+  } else {
+    topleft.setX(rbOrigin.x());
+    botright.setX(rbCurPoint.x());
   }
-  else
-  {
-      topleft.setX(rbOrigin.x());
-      botright.setX(rbCurPoint.x());
-  }
-  if(rbOrigin.y() > rbCurPoint.y())
-  {
-      topleft.setY(rbCurPoint.y());
-      botright.setY(rbOrigin.y());
-  }
-  else
-  {
-      topleft.setY(rbOrigin.y());
-      botright.setY(rbCurPoint.y());
+  if (rbOrigin.y() > rbCurPoint.y()) {
+    topleft.setY(rbCurPoint.y());
+    botright.setY(rbOrigin.y());
+  } else {
+    topleft.setY(rbOrigin.y());
+    botright.setY(rbCurPoint.y());
   }
   rubberBand->setGeometry(QRect(topleft, botright));
 }
 
-void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/)
-{
-    releaseMouse();
-    rubberBand->hide();
+void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
+  releaseMouse();
+  rubberBand->hide();
 
-    // If a Ctrl+Click - toggle
-    if(!rubberBand->size().isValid() || (rubberBand->size().width() == 0 &&
-            rubberBand->size().height() == 0))
-    {
-        QPoint pos = imageView->mapToScene(rubberBand->pos()).toPoint();
-        for(int row = 0; row < model->rowCount(); ++row)
-        {
-            int left = model->index(row, 1).data().toInt();
-            int bottom = model->index(row, 2).data().toInt();
-            int right = model->index(row, 3).data().toInt();
-            int top = model->index(row, 4).data().toInt();
+  // If a Ctrl+Click - toggle
+  if (!rubberBand->size().isValid() || (rubberBand->size().width() == 0 &&
+                                        rubberBand->size().height() == 0)) {
+    QPoint pos = imageView->mapToScene(rubberBand->pos()).toPoint();
+    for (int row = 0; row < model->rowCount(); ++row) {
+      int left = model->index(row, 1).data().toInt();
+      int bottom = model->index(row, 2).data().toInt();
+      int right = model->index(row, 3).data().toInt();
+      int top = model->index(row, 4).data().toInt();
 
-            if(left <= pos.x() && pos.x() <= right && top <= pos.y() && pos.y() <= bottom)
-            {
-                table->selectionModel()->select(model->index(row, 0),
-                                                QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
-                break;
-            }
-         }  // for row
-    }   // if click
-    // If rubber band - add to selection
-    else
-    {
-        QRect rect(rubberBand->pos(), rubberBand->size());
-        QPoint topleft = imageView->mapToScene(rect.topLeft()).toPoint();
-        QPoint botright = imageView->mapToScene(rect.bottomRight()).toPoint();
-        QItemSelection selection;
-        for(int row = 0; row < model->rowCount(); ++row)
-        {
-            int cx = (model->index(row, 1).data().toInt() + model->index(row, 3).data().toInt())/2;
-            int cy = (model->index(row, 2).data().toInt() + model->index(row, 4).data().toInt())/2;
+      if (left <= pos.x() && pos.x() <= right && top <= pos.y() && pos.y() <= bottom) {
+        table->selectionModel()->select(model->index(row, 0),
+                                        QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
+        break;
+      }
+    }  // for row
+  }   // if click
+  // If rubber band - add to selection
+  else {
+    QRect rect(rubberBand->pos(), rubberBand->size());
+    QPoint topleft = imageView->mapToScene(rect.topLeft()).toPoint();
+    QPoint botright = imageView->mapToScene(rect.bottomRight()).toPoint();
+    QItemSelection selection;
+    for (int row = 0; row < model->rowCount(); ++row) {
+      int cx = (model->index(row, 1).data().toInt() + model->index(row, 3).data().toInt())/2;
+      int cy = (model->index(row, 2).data().toInt() + model->index(row, 4).data().toInt())/2;
 
-            if(cx >= topleft.x() && cx <= botright.x() && cy >= topleft.y() && cy <= botright.y())
-                selection.push_back(QItemSelectionRange(model->index(row, 0)));
-        }
-        table->selectionModel()->select(selection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
-    }   // if rubber band
+      if (cx >= topleft.x() && cx <= botright.x() && cy >= topleft.y() && cy <= botright.y())
+        selection.push_back(QItemSelectionRange(model->index(row, 0)));
+    }
+    table->selectionModel()->select(selection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+  }   // if rubber band
 
-    table->setFocus();
-    drawSelectionRects();
-    // Focus the last symbol in the selection
-    if(!table->selectionModel()->hasSelection())
-        table->selectionModel()->setCurrentIndex(table->selectionModel()->selectedRows().last(),
-                                                 QItemSelectionModel::NoUpdate);
+  table->setFocus();
+  drawSelectionRects();
+  // Focus the last symbol in the selection
+  if (!table->selectionModel()->hasSelection())
+    table->selectionModel()->setCurrentIndex(table->selectionModel()->selectedRows().last(),
+        QItemSelectionModel::NoUpdate);
 }
 
 bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
@@ -1219,11 +1220,10 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
     } else {
       return QWidget::eventFilter(object, pKeyEvent);
     }
-  }
-  else if(event->type() == QEvent::GraphicsSceneMouseMove) {
-      rubberBand->setGeometry(QRect(QPoint(30, 30), QSize(10, 10)));
-      rubberBand->show();
-      return true;
+  } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
+    rubberBand->setGeometry(QRect(QPoint(30, 30), QSize(10, 10)));
+    rubberBand->show();
+    return true;
   }
 
   return false;
@@ -1295,31 +1295,35 @@ void ChildWidget::pasteToCell() {
   if (directTypingMode)
     table->setCurrentIndex(model->index(index.row() + 1, 0));
 
-
   drawSelectionRects();
 }
 
 void ChildWidget::directType(QKeyEvent* event) {
   QModelIndex index = selectionModel->currentIndex();
-  if (!event->text().toAscii().trimmed().isEmpty() &&
-      (event->key() !=  Qt::Key_Delete))  {
-    // enter only text
-    if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
-      // enter/return move to next row
-      table->setCurrentIndex(model->index(index.row() + 1, 0));
-    } else  {
-      model->setData(model->index(index.row(), 0, QModelIndex()),
-                     event->text());
 
-      UndoItem ui;
-      ui.m_eop = euoChange;
-      ui.m_origrow = index.row();
+  if (index.column() > 0) {
+    table->setCurrentIndex(model->index(index.row(), 0));
+  } else {
+    if (!event->text().toAscii().trimmed().isEmpty() &&
+        (event->key() !=  Qt::Key_Delete))  {
+      // enter only text
+      if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
+        // enter/return move to next row
+        table->setCurrentIndex(model->index(index.row() + 1, 0));
+      } else  {
+        model->setData(model->index(index.row(), 0, QModelIndex()),
+                       event->text());
 
-      for (int i = 0; i < 9; i++)
-        ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+        UndoItem ui;
+        ui.m_eop = euoChange;
+        ui.m_origrow = index.row();
 
-      m_undostack.push(ui);
-      table->setCurrentIndex(model->index(index.row() + 1, 0));
+        for (int i = 0; i < 9; i++)
+          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+        m_undostack.push(ui);
+        table->setCurrentIndex(model->index(index.row() + 1, 0));
+      }
     }
   }
   event->accept();
@@ -1327,181 +1331,177 @@ void ChildWidget::directType(QKeyEvent* event) {
 }
 
 void ChildWidget::insertSymbol() {
-    QModelIndex index = selectionModel->currentIndex();
-    if(!index.isValid())
-        return;
+  QModelIndex index = selectionModel->currentIndex();
+  if (!index.isValid())
+    return;
 
-    int leftBorder = model->index(index.row(), 3).data().toInt() + 1;
-    int rightBorder = model->index(index.row() + 1, 1).data().toInt() - 1;
+  int leftBorder = model->index(index.row(), 3).data().toInt() + 1;
+  int rightBorder = model->index(index.row() + 1, 1).data().toInt() - 1;
 
-    if (leftBorder > rightBorder)  // end of line or overlapping boxes
-      rightBorder = leftBorder +
-                    (leftBorder - model->index(index.row(), 1).data().toInt());
-    model->insertRow(index.row() + 1);
-    model->setData(model->index(index.row() + 1, 0), "*");
-    model->setData(model->index(index.row() + 1, 1), leftBorder);
-    model->setData(model->index(index.row() + 1, 2),
-                   model->index(index.row(), 2).data().toInt());
-    model->setData(model->index(index.row() + 1, 3), rightBorder);
-    model->setData(model->index(index.row() + 1, 4),
-                   model->index(index.row(), 4).data().toInt());
-    model->setData(model->index(index.row() + 1, 5),
-                   model->index(index.row(), 5).data().toInt());
-    model->setData(model->index(index.row() + 1, 6),
-                   model->index(index.row(), 6).data().toBool());
-    model->setData(model->index(index.row() + 1, 7),
-                   model->index(index.row(), 7).data().toBool());
-    model->setData(model->index(index.row() + 1, 8),
-                   model->index(index.row(), 8).data().toBool());
+  if (leftBorder > rightBorder)  // end of line or overlapping boxes
+    rightBorder = leftBorder +
+                  (leftBorder - model->index(index.row(), 1).data().toInt());
+  model->insertRow(index.row() + 1);
+  model->setData(model->index(index.row() + 1, 0), "*");
+  model->setData(model->index(index.row() + 1, 1), leftBorder);
+  model->setData(model->index(index.row() + 1, 2),
+                 model->index(index.row(), 2).data().toInt());
+  model->setData(model->index(index.row() + 1, 3), rightBorder);
+  model->setData(model->index(index.row() + 1, 4),
+                 model->index(index.row(), 4).data().toInt());
+  model->setData(model->index(index.row() + 1, 5),
+                 model->index(index.row(), 5).data().toInt());
+  model->setData(model->index(index.row() + 1, 6),
+                 model->index(index.row(), 6).data().toBool());
+  model->setData(model->index(index.row() + 1, 7),
+                 model->index(index.row(), 7).data().toBool());
+  model->setData(model->index(index.row() + 1, 8),
+                 model->index(index.row(), 8).data().toBool());
 
-    QGraphicsRectItem* rectItem = createModelItemBox(index.row() + 1);
-    if(boxesVisible)
-        rectItem->show();
-    table->setCurrentIndex(model->index(index.row() + 1, 0));
-    table->setFocus();
+  QGraphicsRectItem* rectItem = createModelItemBox(index.row() + 1);
+  if (boxesVisible)
+    rectItem->show();
+  table->setCurrentIndex(model->index(index.row() + 1, 0));
+  table->setFocus();
 
-    UndoItem ui;
-    ui.m_eop = euoAdd;
-    ui.m_origrow = index.row() + 1;
-    m_undostack.push(ui);
+  UndoItem ui;
+  ui.m_eop = euoAdd;
+  ui.m_origrow = index.row() + 1;
+  m_undostack.push(ui);
 
-    drawSelectionRects();
+  drawSelectionRects();
 }
 
 void ChildWidget::splitSymbol() {
-    QModelIndex index = selectionModel->currentIndex();
-    if(!index.isValid())
-     return;
+  QModelIndex index = selectionModel->currentIndex();
+  if (!index.isValid())
+    return;
 
-    UndoItem ui;
-    ui.m_eop = euoSplit;
-    ui.m_origrow = index.row();
-    ui.m_extrarow = ui.m_origrow + 1;
+  UndoItem ui;
+  ui.m_eop = euoSplit;
+  ui.m_origrow = index.row();
+  ui.m_extrarow = ui.m_origrow + 1;
 
-    for (int i = 0; i < 9; i++)
-      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+  for (int i = 0; i < 9; i++)
+    ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
-    m_undostack.push(ui);
+  m_undostack.push(ui);
 
-    QModelIndex left = model->index(index.row(), 1);
-    QModelIndex right = model->index(index.row(), 3);
-    int width = right.data().toInt() - left.data().toInt();
-    model->insertRow(index.row() + 1);
-    model->setData(model->index(index.row() + 1, 0), "*");
-    model->setData(model->index(index.row() + 1, 1),
-                   right.data().toInt() - width / 2);
-    model->setData(model->index(index.row() + 1, 2),
-                   model->index(index.row(), 2).data().toInt());
-    model->setData(model->index(index.row() + 1, 3), right.data().toInt());
-    model->setData(model->index(index.row() + 1, 4),
-                   model->index(index.row(), 4).data().toInt());
-    model->setData(model->index(index.row() + 1, 5),
-                   model->index(index.row(), 5).data().toInt());
-    model->setData(model->index(index.row() + 1, 6),
-                   model->index(index.row(), 6).data().toBool());
-    model->setData(model->index(index.row() + 1, 7),
-                   model->index(index.row(), 7).data().toBool());
-    model->setData(model->index(index.row() + 1, 8),
-                   model->index(index.row(), 8).data().toBool());
-    model->setData(right, right.data().toInt() - width / 2);
+  QModelIndex left = model->index(index.row(), 1);
+  QModelIndex right = model->index(index.row(), 3);
+  int width = right.data().toInt() - left.data().toInt();
+  model->insertRow(index.row() + 1);
+  model->setData(model->index(index.row() + 1, 0), "*");
+  model->setData(model->index(index.row() + 1, 1),
+                 right.data().toInt() - width / 2);
+  model->setData(model->index(index.row() + 1, 2),
+                 model->index(index.row(), 2).data().toInt());
+  model->setData(model->index(index.row() + 1, 3), right.data().toInt());
+  model->setData(model->index(index.row() + 1, 4),
+                 model->index(index.row(), 4).data().toInt());
+  model->setData(model->index(index.row() + 1, 5),
+                 model->index(index.row(), 5).data().toInt());
+  model->setData(model->index(index.row() + 1, 6),
+                 model->index(index.row(), 6).data().toBool());
+  model->setData(model->index(index.row() + 1, 7),
+                 model->index(index.row(), 7).data().toBool());
+  model->setData(model->index(index.row() + 1, 8),
+                 model->index(index.row(), 8).data().toBool());
+  model->setData(right, right.data().toInt() - width / 2);
 
-    updateModelItemBox(index.row());
-    QGraphicsRectItem* rectItem = createModelItemBox(index.row() + 1);
-    if(boxesVisible)
-        rectItem->show();
-    drawSelectionRects();
+  updateModelItemBox(index.row());
+  QGraphicsRectItem* rectItem = createModelItemBox(index.row() + 1);
+  if (boxesVisible)
+    rectItem->show();
+  drawSelectionRects();
 }
 
 void ChildWidget::joinSymbol() {
-    QModelIndexList indexes = selectionModel->selectedRows();
-    if(indexes.empty())
-        return;
-    // On single selected item join with the next ...
-    if(indexes.size() == 1) {
-        // ... if selected is not the last
-        if(indexes.back().row() != model->rowCount() - 1) {
-            indexes.push_back(model->index(indexes.back().row() + 1, 0));
-        } else {
-            return;
-        }
+  QModelIndexList indexes = selectionModel->selectedRows();
+  if (indexes.empty())
+    return;
+  // On single selected item join with the next ...
+  if (indexes.size() == 1) {
+    // ... if selected is not the last
+    if (indexes.back().row() != model->rowCount() - 1) {
+      indexes.push_back(model->index(indexes.back().row() + 1, 0));
+    } else {
+      return;
     }
+  }
 
-    QString letter = "";
-    int left = INT_MAX;
-    int top = INT_MAX;
-    int right = INT_MIN;
-    int bottom = INT_MIN;
-    int page = INT_MAX;
-    bool italic = false;
-    bool bold = false;
-    bool underline = false;
-    for(int i = 0; i < indexes.size(); ++i)
-    {
-        int row = indexes[i].row();
-        letter += model->data(model->index(row, 0)).toString();
-        left = my_min(left, model->data(model->index(row, 1)).toInt());
-        bottom = my_max(bottom, model->data(model->index(row, 2)).toInt());
-        right = my_max(right, model->data(model->index(row, 3)).toInt());
-        top = my_min(top, model->data(model->index(row, 4)).toInt());
-        page = my_min(page, model->data(model->index(row, 5)).toInt());
-        italic = italic || model->data(model->index(row, 6)).toBool();
-        bold = bold || model->data(model->index(row, 7)).toBool();
-        underline = underline || model->data(model->index(row, 8)).toBool();
-    }
+  QString letter = "";
+  int left = INT_MAX;
+  int top = INT_MAX;
+  int right = INT_MIN;
+  int bottom = INT_MIN;
+  int page = INT_MAX;
+  bool italic = false;
+  bool bold = false;
+  bool underline = false;
+  for (int i = 0; i < indexes.size(); ++i) {
+    int row = indexes[i].row();
+    letter += model->data(model->index(row, 0)).toString();
+    left = my_min(left, model->data(model->index(row, 1)).toInt());
+    bottom = my_max(bottom, model->data(model->index(row, 2)).toInt());
+    right = my_max(right, model->data(model->index(row, 3)).toInt());
+    top = my_min(top, model->data(model->index(row, 4)).toInt());
+    page = my_min(page, model->data(model->index(row, 5)).toInt());
+    italic = italic || model->data(model->index(row, 6)).toBool();
+    bold = bold || model->data(model->index(row, 7)).toBool();
+    underline = underline || model->data(model->index(row, 8)).toBool();
+  }
 
-    int targetRow = indexes.front().row();
-    model->setData(model->index(targetRow, 0), letter);
-    model->setData(model->index(targetRow, 1), left);
-    model->setData(model->index(targetRow, 2), bottom);
-    model->setData(model->index(targetRow, 3), right);
-    model->setData(model->index(targetRow, 4), top);
-    model->setData(model->index(targetRow, 5), page);
-    model->setData(model->index(targetRow, 6), italic);
-    model->setData(model->index(targetRow, 7), bold);
-    model->setData(model->index(targetRow, 8), underline);
-    updateModelItemBox(targetRow);
+  int targetRow = indexes.front().row();
+  model->setData(model->index(targetRow, 0), letter);
+  model->setData(model->index(targetRow, 1), left);
+  model->setData(model->index(targetRow, 2), bottom);
+  model->setData(model->index(targetRow, 3), right);
+  model->setData(model->index(targetRow, 4), top);
+  model->setData(model->index(targetRow, 5), page);
+  model->setData(model->index(targetRow, 6), italic);
+  model->setData(model->index(targetRow, 7), bold);
+  model->setData(model->index(targetRow, 8), underline);
+  updateModelItemBox(targetRow);
 
-    selectionModel->clearSelection();
-    for(int i = indexes.size() - 1; i >= 1; --i)
-    {
-        int row = indexes[i].row();
-        deleteModelItemBox(row);
-        model->removeRow(row);
-    }
+  selectionModel->clearSelection();
+  for (int i = indexes.size() - 1; i >= 1; --i) {
+    int row = indexes[i].row();
+    deleteModelItemBox(row);
+    model->removeRow(row);
+  }
 
-    table->setCurrentIndex(model->index(targetRow, 0));
-    table->setFocus();
-    drawSelectionRects();
+  table->setCurrentIndex(model->index(targetRow, 0));
+  table->setFocus();
+  drawSelectionRects();
 }
 
 void ChildWidget::deleteSymbol() {
-    QModelIndexList indexes = selectionModel->selectedRows();
-    if(indexes.empty())
-        return;
-    // This prevents deselecting dead rows in selectionChanged() on removeRow()
-    selectionModel->clearSelection();
+  QModelIndexList indexes = selectionModel->selectedRows();
+  if (indexes.empty())
+    return;
+  // This prevents deselecting dead rows in selectionChanged() on removeRow()
+  selectionModel->clearSelection();
 
-    for(int i = indexes.size() - 1; i >= 0; --i)
-    {
-        UndoItem ui;
-        ui.m_eop = euoDelete;
-        ui.m_origrow = indexes[i].row();
-        for (int j = 0; j < 9; ++j)
-          ui.m_vdata[j] = model->index(ui.m_origrow, j).data();
-        m_undostack.push(ui);
+  for (int i = indexes.size() - 1; i >= 0; --i) {
+    UndoItem ui;
+    ui.m_eop = euoDelete;
+    ui.m_origrow = indexes[i].row();
+    for (int j = 0; j < 9; ++j)
+      ui.m_vdata[j] = model->index(ui.m_origrow, j).data();
+    m_undostack.push(ui);
 
-        deleteModelItemBox(ui.m_origrow);
-        model->removeRow(ui.m_origrow);
-    }
+    deleteModelItemBox(ui.m_origrow);
+    model->removeRow(ui.m_origrow);
+  }
 
-    if(model->rowCount() != 0)
-    {
-        int afterRow = my_min(indexes.back().row() - indexes.size() + 1, model->rowCount() - 1);
-        table->setCurrentIndex(model->index(afterRow, 0));
-    }
-    table->setFocus();
-    drawSelectionRects();
-    documentWasModified();
+  if (model->rowCount() != 0) {
+    int afterRow = my_min(indexes.back().row() - indexes.size() + 1, model->rowCount() - 1);
+    table->setCurrentIndex(model->index(afterRow, 0));
+  }
+  table->setFocus();
+  drawSelectionRects();
+  documentWasModified();
 }
 
 void ChildWidget::moveUp() {
@@ -1631,99 +1631,91 @@ void ChildWidget::emitBoxChanged() {
 void ChildWidget::selectionChanged(const QItemSelection& /*selected*/, const QItemSelection& deselected) {
   // Set deselected bboxes' colors back to normal
   QModelIndexList indexes = deselected.indexes();
-  for(int i = 0; i < indexes.size(); ++i)
-    if(indexes[i].column() == 0)
-    {
+  for (int i = 0; i < indexes.size(); ++i)
+    if (indexes[i].column() == 0) {
       modelItemBox(indexes[i].row())->setPen(QPen(boxColor));
-      if(!boxesVisible)
-          modelItemBox(indexes[i].row())->hide();
+      if (!boxesVisible)
+        modelItemBox(indexes[i].row())->hide();
     }
   drawSelectionRects();
 
   emit boxChanged();
 }
 
-void ChildWidget::clearBalloons()
-{
-    for(int i = 0; i < balloons.size(); ++i)
-    {
-        imageScene->removeItem(balloons[i].symbol);
-        delete balloons[i].symbol;
-        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
-        {
-            imageScene->removeItem(balloons[i].halo[j]);
-            delete balloons[i].halo[j];
-        }
+void ChildWidget::clearBalloons() {
+  for (int i = 0; i < balloons.size(); ++i) {
+    imageScene->removeItem(balloons[i].symbol);
+    delete balloons[i].symbol;
+    for (int j = 0; j < BalloonSymbol::haloCompCount; ++j) {
+      imageScene->removeItem(balloons[i].halo[j]);
+      delete balloons[i].halo[j];
     }
-    balloons.clear();
+  }
+  balloons.clear();
 }
 
-void ChildWidget::updateBalloons()
-{
-    int idx = table->selectionModel()->selectedRows().last().row();
-    int min_idx = my_max(idx - balloonCount/2, 0);
-    int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
-    QFont tableFont = table->font();
-    tableFont.setPointSize(2*tableFont.pointSize());
+void ChildWidget::updateBalloons() {
+  int idx = table->selectionModel()->selectedRows().last().row();
+  int min_idx = my_max(idx - balloonCount/2, 0);
+  int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
 
-    //calculate baseline for symbols based on selected symbol
-    int baseline = 0;
-    for(int i = min_idx; i <= max_idx; ++i) {
-        if (baseline == 0) {
-                baseline = model->index(i, 4).data().toInt();
-        } else {
-        baseline = my_min(baseline, model->index(i, 4).data().toInt());
-        }
+  //calculate baseline for symbols based on selected symbol
+  int baseline = 0;
+  for (int i = min_idx; i <= max_idx; ++i) {
+    if (baseline == 0) {
+      baseline = model->index(i, 4).data().toInt();
+    } else {
+      baseline = my_min(baseline, model->index(i, 4).data().toInt());
+    }
+  }
+
+  for (int i = min_idx; i <= max_idx; ++i) {
+    balloons.push_back(BalloonSymbol());
+
+    QString letter = model->index(i, 0).data().toString();
+    int left = model->index(i, 1).data().toInt();
+    int top = model->index(i, 4).data().toInt();
+    int botPrev = model->index(i-1, 2).data().toInt();
+    if (top > botPrev) {
+      baseline = top; //new line? => problem with '", o'
     }
 
-    for(int i = min_idx; i <= max_idx; ++i)
-    {
-        balloons.push_back(BalloonSymbol());
+    balloons.back().symbol = imageScene->addText(letter, m_imageFont);
+    QGraphicsTextItem* curSymbol = balloons.back().symbol;
+    // TODO(zdenop): put offset to settings
+    // TODO(zdenop): get font metrics and calculate better placement
+    // (e.g. visible in case of narrow margin)
+    curSymbol->setPos(QPoint(left, baseline - 16*2 - 15));
+    curSymbol->setDefaultTextColor(Qt::red);
+    curSymbol->setZValue(4);
+    curSymbol->setVisible(true);
 
-        QString letter = model->index(i, 0).data().toString();
-        int left = model->index(i, 1).data().toInt();
-        int top = model->index(i, 4).data().toInt();
-        int botPrev = model->index(i-1, 2).data().toInt();
-        if (top > botPrev) {baseline = top;}  //new line?
-
-        balloons.back().symbol = imageScene->addText(letter, tableFont);
-        QGraphicsTextItem* curSymbol = balloons.back().symbol;
-        // TODO(zdenop): put offset to settings
-        // TODO(zdenop): get font metrics and calculate better placement
-        // (e.g. visible in case of narrow margin)
-        curSymbol->setPos(QPoint(left, baseline - 16*2 - 15));
-        curSymbol->setDefaultTextColor(Qt::red);
-        curSymbol->setZValue(4);
-        curSymbol->setVisible(true);
-
-        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
-        {
-            balloons.back().halo[j] = imageScene->addText(letter, tableFont);
-            QGraphicsTextItem* curHalo = balloons.back().halo[j];
-            curHalo->setDefaultTextColor(Qt::white);
-            curHalo->setZValue(3);
-        }
-        balloons.back().halo[0]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint( 1,  0));
-        balloons.back().halo[1]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint( 1,  1));
-        balloons.back().halo[2]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint( 0,  1));
-        balloons.back().halo[3]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1,  1));
-        balloons.back().halo[4]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1,  0));
-        balloons.back().halo[5]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1, -1));
-        balloons.back().halo[6]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint( 0, -1));
-        balloons.back().halo[7]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint( 1, -1));
-        for(int j = 0; j < BalloonSymbol::haloCompCount; ++j)
-          balloons.back().halo[j]->setVisible(true);
-    }   // for i (idx)
+    for (int j = 0; j < BalloonSymbol::haloCompCount; ++j) {
+      balloons.back().halo[j] = imageScene->addText(letter, m_imageFont);
+      QGraphicsTextItem* curHalo = balloons.back().halo[j];
+      curHalo->setDefaultTextColor(Qt::white);
+      curHalo->setZValue(3);
+    }
+    balloons.back().halo[0]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(1,  0));
+    balloons.back().halo[1]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(1,  1));
+    balloons.back().halo[2]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(0,  1));
+    balloons.back().halo[3]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1,  1));
+    balloons.back().halo[4]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1,  0));
+    balloons.back().halo[5]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1, -1));
+    balloons.back().halo[6]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(0, -1));
+    balloons.back().halo[7]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(1, -1));
+    for (int j = 0; j < BalloonSymbol::haloCompCount; ++j)
+      balloons.back().halo[j]->setVisible(true);
+  }   // for i (idx)
 }
 
 void ChildWidget::drawSelectionRects() {
   QModelIndexList indexes = table->selectionModel()->selectedRows();
 
-  if(!indexes.empty()) {
+  if (!indexes.empty()) {
     clearBalloons();
 
-    for (int i = 0; i < indexes.size(); ++i)
-    {
+    for (int i = 0; i < indexes.size(); ++i) {
       QGraphicsRectItem* rectItem = modelItemBox(indexes[i].row());
       rectItem->setPen(QPen(rectColor));
       rectItem->show();
@@ -1732,8 +1724,7 @@ void ChildWidget::drawSelectionRects() {
 
     if (symbolShown == true && indexes.size() == 1)
       updateBalloons();
-  }
-  else
+  } else
     clearBalloons();
 }
 
@@ -1773,24 +1764,22 @@ QString ChildWidget::strippedName(const QString& fullFileName) {
   return QFileInfo(fullFileName).fileName();
 }
 
-void ChildWidget::cbFontToggleProxy(bool checked, int column)
-{
-    QModelIndexList selectedIndexes = selectionModel->selectedRows();
-    QModelIndex index = selectedIndexes.first();
-    switch(column)
-    {
-    case 6 :
-        setItalic(checked);
-        break;
-    case 7 :
-        setBolded(checked);
-        break;
-    case 8 :
-        setUnderline(checked);
-        break;
-    default :
-        break;
-    }
+void ChildWidget::cbFontToggleProxy(bool checked, int column) {
+  QModelIndexList selectedIndexes = selectionModel->selectedRows();
+  QModelIndex index = selectedIndexes.first();
+  switch (column) {
+  case 6 :
+    setItalic(checked);
+    break;
+  case 7 :
+    setBolded(checked);
+    break;
+  case 8 :
+    setUnderline(checked);
+    break;
+  default :
+    break;
+  }
 }
 
 void ChildWidget::sbValueChanged(int sbdValue) {
@@ -1941,10 +1930,10 @@ void ChildWidget::undoAdd(UndoItem& ui) {
 void ChildWidget::undoEdit(UndoItem& ui) {
   for (int i = 0; i < 9; i++)
     model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
-  if(ui.m_eop == euoDelete)
-      createModelItemBox(ui.m_origrow);
+  if (ui.m_eop == euoDelete)
+    createModelItemBox(ui.m_origrow);
   else
-      updateModelItemBox(ui.m_origrow);
+    updateModelItemBox(ui.m_origrow);
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
   table->setFocus();

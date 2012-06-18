@@ -474,8 +474,16 @@ void MainWindow::undo() {
   }
 }
 
+void MainWindow::reReadSetting() {
+  for (int i = 0; i < tabWidget->count(); ++i) {
+    ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
+    child->readSettings();
+  }
+}
+
 void MainWindow::slotSettings() {
   runSettingsDialog = new SettingsDialog(this);
+  connect(runSettingsDialog, SIGNAL(settingsChanged()), this, SLOT(reReadSetting()));
   runSettingsDialog->exec();
 }
 
@@ -837,7 +845,7 @@ void MainWindow::createActions() {
           SLOT(directTypingMode(bool)));
 
   showFontColumnsAct = new QAction(QIcon(":/images/applications-fonts.svg"),
-                                tr("Show Font Columns"), this);
+                                   tr("Show Font Columns"), this);
   showFontColumnsAct->setCheckable(true);
   connect(showFontColumnsAct, SIGNAL(triggered(bool)), this,
           SLOT(showFontColumns(bool)));

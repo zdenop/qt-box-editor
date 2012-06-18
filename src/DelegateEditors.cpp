@@ -67,46 +67,44 @@ void SpinBoxDelegate::updateEditorGeometry(QWidget *editor,
  * CheckboxDelegate
  ********************************/
 CheckboxDelegate::CheckboxDelegate(QObject* parent)
-    : QItemDelegate(parent) {
+  : QItemDelegate(parent) {
 }
 
 QWidget* CheckboxDelegate::createEditor(QWidget* /*parent*/, const QStyleOptionViewItem& /*option*/,
-                      const QModelIndex& /*index*/) const {
-    // NOTE: This prevents standard bool editor from appearing on double click
-    return NULL;
+                                        const QModelIndex& /*index*/) const {
+  // NOTE: This prevents standard bool editor from appearing on double click
+  return NULL;
 }
 
-void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-    bool value = index.data(Qt::EditRole).toBool();
-    QSize size = check(option, option.rect, Qt::Checked).size();
-    QRect checkboxRect = QStyle::alignedRect(option.direction, Qt::AlignCenter, size, option.rect);
-    drawCheck(painter, option, checkboxRect, (value ? Qt::Checked : Qt::Unchecked));
+void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
+  bool value = index.data(Qt::EditRole).toBool();
+  QSize size = check(option, option.rect, Qt::Checked).size();
+  QRect checkboxRect = QStyle::alignedRect(option.direction, Qt::AlignCenter, size, option.rect);
+  drawCheck(painter, option, checkboxRect, (value ? Qt::Checked : Qt::Unchecked));
 }
 
 bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, const QStyleOptionViewItem& option,
-                         const QModelIndex& index)
-{
-    bool value = index.data(Qt::EditRole).toBool();
+                                   const QModelIndex& index) {
+  bool value = index.data(Qt::EditRole).toBool();
 
-    if (event->type() == QEvent::MouseButtonRelease) {
-        const int textMargin = QApplication::style()->pixelMetric(QStyle::PM_FocusFrameHMargin) + 1;
-        QRect checkRect = QStyle::alignedRect(option.direction, Qt::AlignCenter,
-                                              option.decorationSize,
-                                              QRect(option.rect.x() + (2 * textMargin), option.rect.y(),
-                                                    option.rect.width() - (2 * textMargin),
-                                                    option.rect.height()));
-        if (!checkRect.contains(static_cast<QMouseEvent*>(event)->pos()))
-            return false;
-    } else if (event->type() == QEvent::KeyPress) {
-        if (static_cast<QKeyEvent*>(event)->key() != Qt::Key_Space && static_cast<QKeyEvent*>(event)->key() != Qt::Key_Select)
-            return false;
-    } else {
-        return false;
-    }
+  if (event->type() == QEvent::MouseButtonRelease) {
+    const int textMargin = QApplication::style()->pixelMetric(QStyle::PM_FocusFrameHMargin) + 1;
+    QRect checkRect = QStyle::alignedRect(option.direction, Qt::AlignCenter,
+                                          option.decorationSize,
+                                          QRect(option.rect.x() + (2 * textMargin), option.rect.y(),
+                                              option.rect.width() - (2 * textMargin),
+                                              option.rect.height()));
+    if (!checkRect.contains(static_cast<QMouseEvent*>(event)->pos()))
+      return false;
+  } else if (event->type() == QEvent::KeyPress) {
+    if (static_cast<QKeyEvent*>(event)->key() != Qt::Key_Space && static_cast<QKeyEvent*>(event)->key() != Qt::Key_Select)
+      return false;
+  } else {
+    return false;
+  }
 
-    value = !value;
-    emit toggled(value, index.column());
+  value = !value;
+  emit toggled(value, index.column());
 
-    return model->setData(index, value, Qt::EditRole);
+  return model->setData(index, value, Qt::EditRole);
 }

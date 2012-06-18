@@ -116,6 +116,7 @@ class MainWindow : public QMainWindow {
     void find();
     void drawRect(bool checked);
     void undo();
+    void reReadSetting();
     void slotSettings();
     void shortCutList();
     void about();

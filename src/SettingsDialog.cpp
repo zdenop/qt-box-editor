@@ -53,6 +53,18 @@ void SettingsDialog::on_fontButton_clicked() {
   }
 }
 
+void SettingsDialog::on_fontImageButton_clicked() {
+  bool ok = false;
+
+  imageFont = QFontDialog::getFont(&ok, fontImageLabel->font(), this,
+                                   "Select font...");
+  if (ok) {
+    fontImageLabel->setFont(imageFont);
+    fontImageLabel->setText(imageFont.family().toAscii() +
+                       tr(", %1 pt").arg(imageFont.pointSize()));
+  }
+}
+
 void SettingsDialog::on_colorRectButton_clicked() {
   chooseColor(colorRectButton, &rectColor);
 }
@@ -69,7 +81,6 @@ void SettingsDialog::on_backgroundColorButton_clicked() {
   chooseColor(backgroundColorButton, &backgroundColor);
 }
 
-
 void SettingsDialog::initSettings() {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                        SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -80,6 +91,20 @@ void SettingsDialog::initSettings() {
     tableFont.setPointSize(TABLE_FONT_SIZE);
   } else {
     tableFont = settings.value("GUI/Font").value<QFont>();
+  }
+
+   QString fontImageName = settings.value("GUI/ImageFont").toString();
+   if (fontImageName.isEmpty()) {
+     imageFont.setFamily(TABLE_FONT);
+     imageFont.setPointSize(TABLE_FONT_SIZE);
+   } else {
+     imageFont = settings.value("GUI/ImageFont").value<QFont>();
+   }
+  if (settings.contains("GUI/UseTheSameFont")) {
+     useSameFontCB->setChecked(settings.value("GUI/UseTheSameFont").toBool());
+     fontImageButton->setDisabled(useSameFontCB->isChecked());
+     fontImageLabel->setDisabled(useSameFontCB->isChecked());
+     fontImageLbl->setDisabled(useSameFontCB->isChecked());
   }
 
   if (settings.contains("GUI/Rectagle")) {
@@ -120,6 +145,10 @@ void SettingsDialog::initSettings() {
   fontLabel->setFont(tableFont);
   fontLabel->setText(tableFont.family().toAscii() +
                      tr(", %1 pt").arg(tableFont.pointSize()));
+  fontImageLabel->setFont(imageFont);
+  fontImageLabel->setText(imageFont.family().toAscii() +
+                     tr(", %1 pt").arg(imageFont.pointSize()));
+
   updateColorButton(colorRectButton, rectColor);
   updateColorButton(rectFillColorButton, rectFillColor);
   updateColorButton(colorBoxButton, boxColor);
@@ -141,6 +170,8 @@ void SettingsDialog::saveSettings() {
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
 
   settings.setValue("GUI/Font", tableFont);
+  settings.setValue("GUI/ImageFont", imageFont);
+  settings.setValue("GUI/UseTheSameFont", useSameFontCB->isChecked());
   settings.setValue("GUI/Rectagle", rectColor);
   settings.setValue("GUI/Rectagle_fill", rectFillColor);
   settings.setValue("GUI/Box", boxColor);
@@ -174,8 +205,7 @@ void SettingsDialog::saveSettings() {
   settings.setValue("Tesseract/Lang",
                     cbLang->itemData(cbLang->currentIndex()).toString());
 
-  // emit setTableFont(tableFont);
-  // TODO(zdenop): use font for open child windows
+  emit settingsChanged();
   emit accept();
 }
 
