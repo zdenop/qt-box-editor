@@ -110,6 +110,19 @@ ChildWidget::ChildWidget(QWidget* parent)
   }
   table->setFont(tableFont);
 
+  // Font for Image/ballons
+  if (settings.contains("GUI/UseTheSameFont") &&
+      settings.value("GUI/UseTheSameFont").toBool()) {
+    m_imageFont = tableFont;
+  } else {
+    m_imageFont = settings.value("GUI/ImageFont").value<QFont>();
+    if (m_imageFont.family().isEmpty()) {
+      m_imageFont.setFamily(TABLE_FONT);
+      m_imageFont.setPointSize(TABLE_FONT_SIZE);
+    }
+  }
+  m_imageFont.setPointSize(2*m_imageFont.pointSize());
+
   if (settings.contains("GUI/Rectagle")) {
     rectColor = settings.value("GUI/Rectagle").value<QColor>();
   } else {
@@ -902,14 +915,14 @@ void ChildWidget::setUnderline(bool v) {
 void ChildWidget::setSelectionRect() {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
-  QFont tableFont = settings.value("GUI/Font").value<QFont>();
+  QFont imageFont = settings.value("GUI/ImageFont").value<QFont>();
 
-  if (tableFont.family().isEmpty()) {
-    tableFont.setFamily(TABLE_FONT);
-    tableFont.setPointSize(TABLE_FONT_SIZE);
+  if (imageFont.family().isEmpty()) {
+    imageFont.setFamily(TABLE_FONT);
+    imageFont.setPointSize(TABLE_FONT_SIZE);
   }
 
-  tableFont.setPointSize((tableFont.pointSize() * 2));
+  imageFont.setPointSize((imageFont.pointSize() * 2));
 }
 
 void ChildWidget::getZoom() {
@@ -1642,8 +1655,6 @@ void ChildWidget::updateBalloons() {
   int idx = table->selectionModel()->selectedRows().last().row();
   int min_idx = my_max(idx - balloonCount/2, 0);
   int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
-  QFont tableFont = table->font();
-  tableFont.setPointSize(2*tableFont.pointSize());
 
   //calculate baseline for symbols based on selected symbol
   int baseline = 0;
@@ -1666,7 +1677,7 @@ void ChildWidget::updateBalloons() {
       baseline = top; //new line? => problem with '", o'
     }
 
-    balloons.back().symbol = imageScene->addText(letter, tableFont);
+    balloons.back().symbol = imageScene->addText(letter, m_imageFont);
     QGraphicsTextItem* curSymbol = balloons.back().symbol;
     // TODO(zdenop): put offset to settings
     // TODO(zdenop): get font metrics and calculate better placement
@@ -1677,7 +1688,7 @@ void ChildWidget::updateBalloons() {
     curSymbol->setVisible(true);
 
     for (int j = 0; j < BalloonSymbol::haloCompCount; ++j) {
-      balloons.back().halo[j] = imageScene->addText(letter, tableFont);
+      balloons.back().halo[j] = imageScene->addText(letter, m_imageFont);
       QGraphicsTextItem* curHalo = balloons.back().halo[j];
       curHalo->setDefaultTextColor(Qt::white);
       curHalo->setZValue(3);

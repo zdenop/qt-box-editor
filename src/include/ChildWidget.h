@@ -248,6 +248,7 @@ protected:
   int widgetWidth;
 
   QStack<UndoItem> m_undostack;
+  QFont m_imageFont;
 
   // Overhead symbols
   // TODO(all): Temp const, to be replaced by user-adjusted setting
