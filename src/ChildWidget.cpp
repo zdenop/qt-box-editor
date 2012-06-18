@@ -1009,8 +1009,7 @@ void ChildWidget::drawRectangle(bool checked) {
     if (ret) {
       QRect newCoords = m_DrawRectangle->getRectangle();
       if (rectangle) {
-        imageScene->removeItem(rectangle);
-        delete rectangle;
+        qDebug() << "Something went wrong. Object rectangle should not exists!";
       }
       rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
                                       newCoords.width(), newCoords.height(),
