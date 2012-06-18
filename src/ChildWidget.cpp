@@ -276,6 +276,11 @@ void ChildWidget::readSettings() {
       backgroundColor = (Qt::gray);
     }
     imageView->setBackgroundBrush(backgroundColor);
+
+    if (model->rowCount() > 0) {
+        table->resizeRowsToContents();
+        calculateTableWidth();
+    }
 }
 
 void ChildWidget::calculateTableWidth() {
