@@ -68,7 +68,7 @@
              <enum>QFrame::Sunken</enum>
             </property>
             <property name="lineWidth">
-             <number>8</number>
+             <number>6</number>
             </property>
             <property name="midLineWidth">
              <number>6</number>
