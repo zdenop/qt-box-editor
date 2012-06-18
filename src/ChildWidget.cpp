@@ -1296,32 +1296,36 @@ void ChildWidget::pasteToCell() {
   if (directTypingMode)
     table->setCurrentIndex(model->index(index.row() + 1, 0));
 
-
   drawSelectionRects();
 }
 
 void ChildWidget::directType(QKeyEvent* event) {
   QModelIndex index = selectionModel->currentIndex();
-  if (!event->text().toAscii().trimmed().isEmpty() &&
-      (event->key() !=  Qt::Key_Delete))  {
-    // enter only text
-    if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
-      // enter/return move to next row
-      table->setCurrentIndex(model->index(index.row() + 1, 0));
-    } else  {
-      model->setData(model->index(index.row(), 0, QModelIndex()),
-                     event->text());
 
-      UndoItem ui;
-      ui.m_eop = euoChange;
-      ui.m_origrow = index.row();
+  if (index.column() > 0) {
+    table->setCurrentIndex(model->index(index.row(), 0));
+  } else {
+        if (!event->text().toAscii().trimmed().isEmpty() &&
+          (event->key() !=  Qt::Key_Delete))  {
+        // enter only text
+        if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
+          // enter/return move to next row
+          table->setCurrentIndex(model->index(index.row() + 1, 0));
+        } else  {
+          model->setData(model->index(index.row(), 0, QModelIndex()),
+                         event->text());
 
-      for (int i = 0; i < 9; i++)
-        ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+          UndoItem ui;
+          ui.m_eop = euoChange;
+          ui.m_origrow = index.row();
 
-      m_undostack.push(ui);
-      table->setCurrentIndex(model->index(index.row() + 1, 0));
-    }
+          for (int i = 0; i < 9; i++)
+            ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+          m_undostack.push(ui);
+          table->setCurrentIndex(model->index(index.row() + 1, 0));
+        }
+      }
   }
   event->accept();
   drawSelectionRects();
@@ -1685,7 +1689,7 @@ void ChildWidget::updateBalloons()
         int left = model->index(i, 1).data().toInt();
         int top = model->index(i, 4).data().toInt();
         int botPrev = model->index(i-1, 2).data().toInt();
-        if (top > botPrev) {baseline = top;}  //new line?
+        if (top > botPrev) {baseline = top;}  //new line? => problem with '", o'
 
         balloons.back().symbol = imageScene->addText(letter, tableFont);
         QGraphicsTextItem* curSymbol = balloons.back().symbol;
