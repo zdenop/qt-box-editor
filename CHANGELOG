@@ -1,12 +1,12 @@
 1.08
-- show/hide columns with font formating
-- char table col width management, Font column fixes
-- fixed MSVC build
-- multiple Balloon Symbols to increase proofreading
+- show/hide columns with font formatting (thanks to D. Silaev)
+- char table col width management, Font column fixes (thanks to D. Silaev)
+- fixed MSVC build (thanks to D. Silaev)
+- multiple Balloon Symbols to increase proofreading (thanks to D. Silaev)
 - initial implementiation of undo for table operation: Add, Delete, Change, 
   Join, Split, Replace (thanks to Z. Gofer)
 - Halo text effect for better readibility (thanks to D. Silaev)
-- fixes related to direct typing mode
+- fixes related to direct typing mode thanks to D. Silaev)
 - fix segfault when zooming
 
 1.07
