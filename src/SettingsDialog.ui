@@ -58,7 +58,7 @@
            <x>5</x>
            <y>5</y>
            <width>385</width>
-           <height>281</height>
+           <height>291</height>
           </rect>
          </property>
          <layout class="QVBoxLayout" name="fontLayout">
@@ -74,11 +74,17 @@
              <number>6</number>
             </property>
             <layout class="QGridLayout" name="gridLayout_2">
+             <property name="sizeConstraint">
+              <enum>QLayout::SetNoConstraint</enum>
+             </property>
+             <property name="bottomMargin">
+              <number>16</number>
+             </property>
              <property name="horizontalSpacing">
               <number>0</number>
              </property>
              <property name="verticalSpacing">
-              <number>8</number>
+              <number>18</number>
              </property>
              <item row="0" column="2">
               <spacer name="horizontalSpacer_7">
@@ -105,6 +111,13 @@
                 </size>
                </property>
               </spacer>
+             </item>
+             <item row="4" column="1" colspan="3">
+              <widget class="QLabel" name="balloonsLabel">
+               <property name="text">
+                <string>Number of balloons:</string>
+               </property>
+              </widget>
              </item>
              <item row="0" column="1">
               <widget class="QLabel" name="fontLabel">
@@ -134,16 +147,6 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="3" rowspan="2">
-              <widget class="QSpinBox" name="offsetSpinBox">
-               <property name="toolTip">
-                <string>How far should be displayed symbol from baseline.</string>
-               </property>
-               <property name="value">
-                <number>17</number>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="3">
               <widget class="QPushButton" name="fontButton">
                <property name="maximumSize">
@@ -164,7 +167,7 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
+             <item row="3" column="1" colspan="2">
               <widget class="QLabel" name="offsetLabel">
                <property name="text">
                 <string>Image font offset:</string>
@@ -178,16 +181,41 @@
                </property>
               </widget>
              </item>
+             <item row="3" column="3">
+              <widget class="QSpinBox" name="offsetSpinBox">
+               <property name="toolTip">
+                <string>How far should be displayed symbol from baseline.</string>
+               </property>
+               <property name="value">
+                <number>17</number>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="3">
+              <widget class="QSpinBox" name="ballonsSpinBox">
+               <property name="toolTip">
+                <string>How many &quot;balloons&quot; should be shown on image.</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="value">
+                <number>13</number>
+               </property>
+              </widget>
+             </item>
             </layout>
             <zorder>fontLabel</zorder>
-            <zorder>fontImageLabel</zorder>
             <zorder>fontTableLbl</zorder>
+            <zorder>fontImageLabel</zorder>            
             <zorder>fontImageLbl</zorder>
-            <zorder>offsetSpinBox</zorder>
+            <zorder>fontImageButton</zorder>
             <zorder>fontButton</zorder>
             <zorder>useSameFontCB</zorder>
             <zorder>offsetLabel</zorder>
-            <zorder>fontImageButton</zorder>
+            <zorder>offsetSpinBox</zorder>            
+            <zorder>balloonsLabel</zorder>            
+            <zorder>ballonsSpinBox</zorder>
            </widget>
           </item>
           <item>

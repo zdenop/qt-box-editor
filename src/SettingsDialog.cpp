@@ -123,6 +123,9 @@ void SettingsDialog::initSettings() {
   if (settings.contains("GUI/ImageFontOffset"))
     offsetSpinBox->setValue(settings.value("GUI/ImageFontOffset").toInt());
 
+  if (settings.contains("GUI/BalloonCount"))
+    ballonsSpinBox->setValue(settings.value("GUI/BalloonCount").toInt());
+
   if (settings.contains("GUI/ImageFontColor")) {
     imageFontColor = settings.value("GUI/ImageFontColor").value<QColor>();
   } else {
@@ -201,8 +204,9 @@ void SettingsDialog::saveSettings() {
 
   settings.setValue("GUI/Font", tableFont);
   settings.setValue("GUI/ImageFont", imageFont);
-  settings.setValue("GUI/ImageFontOffset", offsetSpinBox->value());
   settings.setValue("GUI/UseTheSameFont", useSameFontCB->isChecked());
+  settings.setValue("GUI/ImageFontOffset", offsetSpinBox->value());
+  settings.setValue("GUI/BalloonCount", ballonsSpinBox->value());
   settings.setValue("GUI/ImageFontColor", imageFontColor);
   settings.setValue("GUI/Rectagle", rectColor);
   settings.setValue("GUI/Rectagle_fill", rectFillColor);

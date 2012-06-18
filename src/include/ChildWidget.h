@@ -254,8 +254,7 @@ protected:
   QFont m_imageFont;
 
   // Overhead symbols
-  // TODO(all): Temp const, to be replaced by user-adjusted setting
-  static const int balloonCount = 13;
+  int balloonCount;
   QVector<BalloonSymbol> balloons;
 
   QRubberBand* rubberBand;

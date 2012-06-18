@@ -226,7 +226,7 @@ void ChildWidget::readSettings() {
     }
     table->setFont(tableFont);
 
-    // Font for Image/ballons
+    // Font for Image/balloons
     if (settings.contains("GUI/UseTheSameFont") &&
         settings.value("GUI/UseTheSameFont").toBool()) {
       m_imageFont = tableFont;
@@ -243,6 +243,12 @@ void ChildWidget::readSettings() {
       fontOffset = settings.value("GUI/ImageFontOffset").toInt();
     } else {
       fontOffset = 16 * 2 - 15;
+    }
+
+    if (settings.contains("GUI/BalloonCount")) {
+      balloonCount = settings.value("GUI/BalloonCount").toInt();
+    } else {
+      balloonCount = 13;
     }
 
     if (settings.contains("GUI/ImageFontColor")) {
