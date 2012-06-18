@@ -99,8 +99,6 @@ ChildWidget::ChildWidget(QWidget* parent)
   connect(cbDelegate, SIGNAL(toggled(bool, int)), this,
           SLOT(cbFontToggleProxy(bool, int)));
 
-  readSettings();
-
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
   imageView = new QGraphicsView(imageScene);
@@ -108,8 +106,8 @@ ChildWidget::ChildWidget(QWidget* parent)
                             QPainter::SmoothPixmapTransform);
   imageView->setAttribute(Qt::WA_TranslucentBackground, true);
   imageView->setAutoFillBackground(true);
-  imageView->setBackgroundBrush(backgroundColor);
 
+  readSettings();
   // Table toolbar
   QPushButton* upButton = new QPushButton();
   upButton->setIcon(QIcon(":/images/up.svg"));
@@ -264,6 +262,7 @@ void ChildWidget::readSettings() {
     } else {
       backgroundColor = (Qt::gray);
     }
+    imageView->setBackgroundBrush(backgroundColor);
 }
 
 void ChildWidget::calculateTableWidth() {
