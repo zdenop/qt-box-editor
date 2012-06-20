@@ -1,40 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/fileopen.png</file>
-        <file>images/filesave.png</file>
-        <file>images/filesaveas.png</file>
-        <file>images/window-close.png</file>
-        <file>images/exit.png</file>
-        <file>images/text_bold.png</file>
-        <file>images/text_italic.png</file>
-        <file>images/text_under.png</file>
-        <file>images/next.png</file>
-        <file>images/previous.png</file>
-        <file>images/zoom-original.png</file>
-        <file>images/zoom-out.png</file>
-        <file>images/zoom-in.png</file>
-        <file>images/help-about.png</file>
-        <file>images/qbe.png</file>
-        <file>images/qbe.svg</file>
-        <file>images/drawRect.png</file>
-        <file>images/zoom-fit.png</file>
-        <file>images/zoom-selection.png</file>
-        <file>images/zoom-width.png</file>
-        <file>images/zoom-height.png</file>
-        <file>images/showSymbol.png</file>
-        <file>images/splitRow.svg</file>
-        <file>images/joinRow.svg</file>
-        <file>images/up.svg</file>
-        <file>images/down.svg</file>
-        <file>images/moveTo.svg</file>
-        <file>images/gtk-jump-to-ltr.png</file>
-        <file>images/insertRow.svg</file>
-        <file>images/deleteRow.png</file>
-        <file>images/key_bindings.svg</file>
-        <file>images/import.svg</file>
-        <file>images/gnome-edit-find.svg</file>
-        <file>images/rectangle.svg</file>
-        <file>images/undo.png</file>
-        <file>images/applications-fonts.svg</file>
+        <file>icons/qbe.png</file>
+        <file>icons/qbe.svg</file>
     </qresource>
 </RCC>

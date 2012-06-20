@@ -1,0 +1,11 @@
+[Icon Theme]
+Name=Tango
+Comment=Tango Theme
+Inherits=default
+Directories=22x22 24x24
+
+[22x22]
+Size=22
+
+[24x24]
+Size=24

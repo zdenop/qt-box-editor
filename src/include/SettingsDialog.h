@@ -40,8 +40,6 @@ class SettingsDialog : public QDialog, public Ui::SettingsDialog {
   public:
     explicit SettingsDialog(QWidget* pard = 0, int tabIndex = 0);
     ~SettingsDialog();
-    void initSettings();
-    void initLangs();
     QString getLangName(QString lang);
 
   signals:
@@ -60,6 +58,9 @@ class SettingsDialog : public QDialog, public Ui::SettingsDialog {
     void saveSettings();
 
   private:
+    void initSettings();
+    void initLangs();
+    void initStyles();
     void chooseColor(QPushButton* button, QColor* color);
     void updateColorButton(QPushButton* button, const QColor& color);
 

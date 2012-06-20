@@ -50,191 +50,207 @@
        </property>
        <widget class="QWidget" name="FontSett">
         <attribute name="title">
-         <string>Fonts</string>
+         <string>Style &amp;&amp; Fonts</string>
         </attribute>
-        <widget class="QWidget" name="layoutWidget_1">
+        <widget class="QFrame" name="fontFrame">
          <property name="geometry">
           <rect>
-           <x>5</x>
-           <y>5</y>
-           <width>385</width>
-           <height>291</height>
+           <x>6</x>
+           <y>6</y>
+           <width>386</width>
+           <height>276</height>
           </rect>
          </property>
-         <layout class="QVBoxLayout" name="fontLayout">
-          <item>
-           <widget class="QFrame" name="fontFrame">
-            <property name="frameShadow">
-             <enum>QFrame::Sunken</enum>
-            </property>
-            <property name="lineWidth">
-             <number>6</number>
-            </property>
-            <property name="midLineWidth">
-             <number>6</number>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <property name="sizeConstraint">
-              <enum>QLayout::SetNoConstraint</enum>
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetNoConstraint</enum>
+          </property>
+          <property name="bottomMargin">
+           <number>16</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>16</number>
+          </property>
+          <item row="6" column="3">
+           <widget class="QComboBox" name="themeComboBox">
+            <item>
+             <property name="text">
+              <string>faenza</string>
              </property>
-             <property name="bottomMargin">
-              <number>16</number>
+            </item>
+            <item>
+             <property name="text">
+              <string>tango</string>
              </property>
-             <property name="horizontalSpacing">
-              <number>0</number>
-             </property>
-             <property name="verticalSpacing">
-              <number>18</number>
-             </property>
-             <item row="0" column="2">
-              <spacer name="horizontalSpacer_7">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="1" column="2">
-              <spacer name="horizontalSpacer_8">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="4" column="1" colspan="3">
-              <widget class="QLabel" name="balloonsLabel">
-               <property name="text">
-                <string>Number of balloons:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="fontLabel">
-               <property name="text">
-                <string>Consolas, 12 pt</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="fontImageLabel">
-               <property name="text">
-                <string>Consolas, 12 pt</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0">
-              <widget class="QLabel" name="fontTableLbl">
-               <property name="text">
-                <string>Table:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="fontImageLbl">
-               <property name="text">
-                <string>Image:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="3">
-              <widget class="QPushButton" name="fontButton">
-               <property name="maximumSize">
-                <size>
-                 <width>75</width>
-                 <height>26</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>Change...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1" colspan="3">
-              <widget class="QCheckBox" name="useSameFontCB">
-               <property name="text">
-                <string>Use the same font for table and image</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1" colspan="2">
-              <widget class="QLabel" name="offsetLabel">
-               <property name="text">
-                <string>Image font offset:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="3">
-              <widget class="QPushButton" name="fontImageButton">
-               <property name="text">
-                <string>Change...</string>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="3">
-              <widget class="QSpinBox" name="offsetSpinBox">
-               <property name="toolTip">
-                <string>How far should be displayed symbol from baseline.</string>
-               </property>
-               <property name="value">
-                <number>17</number>
-               </property>
-              </widget>
-             </item>
-             <item row="4" column="3">
-              <widget class="QSpinBox" name="ballonsSpinBox">
-               <property name="toolTip">
-                <string>How many &quot;balloons&quot; should be shown on image.</string>
-               </property>
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="value">
-                <number>13</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-            <zorder>fontLabel</zorder>
-            <zorder>fontTableLbl</zorder>
-            <zorder>fontImageLabel</zorder>            
-            <zorder>fontImageLbl</zorder>
-            <zorder>fontImageButton</zorder>
-            <zorder>fontButton</zorder>
-            <zorder>useSameFontCB</zorder>
-            <zorder>offsetLabel</zorder>
-            <zorder>offsetSpinBox</zorder>            
-            <zorder>balloonsLabel</zorder>            
-            <zorder>ballonsSpinBox</zorder>
+            </item>
            </widget>
           </item>
-          <item>
-           <spacer name="verticalSpacer">
-            <property name="orientation">
-             <enum>Qt::Vertical</enum>
+          <item row="4" column="1">
+           <widget class="QLabel" name="balloonsLabel">
+            <property name="text">
+             <string>Number of balloons:</string>
             </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::MinimumExpanding</enum>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_7">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
             <property name="sizeHint" stdset="0">
              <size>
-              <width>20</width>
-              <height>44</height>
+              <width>40</width>
+              <height>20</height>
              </size>
             </property>
            </spacer>
           </item>
+          <item row="5" column="1">
+           <widget class="QLabel" name="styleLabel">
+            <property name="text">
+             <string>QT Style:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QSpinBox" name="ballonsSpinBox">
+            <property name="toolTip">
+             <string>How many &quot;balloons&quot; should be shown on image.</string>
+            </property>
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>13</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="3">
+           <widget class="QSpinBox" name="offsetSpinBox">
+            <property name="toolTip">
+             <string>How far should be displayed symbol from baseline.</string>
+            </property>
+            <property name="value">
+             <number>17</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="fontLabel">
+            <property name="text">
+             <string>Consolas, 12 pt</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="2">
+           <widget class="QLabel" name="offsetLabel">
+            <property name="text">
+             <string>Image font offset:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1">
+           <widget class="QLabel" name="themeLabel">
+            <property name="text">
+             <string>Icon Theme:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QPushButton" name="fontButton">
+            <property name="minimumSize">
+             <size>
+              <width>85</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Change...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="fontImageLabel">
+            <property name="text">
+             <string>Consolas, 12 pt</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <spacer name="horizontalSpacer_8">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="fontImageLbl">
+            <property name="text">
+             <string>Image:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="3">
+           <widget class="QComboBox" name="styleComboBox"/>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="fontImageButton">
+            <property name="minimumSize">
+             <size>
+              <width>85</width>
+              <height>25</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Change...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="3">
+           <widget class="QCheckBox" name="useSameFontCB">
+            <property name="text">
+             <string>Use the same font for table and image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="fontTableLbl">
+            <property name="text">
+             <string>Table:</string>
+            </property>
+           </widget>
+          </item>
          </layout>
+         <zorder>fontLabel</zorder>
+         <zorder>fontTableLbl</zorder>
+         <zorder>fontButton</zorder>
+         <zorder>fontImageLabel</zorder>
+         <zorder>fontImageLbl</zorder>
+         <zorder>fontImageButton</zorder>
+         <zorder>useSameFontCB</zorder>
+         <zorder>offsetLabel</zorder>
+         <zorder>offsetSpinBox</zorder>
+         <zorder>balloonsLabel</zorder>
+         <zorder>ballonsSpinBox</zorder>
+         <zorder>styleLabel</zorder>
+         <zorder>styleComboBox</zorder>
+         <zorder>themeLabel</zorder>
+         <zorder>themeComboBox</zorder>
         </widget>
        </widget>
        <widget class="QWidget" name="ColorsSett">

@@ -111,53 +111,53 @@ ChildWidget::ChildWidget(QWidget* parent)
 
   // Table toolbar
   QPushButton* upButton = new QPushButton();
-  upButton->setIcon(QIcon(":/images/up.svg"));
+  upButton->setIcon(QIcon::fromTheme("up"));
   upButton->setToolTip(tr("Move row up"));
   upButton->setMinimumSize(QSize(24, 24));
   upButton->setMaximumSize(QSize(24, 24));
   connect(upButton, SIGNAL(clicked()), this, SLOT(moveUp()));
 
   QPushButton* downButton = new QPushButton();
-  downButton->setIcon(QIcon(":/images/down.svg"));
+  downButton->setIcon(QIcon::fromTheme("down"));
   downButton->setToolTip(tr("Move row down"));
   downButton->setMinimumSize(QSize(24, 24));
   downButton->setMaximumSize(QSize(24, 24));
   connect(downButton, SIGNAL(clicked()), this, SLOT(moveDown()));
 
   QPushButton* moveToButton = new QPushButton();
-  moveToButton->setIcon(QIcon(":/images/moveTo.svg"));
+  moveToButton->setIcon(QIcon::fromTheme("moveTo"));
   moveToButton->setToolTip(tr("Move row to position…"));
   moveToButton->setMinimumSize(QSize(24, 24));
   moveToButton->setMaximumSize(QSize(24, 24));
   connect(moveToButton, SIGNAL(clicked()), this, SLOT(moveTo()));
 
   QPushButton* goToButton = new QPushButton();
-  goToButton->setIcon(QIcon(":/images/gtk-jump-to-ltr.png"));
+  goToButton->setIcon(QIcon::fromTheme("gtk-jump-to-ltr"));
   goToButton->setToolTip(tr("Go to row…"));
   goToButton->setMinimumSize(QSize(24, 24));
   goToButton->setMaximumSize(QSize(24, 24));
   connect(goToButton, SIGNAL(clicked()), this, SLOT(goToRow()));
 
   QPushButton* insertButton = new QPushButton();
-  insertButton->setIcon(QIcon(":/images/insertRow.svg"));
+  insertButton->setIcon(QIcon::fromTheme("insertRow"));
   insertButton->setToolTip(tr("Insert symbol"));
   insertButton->setMaximumSize(QSize(24, 24));
   connect(insertButton, SIGNAL(clicked()), this, SLOT(insertSymbol()));
 
   QPushButton* joinButton = new QPushButton();
-  joinButton->setIcon(QIcon(":/images/joinRow.svg"));
+  joinButton->setIcon(QIcon::fromTheme("joinRow"));
   joinButton->setToolTip(tr("Join symbols"));
   joinButton->setMaximumSize(QSize(24, 24));
   connect(joinButton, SIGNAL(clicked()), this, SLOT(joinSymbol()));
 
   QPushButton* splitButton = new QPushButton();
-  splitButton->setIcon(QIcon(":/images/splitRow.svg"));
+  splitButton->setIcon(QIcon::fromTheme("splitRow"));
   splitButton->setToolTip(tr("Split symbol"));
   splitButton->setMaximumSize(QSize(24, 24));
   connect(splitButton, SIGNAL(clicked()), this, SLOT(splitSymbol()));
 
   QPushButton* removeButton = new QPushButton();
-  removeButton->setIcon(QIcon(":/images/deleteRow.png"));
+  removeButton->setIcon(QIcon::fromTheme("deleteRow"));
   removeButton->setToolTip(tr("Remove symbol"));
   removeButton->setMaximumSize(QSize(24, 24));
   connect(removeButton, SIGNAL(clicked()), this, SLOT(deleteSymbol()));

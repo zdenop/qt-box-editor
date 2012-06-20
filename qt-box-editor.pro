@@ -52,7 +52,9 @@ HEADERS += dialogs/GetRowIDDialog.h \
     dialogs/FindDialog.h \
     dialogs/DrawRectangle.h
 
-RESOURCES = resources/application.qrc
+RESOURCES = resources/application.qrc \
+    resources/faenza.qrc \
+    resources/tango.qrc
 
 win32: {
     DESTDIR = ./win32

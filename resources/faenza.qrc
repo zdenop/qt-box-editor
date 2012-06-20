@@ -1,0 +1,43 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="icons/faenza">
+    <file alias="index.theme">icons/faenza/index.theme</file>
+
+    <file alias="24x24/fileopen.svg">icons/faenza/document-open.svg</file>
+    <file alias="24x24/filesave.svg">icons/faenza/document-save.svg</file>
+    <file alias="24x24/filesaveas.svg">icons/faenza/document-save-as.svg</file>
+    <file alias="24x24/exit.svg">icons/faenza/exit.svg</file>
+    <file alias="24x24/text_bold.svg">icons/faenza/format-text-bold.svg</file>
+    <file alias="24x24/text_italic.svg">icons/faenza/format-text-italic.svg</file>
+    <file alias="24x24/text_under.svg">icons/faenza/format-text-underline.svg</file>
+    <file alias="24x24/next.svg">icons/faenza/go-next.svg</file>
+    <file alias="24x24/previous.svg">icons/faenza/go-previous.svg</file>
+    <file alias="24x24/zoom-original.svg">icons/faenza/zoom-original.svg</file>
+    <file alias="24x24/zoom-out.svg">icons/faenza/zoom-out.svg</file>
+    <file alias="24x24/zoom-in.svg">icons/faenza/zoom-in.svg</file>
+    <file alias="24x24/help-about.svg">icons/faenza/help-about.svg</file>
+    <file alias="24x24/zoom-fit.svg">icons/faenza/zoom-fit.svg</file>
+    <file alias="24x24/zoom-selection.png">icons/faenza/zoom-selection.png</file>
+    <file alias="24x24/zoom-width.png">icons/faenza/zoom-width.png</file>
+    <file alias="24x24/24x24/zoom-width.png">icons/faenza/zoom-width.png</file>
+    <file alias="24x24/zoom-height.png">icons/faenza/zoom-height.png</file>
+    <file alias="24x24/gtk-jump-to-ltr.svg">icons/faenza/go-jump.svg</file>
+    <file alias="24x24/key_bindings.svg">icons/faenza/key_bindings.svg</file>
+    <file alias="24x24/import.svg">icons/faenza/import.svg</file>
+    <file alias="24x24/undo.svg">icons/faenza/edit-undo.svg</file>
+    <file alias="24x24/software-properties.svg">icons/faenza/software-properties.svg</file>
+
+    <file alias="24x24/applications-fonts.svg">icons/misc/applications-fonts.svg</file>
+    <file alias="24x24/gnome-edit-find.svg">icons/misc/gnome-edit-find.svg</file>
+    <file alias="24x24/joinRow.svg">icons/misc/joinRow.svg</file>
+    <file alias="24x24/moveTo.svg">icons/misc/moveTo.svg</file>
+    <file alias="24x24/splitRow.svg">icons/misc/splitRow.svg</file>
+
+    <file alias="24x24/drawRect.png">icons/qbe/drawRect.png</file>
+    <file alias="24x24/deleteRow.svg">icons/qbe/deleteRow.svg</file>
+    <file alias="24x24/up.svg">icons/qbe/up.svg</file>
+    <file alias="24x24/insertRow.svg">icons/qbe/insertRow.svg</file>
+    <file alias="24x24/rectangle.svg">icons/qbe/rectangle.svg</file>
+    <file alias="24x24/showSymbol.png">icons/qbe/showSymbol.png</file>
+    <file alias="24x24/down.svg">icons/qbe/down.svg</file>
+</qresource>
+</RCC>

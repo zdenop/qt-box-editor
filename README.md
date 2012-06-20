@@ -27,7 +27,7 @@ LICENSE
 License was changed from "THE BEER-WARE LICENSE" to ["Apache License, Version 2.0"](http://www.apache.org/licenses/LICENSE-2.0) based on agreement with Marcel Kołodziejczyk ([original author](https://github.com/mk219533/tesseract-gui)). Anyway you are welcome to buy him a free beer if you meet him. He deserves it.
 
 [Faenza Icons](http://tiheum.deviantart.com/art/Faenza-Icons-173323228) are under GNU/GPL license.
-
+[Tango Icons](http://tango.freedesktop.org/) are Public Domain.
 
 ARTWORK
 -------
@@ -56,4 +56,4 @@ joinRow.svg and splitRow.svg are adapted icons of lmproulx icons [Convergent](ht
 
 gnome-edit-find.svg is from [Wikipedia](http://en.wikipedia.org/wiki/File:Gnome-edit-find.svg).
 
-Other icons/artwork were created for Qt Box Editor and they are release under Apache License, Version 2.0.
+Other icons/artwork were created for Qt Box Editor and they are released under Apache License, Version 2.0.
