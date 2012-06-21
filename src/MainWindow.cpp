@@ -557,6 +557,7 @@ void MainWindow::about() {
                    arg(PROJECT_URL).arg(PROJECT_URL_NAME));
   abouttext.append(tr("<p>Copyright 2010 Marcel Kolodziejczyk<br/>"));
   abouttext.append(tr("Copyright 2012 Zohar Gofer<br/>"));
+  abouttext.append(tr("Copyright 2012 Dmitri Silaev<br/>"));
   abouttext.append(tr("Copyright 2011-2012 Zdenko Podobný</p>"));
   abouttext.append(tr("<p>This software is released under "
                       "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\"" \
