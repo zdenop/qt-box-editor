@@ -94,6 +94,11 @@
             </item>
             <item>
              <property name="text">
+              <string>QBE-Oxygen</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>tango</string>
              </property>
             </item>

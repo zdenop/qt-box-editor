@@ -1,0 +1,42 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="icons/QBE-Oxygen">
+    <file alias="index.theme">icons/QBE-Oxygen/index.theme</file>
+
+    <file alias="22x22/fileopen.png">icons/QBE-Oxygen/document-open.png</file>
+    <file alias="22x22/filesave.png">icons/QBE-Oxygen/document-save.png</file>
+    <file alias="22x22/filesaveas.png">icons/QBE-Oxygen/document-save-as.png</file>
+    <file alias="22x22/fileimport.png">icons/QBE-Oxygen/document-import.png</file>  
+    <file alias="22x22/exit.png">icons/QBE-Oxygen/application-exit.png</file>
+    <file alias="22x22/text_bold.png">icons/QBE-Oxygen/format-text-bold.png</file>
+    <file alias="22x22/text_italic.png">icons/QBE-Oxygen/format-text-italic.png</file>
+    <file alias="22x22/text_under.png">icons/QBE-Oxygen/format-text-underline.png</file>
+    <file alias="22x22/zoom-original.png">icons/QBE-Oxygen/zoom-original.png</file>
+    <file alias="22x22/zoom-out.png">icons/QBE-Oxygen/zoom-out.png</file>
+    <file alias="22x22/zoom-in.png">icons/QBE-Oxygen/zoom-in.png</file>
+    <file alias="22x22/zoom-fit.png">icons/QBE-Oxygen/zoom-fit-best.png</file>
+    <file alias="22x22/zoom-selection.png">icons/QBE-Oxygen/zoom-select.png</file>
+    <file alias="22x22/zoom-width.png">icons/QBE-Oxygen/zoom-fit-width.png</file>
+    <file alias="22x22/zoom-height.png">icons/QBE-Oxygen/zoom-fit-height.png</file>      
+    <file alias="22x22/next.png">icons/QBE-Oxygen/go-next.png</file>
+    <file alias="22x22/previous.png">icons/QBE-Oxygen/go-previous.png</file>
+    <file alias="22x22/up.png">icons/QBE-Oxygen/go-up.png</file>
+    <file alias="22x22/down.png">icons/QBE-Oxygen/go-down.png</file>
+    <file alias="22x22/jump.png">icons/QBE-Oxygen/go-jump.png</file>
+    <file alias="22x22/help-about.png">icons/QBE-Oxygen/help-about.png</file>
+    <file alias="22x22/insertRow.png">icons/QBE-Oxygen/edit-table-insert-row-under.png</file>
+    <file alias="22x22/deleteRow.png">icons/QBE-Oxygen/edit-table-delete-row.png</file>
+    <file alias="22x22/find.png">icons/QBE-Oxygen/edit-find.png</file>
+    <file alias="22x22/undo.png">icons/QBE-Oxygen/edit-undo.png</file>   
+    <file alias="22x22/fonts.png">icons/QBE-Oxygen/application-x-font-ttf.png</file>
+    <file alias="22x22/settings.png">icons/QBE-Oxygen/preferences-system.png</file>
+    <file alias="22x22/key_bindings.png">icons/QBE-Oxygen/preferences-desktop-keyboard.png</file>
+    <file alias="22x22/drawRect.png">icons/QBE-Oxygen/draw-rectangle.png</file>
+
+    <file alias="24x24/joinRow.svg">icons/misc/joinRow.svg</file>
+    <file alias="24x24/moveTo.svg">icons/misc/moveTo.svg</file>
+    <file alias="24x24/splitRow.svg">icons/misc/splitRow.svg</file>
+
+    <file alias="24x24/rectangle.svg">icons/qbe/rectangle.svg</file>
+    <file alias="24x24/showSymbol.png">icons/qbe/showSymbol.png</file>
+</qresource>
+</RCC>

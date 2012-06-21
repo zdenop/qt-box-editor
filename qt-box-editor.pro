@@ -55,7 +55,8 @@ HEADERS += src/MainWindow.h \
 RESOURCES = resources/application.qrc \
     resources/gnome.qrc \
     resources/faenza.qrc \
-    resources/tango.qrc
+    resources/tango.qrc \
+    resources/QBE-Oxygen.qrc
 
 win32: {
     DESTDIR = ./win32
