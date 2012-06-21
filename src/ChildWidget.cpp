@@ -985,7 +985,7 @@ void ChildWidget::zoomToFit() {
   float viewHeight = imageView->viewport()->height();
   float zoomFactor;
   float ratio = viewWidth / viewHeight;
-  float aspectRatio = imageWidth / imageHeight;
+  float aspectRatio = (float) imageWidth / imageHeight;
 
   if (ratio > aspectRatio) {
     zoomFactor = viewHeight / imageHeight;
