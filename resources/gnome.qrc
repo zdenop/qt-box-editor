@@ -1,0 +1,43 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="icons/gnome">
+    <file alias="index.theme">icons/gnome/index.theme</file>
+
+    <file alias="24x24/fileopen.png">icons/gnome/document-open.png</file>
+    <file alias="24x24/filesave.png">icons/gnome/document-save.png</file>
+    <file alias="24x24/filesaveas.png">icons/gnome/document-save-as.png</file>
+    <file alias="24x24/fileimport.svg">icons/misc/Document-import.svg</file>
+    <file alias="24x24/exit.png">icons/gnome/application-exit.png</file>
+    <file alias="24x24/text_bold.png">icons/gnome/format-text-bold.png</file>
+    <file alias="24x24/text_italic.png">icons/gnome/format-text-italic.png</file>
+    <file alias="24x24/text_under.png">icons/gnome/format-text-underline.png</file>
+    <file alias="24x24/zoom-original.png">icons/gnome/zoom-original.png</file>
+    <file alias="24x24/zoom-out.png">icons/gnome/zoom-out.png</file>
+    <file alias="24x24/zoom-in.png">icons/gnome/zoom-in.png</file>
+    <file alias="24x24/zoom-fit.png">icons/gnome/zoom-fit-best.png</file>
+    <file alias="24x24/next.png">icons/gnome/go-next.png</file>
+    <file alias="24x24/previous.png">icons/gnome/go-previous.png</file>
+    <file alias="24x24/up.png">icons/gnome/go-up.png</file>
+    <file alias="24x24/down.png">icons/gnome/go-down.png</file>
+    <file alias="24x24/jump.png">icons/gnome/go-jump.png</file>
+    <file alias="24x24/insertRow.png">icons/gnome/list-add.png</file>
+    <file alias="24x24/deleteRow.png">icons/gnome/list-remove.png</file>
+    <file alias="24x24/help-about.png">icons/gnome/help-about.png</file>
+    <file alias="24x24/find.png">icons/gnome/edit-find.png</file>
+    <file alias="24x24/undo.png">icons/gnome/edit-undo.png</file>
+    <file alias="24x24/fonts.png">icons/gnome/preferences-desktop-font.png</file>
+    <file alias="24x24/key_bindings.png">icons/gnome/preferences-desktop-keyboard-shortcuts.png</file>
+    <file alias="24x24/settings.png">icons/gnome/preferences-system.png</file>
+
+    <file alias="22x22/zoom-selection.png">icons/faenza/zoom-selection.png</file>
+    <file alias="24x24/zoom-width.png">icons/faenza/zoom-width.png</file>
+    <file alias="24x24/zoom-height.png">icons/faenza/zoom-height.png</file>
+
+    <file alias="24x24/joinRow.svg">icons/misc/joinRow.svg</file>
+    <file alias="24x24/moveTo.svg">icons/misc/moveTo.svg</file>
+    <file alias="24x24/splitRow.svg">icons/misc/splitRow.svg</file>
+
+    <file alias="24x24/drawRect.png">icons/qbe/drawRect.png</file>
+    <file alias="24x24/rectangle.svg">icons/qbe/rectangle.svg</file>
+    <file alias="24x24/showSymbol.png">icons/qbe/showSymbol.png</file>
+</qresource>
+</RCC>

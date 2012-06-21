@@ -15,7 +15,7 @@ QT += network \
     svg \
     testlib
 
-# CONFIG += release
+CONFIG += release
 
 OBJECTS_DIR += temp
 MOC_DIR += temp
@@ -53,6 +53,7 @@ HEADERS += src/MainWindow.h \
     dialogs/DrawRectangle.h
 
 RESOURCES = resources/application.qrc \
+    resources/gnome.qrc \
     resources/faenza.qrc \
     resources/tango.qrc
 

@@ -84,6 +84,11 @@
            <widget class="QComboBox" name="themeComboBox">
             <item>
              <property name="text">
+              <string>gnome</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>faenza</string>
              </property>
             </item>
