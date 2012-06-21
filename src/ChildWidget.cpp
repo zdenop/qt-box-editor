@@ -132,7 +132,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   connect(moveToButton, SIGNAL(clicked()), this, SLOT(moveTo()));
 
   QPushButton* goToButton = new QPushButton();
-  goToButton->setIcon(QIcon::fromTheme("gtk-jump-to-ltr"));
+  goToButton->setIcon(QIcon::fromTheme("jump"));
   goToButton->setToolTip(tr("Go to row…"));
   goToButton->setMinimumSize(QSize(24, 24));
   goToButton->setMaximumSize(QSize(24, 24));

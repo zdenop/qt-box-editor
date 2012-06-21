@@ -734,7 +734,7 @@ void MainWindow::createActions() {
   importPLSymAct->setEnabled(false);
   connect(importPLSymAct, SIGNAL(triggered()), this, SLOT(importPLSym()));
 
-  importTextSymAct = new QAction(QIcon::fromTheme("import"),
+  importTextSymAct = new QAction(QIcon::fromTheme("fileimport"),
                                  tr("Import &text file"), this);
   importTextSymAct->setToolTip(tr("Import symbols from text document"));
   importTextSymAct->setEnabled(false);
@@ -845,7 +845,7 @@ void MainWindow::createActions() {
   connect(DirectTypingAct, SIGNAL(triggered(bool)), this,
           SLOT(directTypingMode(bool)));
 
-  showFontColumnsAct = new QAction(QIcon::fromTheme("applications-fonts"),
+  showFontColumnsAct = new QAction(QIcon::fromTheme("fonts"),
                                    tr("Show Font Columns"), this);
   showFontColumnsAct->setCheckable(true);
   connect(showFontColumnsAct, SIGNAL(triggered(bool)), this,
@@ -904,12 +904,12 @@ void MainWindow::createActions() {
   moveToAct->setShortcut(Qt::CTRL | Qt::Key_M);
   connect(moveToAct, SIGNAL(triggered()), this, SLOT(moveTo()));
 
-  goToRowAct = new QAction(QIcon::fromTheme("gtk-jump-to-ltr"),
+  goToRowAct = new QAction(QIcon::fromTheme("jump"),
                            tr("&Go to row…"), this);
   goToRowAct->setShortcut(tr("Ctrl+G"));
   connect(goToRowAct, SIGNAL(triggered()), this, SLOT(goToRow()));
 
-  findAct = new QAction(QIcon::fromTheme("gnome-edit-find"),
+  findAct = new QAction(QIcon::fromTheme("find"),
                         tr("&Find…"), this);
   findAct->setShortcut(tr("Ctrl+F"));
   connect(findAct, SIGNAL(triggered()), this, SLOT(find()));
@@ -925,7 +925,7 @@ void MainWindow::createActions() {
   undoAct->setShortcut(tr("Ctrl+Z"));
   connect(undoAct, SIGNAL(triggered()), this, SLOT(undo()));
 
-  settingsAct = new QAction(QIcon::fromTheme("software-properties"),
+  settingsAct = new QAction(QIcon::fromTheme("settings"),
                             tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
   settingsAct->setToolTip(tr("Programm settings"));
