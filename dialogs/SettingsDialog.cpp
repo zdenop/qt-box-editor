@@ -30,8 +30,8 @@ SettingsDialog::SettingsDialog(QWidget* parent, int tabIndex)
   setWindowTitle(tr("%1 :: Settings...").arg(SETTING_APPLICATION));
 
   setupUi(this);
-  initLangs();
   initSettings();
+  initLangs();
 
   QObject::connect(buttonBox, SIGNAL(accepted()), this, SLOT(saveSettings()));
   QObject::connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
@@ -204,14 +204,9 @@ void SettingsDialog::initSettings() {
   updateColorButton(colorBoxButton, boxColor);
   updateColorButton(backgroundColorButton, backgroundColor);
 
-  // Tesseract settings
+  // Tesseract datapath settings, langs should be set later
   if (settings.contains("Tesseract/DataPath")) {
     lnPrefix->setText(settings.value("Tesseract/DataPath").toString());
-  }
-  if (settings.contains("Tesseract/Lang")) {
-      int langindex = cbLang->findData(
-            settings.value("Tesseract/Lang").toString());
-      cbLang->setCurrentIndex(langindex);
   }
 }
 
@@ -258,7 +253,8 @@ void SettingsDialog::saveSettings() {
   settings.setValue("Text/Ligatures", str);
 
   settings.setValue("Tesseract/DataPath", lnPrefix->text());
-  settings.setValue("Tesseract/Lang",
+  if (!cbLang->itemData(cbLang->currentIndex()).isNull())
+      settings.setValue("Tesseract/Lang",
                     cbLang->itemData(cbLang->currentIndex()).toString());
 
   emit settingsChanged();
@@ -295,11 +291,13 @@ void SettingsDialog::on_pbSelectDP_clicked() {
                           lnPrefix->text(),
                           QFileDialog::ShowDirsOnly
                           | QFileDialog::DontResolveSymlinks);
-    // we need only prefix without /tessdata!!!
+    // we need only prefix endswith "/" and without tessdata!!!
     if (prefix_dir.contains(QRegExp("/tessdata$")))
             prefix_dir.replace(QRegExp("/tessdata$"),"/");
     else if (prefix_dir.contains(QRegExp("/tessdata/$")))
         prefix_dir.replace(QRegExp("/tessdata/$"),"/");
+    if (prefix_dir.right(1) != "/" && prefix_dir != "")
+            prefix_dir += "/";
     if (prefix_dir != "")
         lnPrefix->setText(prefix_dir);
     initLangs();
@@ -325,9 +323,7 @@ void SettingsDialog::initStyles() {
 }
 
 void SettingsDialog::initLangs() {
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                    SETTING_ORGANIZATION, SETTING_APPLICATION);
-    QString datapath = settings.value("Tesseract/DataPath").toString();
+    QString datapath = lnPrefix->text();
     datapath += "tessdata";
     TessTools tt;
     QList<QString> languages = tt.getLanguages(datapath);
@@ -352,6 +348,15 @@ void SettingsDialog::initLangs() {
     cbLang->model()->setParent(proxy);
     cbLang->setModel(proxy);
     cbLang->model()->sort(0);
+
+    cbLang->setCurrentIndex(1);  // do not show empty combobox if there is lang
+    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                        SETTING_ORGANIZATION, SETTING_APPLICATION);
+    if (settings.contains("Tesseract/Lang")) {
+        int langindex = cbLang->findData(
+              settings.value("Tesseract/Lang").toString());
+        cbLang->setCurrentIndex(langindex);
+    }
 }
 
 /**
