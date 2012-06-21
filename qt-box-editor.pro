@@ -15,7 +15,7 @@ QT += network \
     svg \
     testlib
 
-CONFIG += release
+# CONFIG += release
 
 OBJECTS_DIR += temp
 MOC_DIR += temp
@@ -26,29 +26,29 @@ DEFINES += VERSION=\\\"$${VERSION}\\\"
 FORMS += \
     dialogs/ShortCutDialog.ui \
     dialogs/GetRowIDDialog.ui \
-    src/SettingsDialog.ui \
+    dialogs/SettingsDialog.ui \
     dialogs/FindDialog.ui \
     dialogs/DrawRectangle.ui
 
-SOURCES += dialogs/GetRowIDDialog.cpp \
-    dialogs/ShortCutsDialog.cpp \
-    src/DelegateEditors.cpp \
-    src/ChildWidget.cpp \
-    src/main.cpp \
+SOURCES += src/main.cpp \
     src/MainWindow.cpp \
+    src/ChildWidget.cpp \
+    src/DelegateEditors.cpp \
     src/SettingsDialog.cpp \
     src/TessTools.cpp \
+    dialogs/GetRowIDDialog.cpp \
+    dialogs/ShortCutsDialog.cpp \
     dialogs/FindDialog.cpp \
     dialogs/DrawRectangle.cpp
 
-HEADERS += dialogs/GetRowIDDialog.h \
+HEADERS += src/MainWindow.h \
+    src/ChildWidget.h \
+    src/Settings.h \
+    src/include/TessTools.h \
+    dialogs/SettingsDialog.h \
+    dialogs/GetRowIDDialog.h \
     dialogs/ShortCutsDialog.h \
     src/include/DelegateEditors.h \
-    src/include/MainWindow.h \
-    src/include/ChildWidget.h \
-    src/include/Settings.h \
-    src/include/SettingsDialog.h \
-    src/include/TessTools.h \
     dialogs/FindDialog.h \
     dialogs/DrawRectangle.h
 
