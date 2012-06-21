@@ -21,7 +21,7 @@
 **********************************************************************/
 
 #include "dialogs/FindDialog.h"
-#include "include/Settings.h"
+#include "Settings.h"
 
 FindDialog::FindDialog(QWidget* parent, QString title)
   : QDialog(parent) {

@@ -22,7 +22,7 @@
 *
 **********************************************************************/
 
-#include "include/DelegateEditors.h"
+#include "DelegateEditors.h"
 #include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
 

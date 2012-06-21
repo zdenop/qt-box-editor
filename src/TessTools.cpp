@@ -24,7 +24,7 @@
 #include <allheaders.h>
 #include <strngs.h>
 #include "TessTools.h"
-#include "src/include/Settings.h"
+#include "Settings.h"
 #include <locale.h>
 
 #include <QtGui/QApplication>

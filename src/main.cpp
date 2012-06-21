@@ -29,8 +29,8 @@
 Q_IMPORT_PLUGIN(qsvg)
 #endif
 
-#include "include/MainWindow.h"
-#include "include/Settings.h"
+#include "MainWindow.h"
+#include "Settings.h"
 
 int main(int argc, char* argv[]) {
   Q_INIT_RESOURCE(application);

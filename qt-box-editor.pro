@@ -34,8 +34,8 @@ SOURCES += src/main.cpp \
     src/MainWindow.cpp \
     src/ChildWidget.cpp \
     src/DelegateEditors.cpp \
-    src/SettingsDialog.cpp \
     src/TessTools.cpp \
+    dialogs/SettingsDialog.cpp \
     dialogs/GetRowIDDialog.cpp \
     dialogs/ShortCutsDialog.cpp \
     dialogs/FindDialog.cpp \
@@ -44,11 +44,11 @@ SOURCES += src/main.cpp \
 HEADERS += src/MainWindow.h \
     src/ChildWidget.h \
     src/Settings.h \
-    src/include/TessTools.h \
+    src/TessTools.h \
+    src/DelegateEditors.h \
     dialogs/SettingsDialog.h \
     dialogs/GetRowIDDialog.h \
     dialogs/ShortCutsDialog.h \
-    src/include/DelegateEditors.h \
     dialogs/FindDialog.h \
     dialogs/DrawRectangle.h
 

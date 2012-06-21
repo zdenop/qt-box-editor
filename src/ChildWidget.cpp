@@ -26,14 +26,14 @@
 #include <string>
 #include <algorithm>
 
-#include "include/ChildWidget.h"
-#include "include/Settings.h"
-#include "include/SettingsDialog.h"
+#include "ChildWidget.h"
+#include "Settings.h"
+#include "DelegateEditors.h"
+#include "TessTools.h"
+#include "dialogs/SettingsDialog.h"
 #include "dialogs/GetRowIDDialog.h"
 #include "dialogs/FindDialog.h"
 #include "dialogs/DrawRectangle.h"
-#include "include/DelegateEditors.h"
-#include "include/TessTools.h"
 
 Q_DECLARE_METATYPE(QGraphicsRectItem*)
 

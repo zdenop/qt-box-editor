@@ -46,9 +46,9 @@
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 
-#include "src/include/ChildWidget.h"
-#include "src/include/Settings.h"
-#include "src/include/SettingsDialog.h"
+#include "ChildWidget.h"
+#include "Settings.h"
+#include "SettingsDialog.h"
 
 class ChildWidget;
 class QAction;
