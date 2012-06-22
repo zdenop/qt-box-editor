@@ -32,9 +32,9 @@
     <file alias="22x22/key_bindings.png">icons/QBE-Oxygen/preferences-desktop-keyboard.png</file>
     <file alias="22x22/drawRect.png">icons/QBE-Oxygen/draw-rectangle.png</file>
 
-    <file alias="24x24/joinRow.svg">icons/misc/joinRow.svg</file>
-    <file alias="24x24/moveTo.svg">icons/misc/moveTo.svg</file>
-    <file alias="24x24/splitRow.svg">icons/misc/splitRow.svg</file>
+    <file alias="24x24/joinRow.svg">icons/QBE-Misc/joinRow.svg</file>
+    <file alias="24x24/moveTo.svg">icons/QBE-Misc/moveTo.svg</file>
+    <file alias="24x24/splitRow.svg">icons/QBE-Misc/splitRow.svg</file>
 
     <file alias="24x24/rectangle.svg">icons/qbe/rectangle.svg</file>
     <file alias="24x24/showSymbol.png">icons/qbe/showSymbol.png</file>
