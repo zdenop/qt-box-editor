@@ -1,0 +1,43 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="icons/QBE-GNOME">
+    <file alias="index.theme">icons/QBE-GNOME/index.theme</file>
+
+    <file alias="24x24/fileopen.png">icons/QBE-GNOME/document-open.png</file>
+    <file alias="24x24/filesave.png">icons/QBE-GNOME/document-save.png</file>
+    <file alias="24x24/filesaveas.png">icons/QBE-GNOME/document-save-as.png</file>
+    <file alias="24x24/exit.png">icons/QBE-GNOME/application-exit.png</file>
+    <file alias="24x24/text_bold.png">icons/QBE-GNOME/format-text-bold.png</file>
+    <file alias="24x24/text_italic.png">icons/QBE-GNOME/format-text-italic.png</file>
+    <file alias="24x24/text_under.png">icons/QBE-GNOME/format-text-underline.png</file>
+    <file alias="24x24/zoom-original.png">icons/QBE-GNOME/zoom-original.png</file>
+    <file alias="24x24/zoom-out.png">icons/QBE-GNOME/zoom-out.png</file>
+    <file alias="24x24/zoom-in.png">icons/QBE-GNOME/zoom-in.png</file>
+    <file alias="24x24/zoom-fit.png">icons/QBE-GNOME/zoom-fit-best.png</file>
+    <file alias="24x24/next.png">icons/QBE-GNOME/go-next.png</file>
+    <file alias="24x24/previous.png">icons/QBE-GNOME/go-previous.png</file>
+    <file alias="24x24/up.png">icons/QBE-GNOME/go-up.png</file>
+    <file alias="24x24/down.png">icons/QBE-GNOME/go-down.png</file>
+    <file alias="24x24/jump.png">icons/QBE-GNOME/go-jump.png</file>
+    <file alias="24x24/insertRow.png">icons/QBE-GNOME/list-add.png</file>
+    <file alias="24x24/deleteRow.png">icons/QBE-GNOME/list-remove.png</file>
+    <file alias="24x24/help-about.png">icons/QBE-GNOME/help-about.png</file>
+    <file alias="24x24/find.png">icons/QBE-GNOME/edit-find.png</file>
+    <file alias="24x24/undo.png">icons/QBE-GNOME/edit-undo.png</file>
+    <file alias="24x24/fonts.png">icons/QBE-GNOME/preferences-desktop-font.png</file>
+    <file alias="24x24/key_bindings.png">icons/QBE-GNOME/preferences-desktop-keyboard-shortcuts.png</file>
+    <file alias="24x24/settings.png">icons/QBE-GNOME/preferences-system.png</file>
+
+    <file alias="22x22/zoom-selection.png">icons/QBE-Faenza/zoom-selection.png</file>
+    <file alias="24x24/zoom-width.png">icons/QBE-Faenza/zoom-width.png</file>
+    <file alias="24x24/zoom-height.png">icons/QBE-Faenza/zoom-height.png</file>
+
+    <file alias="24x24/fileimport.svg">icons/QBE-Misc/Document-import.svg</file>
+    <file alias="24x24/joinRow.svg">icons/QBE-Misc/joinRow.svg</file>
+    <file alias="24x24/moveTo.svg">icons/QBE-Misc/moveTo.svg</file>
+    <file alias="24x24/splitRow.svg">icons/QBE-Misc/splitRow.svg</file>
+
+    <file alias="24x24/drawRect.png">icons/qbe/drawRect.png</file>
+    <file alias="24x24/rectangle.svg">icons/qbe/rectangle.svg</file>
+    <file alias="24x24/showSymbol.png">icons/qbe/showSymbol.png</file>
+</qresource>
+</RCC>

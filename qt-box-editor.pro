@@ -53,10 +53,10 @@ HEADERS += src/MainWindow.h \
     dialogs/DrawRectangle.h
 
 RESOURCES = resources/application.qrc \
-    resources/gnome.qrc \
-    resources/faenza.qrc \
-    resources/tango.qrc \
-    resources/QBE-Oxygen.qrc
+    resources/QBE-GNOME.qrc \
+    resources/QBE-Faenza.qrc \
+    resources/QBE-Oxygen.qrc \
+    resources/QBE-Tango.qrc
 
 win32: {
     DESTDIR = ./win32

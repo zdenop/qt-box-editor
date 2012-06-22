@@ -55,7 +55,7 @@ int main(int argc, char* argv[]) {
       QIcon::setThemeName(iconTheme);
   }
   static const char * GENERIC_ICON_TO_CHECK = "fileopen";
-  static const char * FALLBACK_ICON_THEME = "faenza";
+  static const char * FALLBACK_ICON_THEME = "QBE-Faenza";
   if (!QIcon::hasThemeIcon(GENERIC_ICON_TO_CHECK)) {
       //If there is no default working icon theme then we should
       //use an icon theme that we provide via a .qrc file

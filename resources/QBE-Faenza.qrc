@@ -1,0 +1,42 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="icons/QBE-Faenza">
+    <file alias="index.theme">icons/QBE-Faenza/index.theme</file>
+
+    <file alias="24x24/fileopen.png">icons/QBE-Faenza/document-open.png</file>
+    <file alias="24x24/filesave.png">icons/QBE-Faenza/document-save.png</file>
+    <file alias="24x24/filesaveas.png">icons/QBE-Faenza/document-save-as.png</file>
+    <file alias="24x24/fileimport.png">icons/QBE-Faenza/document-import.png</file>
+    <file alias="24x24/exit.png">icons/QBE-Faenza/exit.png</file>
+    <file alias="24x24/text_bold.png">icons/QBE-Faenza/format-text-bold.png</file>
+    <file alias="24x24/text_italic.png">icons/QBE-Faenza/format-text-italic.png</file>
+    <file alias="24x24/text_under.png">icons/QBE-Faenza/format-text-underline.png</file>
+    <file alias="24x24/zoom-original.png">icons/QBE-Faenza/zoom-original.png</file>
+    <file alias="24x24/zoom-out.png">icons/QBE-Faenza/zoom-out.png</file>
+    <file alias="24x24/zoom-in.png">icons/QBE-Faenza/zoom-in.png</file>
+    <file alias="24x24/zoom-fit.png">icons/QBE-Faenza/zoom-fit.png</file>
+    <file alias="24x24/zoom-selection.png">icons/QBE-Faenza/zoom-selection.png</file>
+    <file alias="24x24/zoom-width.png">icons/QBE-Faenza/zoom-width.png</file>
+    <file alias="24x24/zoom-height.png">icons/QBE-Faenza/zoom-height.png</file>
+    <file alias="24x24/next.png">icons/QBE-Faenza/go-next.png</file>
+    <file alias="24x24/previous.png">icons/QBE-Faenza/go-previous.png</file>
+    <file alias="24x24/jump.png">icons/QBE-Faenza/go-jump.png</file>
+    <file alias="24x24/key_bindings.svg">icons/QBE-Faenza/key_bindings.svg</file>
+    <file alias="24x24/help-about.svg">icons/QBE-Faenza/help-about.svg</file>
+    <file alias="24x24/undo.png">icons/QBE-Faenza/edit-undo.png</file>
+    <file alias="24x24/settings.svg">icons/QBE-Faenza/software-properties.svg</file>
+    <file alias="24x24/find.svg">icons/QBE-Faenza/edit-find.svg</file>
+    <file alias="24x24/fonts.svg">icons/QBE-Faenza/applications-fonts.svg</file>
+
+    <file alias="24x24/joinRow.svg">icons/QBE-Misc/joinRow.svg</file>
+    <file alias="24x24/moveTo.svg">icons/QBE-Misc/moveTo.svg</file>
+    <file alias="24x24/splitRow.svg">icons/QBE-Misc/splitRow.svg</file>
+
+    <file alias="24x24/drawRect.png">icons/qbe/drawRect.png</file>
+    <file alias="24x24/deleteRow.svg">icons/qbe/deleteRow.svg</file>
+    <file alias="24x24/up.svg">icons/qbe/up.svg</file>
+    <file alias="24x24/insertRow.svg">icons/qbe/insertRow.svg</file>
+    <file alias="24x24/rectangle.svg">icons/qbe/rectangle.svg</file>
+    <file alias="24x24/showSymbol.png">icons/qbe/showSymbol.png</file>
+    <file alias="24x24/down.svg">icons/qbe/down.svg</file>
+</qresource>
+</RCC>

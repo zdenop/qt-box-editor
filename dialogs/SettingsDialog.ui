@@ -84,12 +84,12 @@
            <widget class="QComboBox" name="themeComboBox">
             <item>
              <property name="text">
-              <string>gnome</string>
+              <string>QBE-GNOME</string>
              </property>
             </item>
             <item>
              <property name="text">
-              <string>faenza</string>
+              <string>QBE-Faenza</string>
              </property>
             </item>
             <item>
@@ -99,7 +99,7 @@
             </item>
             <item>
              <property name="text">
-              <string>tango</string>
+              <string>QBE-Tango</string>
              </property>
             </item>
            </widget>
