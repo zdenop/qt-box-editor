@@ -23,6 +23,7 @@
     <file alias="24x24/key_bindings.svg">icons/QBE-Faenza/key_bindings.svg</file>
     <file alias="24x24/help-about.svg">icons/QBE-Faenza/help-about.svg</file>
     <file alias="24x24/undo.png">icons/QBE-Faenza/edit-undo.png</file>
+    <file alias="24x24/redo.png">icons/QBE-Faenza/edit-redo.png</file>
     <file alias="24x24/settings.svg">icons/QBE-Faenza/software-properties.svg</file>
     <file alias="24x24/find.svg">icons/QBE-Faenza/edit-find.svg</file>
     <file alias="24x24/fonts.svg">icons/QBE-Faenza/applications-fonts.svg</file>

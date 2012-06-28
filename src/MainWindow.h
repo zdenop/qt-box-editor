@@ -1,12 +1,12 @@
 /**********************************************************************
-* File:                MainWindow.h
+* File:        MainWindow.h
 * Description: MainWindow functions
-* Author:            Marcel Kolodziejczyk
-* Created:         2010-01-04
+* Author:      Marcel Kolodziejczyk
+* Created:     2010-01-04
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011-2012, Zdenko Podobny
-* (C) Copyright 2012, Zohar Gofer (Undo action)
+* (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -116,6 +116,7 @@ class MainWindow : public QMainWindow {
     void find();
     void drawRect(bool checked);
     void undo();
+    void redo();
     void reReadSetting();
     void slotSettings();
     void shortCutList();
@@ -205,6 +206,7 @@ class MainWindow : public QMainWindow {
     QAction* findAct;
     QAction* drawRectAct;
     QAction* undoAct;
+    QAction* redoAct;
     QAction* checkForUpdateAct;
     QAction* shortCutListAct;
     QAction* aboutAct;

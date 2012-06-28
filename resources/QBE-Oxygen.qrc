@@ -26,7 +26,8 @@
     <file alias="22x22/insertRow.png">icons/QBE-Oxygen/edit-table-insert-row-under.png</file>
     <file alias="22x22/deleteRow.png">icons/QBE-Oxygen/edit-table-delete-row.png</file>
     <file alias="22x22/find.png">icons/QBE-Oxygen/edit-find.png</file>
-    <file alias="22x22/undo.png">icons/QBE-Oxygen/edit-undo.png</file>   
+    <file alias="22x22/undo.png">icons/QBE-Oxygen/edit-undo.png</file>
+    <file alias="22x22/redo.png">icons/QBE-Oxygen/edit-redo.png</file>
     <file alias="22x22/fonts.png">icons/QBE-Oxygen/application-x-font-ttf.png</file>
     <file alias="22x22/settings.png">icons/QBE-Oxygen/preferences-system.png</file>
     <file alias="22x22/key_bindings.png">icons/QBE-Oxygen/preferences-desktop-keyboard.png</file>

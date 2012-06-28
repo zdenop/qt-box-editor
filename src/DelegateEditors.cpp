@@ -7,6 +7,7 @@
 * Created:     2011-07-06
 *
 * (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -25,6 +26,7 @@
 #include "DelegateEditors.h"
 #include <QtGui/QApplication>
 #include <QtGui/QMouseEvent>
+#include <QtGui/QLineEdit>
 
 /********************************
  * SpinBoxDelegate
@@ -107,4 +109,19 @@ bool CheckboxDelegate::editorEvent(QEvent* event, QAbstractItemModel* model, con
   emit toggled(value, index.column());
 
   return model->setData(index, value, Qt::EditRole);
+}
+
+LineEditDelegate::LineEditDelegate(QObject* parent)
+  : QItemDelegate(parent) {
+}
+
+QWidget* LineEditDelegate::createEditor(QWidget *parent,
+                                        const QStyleOptionViewItem &option,
+                                        const QModelIndex &index) const {
+  QLineEdit* editor = new QLineEdit(parent);
+
+  connect(editor,SIGNAL(textEdited(QString)),SIGNAL(led_editstarted()));
+  connect(editor,SIGNAL(editingFinished()),SIGNAL(led_editfinished()));
+
+  return editor;
 }

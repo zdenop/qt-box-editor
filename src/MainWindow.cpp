@@ -6,7 +6,7 @@
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011-2012, Zdenko Podobny
-* (C) Copyright 2012, Zohar Gofer (Undo action)
+* (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -474,6 +474,12 @@ void MainWindow::undo() {
   }
 }
 
+void MainWindow::redo() {
+  if (activeChild()) {
+    activeChild()->redo();
+  }
+}
+
 void MainWindow::reReadSetting() {
   for (int i = 0; i < tabWidget->count(); ++i) {
     ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
@@ -604,6 +610,7 @@ void MainWindow::updateMenus() {
   goToRowAct->setEnabled(activeChild() != 0);
   findAct->setEnabled(activeChild() != 0);
   undoAct->setEnabled(activeChild() != 0);
+  redoAct->setEnabled(activeChild() != 0);
   drawRectAct->setEnabled(activeChild() != 0);
   drawBoxesAct->setEnabled(activeChild() != 0);
   DirectTypingAct->setEnabled(activeChild() != 0);
@@ -615,6 +622,8 @@ void MainWindow::updateCommandActions() {
 
   undoAct->setEnabled((activeChild())
                       ? activeChild()->isUndoAvailable() : false);
+  redoAct->setEnabled((activeChild())
+                      ? activeChild()->isRedoAvailable() : false);
   boldAct->setEnabled(enable);
   boldAct->setChecked((activeChild()) ? activeChild()->isBold() : false);
   italicAct->setEnabled(enable);
@@ -925,6 +934,11 @@ void MainWindow::createActions() {
   undoAct->setShortcut(tr("Ctrl+Z"));
   connect(undoAct, SIGNAL(triggered()), this, SLOT(undo()));
 
+  redoAct = new QAction(QIcon::fromTheme("redo"),
+                        tr("&Redo"), this);
+  redoAct->setShortcut(tr("Ctrl+Y"));
+  connect(redoAct, SIGNAL(triggered()), this, SLOT(redo()));
+
   settingsAct = new QAction(QIcon::fromTheme("settings"),
                             tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
@@ -981,6 +995,7 @@ void MainWindow::createMenus() {
 
   editMenu = menuBar()->addMenu(tr("&Edit"));
   editMenu->addAction(undoAct);
+  editMenu->addAction(redoAct);
   editMenu->addSeparator();
   editMenu->addAction(boldAct);
   editMenu->addAction(italicAct);
@@ -1046,6 +1061,7 @@ void MainWindow::createToolBars() {
   editToolBar = addToolBar(tr("Edit"));
   editToolBar->setObjectName("editToolBar");
   editToolBar->addAction(undoAct);
+  editToolBar->addAction(redoAct);
   editToolBar->addSeparator();
   editToolBar->addAction(boldAct);
   editToolBar->addAction(italicAct);

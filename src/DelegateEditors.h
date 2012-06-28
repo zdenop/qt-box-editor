@@ -7,6 +7,7 @@
 * Created:     2011-07-06
 *
 * (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -55,7 +56,7 @@ class CheckboxDelegate : public QItemDelegate
 {
     Q_OBJECT
 
-public:
+  public:
     CheckboxDelegate(QObject* parent = 0);
     QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
                           const QModelIndex& index) const;
@@ -64,8 +65,22 @@ public:
 
     void paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-signals:
-  void toggled(bool checked, int column);
+  signals:
+    void toggled(bool checked, int column);
+};
+
+class LineEditDelegate : public QItemDelegate
+{
+    Q_OBJECT
+
+  public:
+    LineEditDelegate(QObject* parent = 0);
+    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
+                          const QModelIndex& index) const;
+
+  signals:
+    void led_editstarted();
+    void led_editfinished();
 };
 
 #endif  // SRC_INCLUDE_DELEGATEEDITORS_H_

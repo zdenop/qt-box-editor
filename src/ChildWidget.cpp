@@ -6,8 +6,8 @@
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
 * (C) Copyright 2011-2012, Zdenko Podobny
-* (C) Copyright 2012, Zohar Gofer (Undo action)
-* (C) Copyright 2012, Dmitri Silaev (Hall text effect)
+* (C) Copyright 2012, Zohar Gofer
+* (C) Copyright 2012, Dmitri Silaev
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -81,6 +81,14 @@ ChildWidget::ChildWidget(QWidget* parent)
   table->hideColumn(9);
   table->installEventFilter(this);  // installs event filter
 
+  LineEditDelegate* leDelegate = new LineEditDelegate;
+  table->setItemDelegateForColumn(0,leDelegate);
+
+  connect(leDelegate,SIGNAL(led_editstarted()),this,
+          SLOT(letterStartEdit()));
+  connect(leDelegate,SIGNAL(led_editfinished()),this,
+          SLOT(letterEditFinished()));
+
   SpinBoxDelegate* sbDelegate = new SpinBoxDelegate;
   // TODO(zdenop): setMaximum for delegates after changing box
   table->setItemDelegateForColumn(1, sbDelegate);
@@ -90,7 +98,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   connect(sbDelegate, SIGNAL(sbd_valueChanged(int)), this,
           SLOT(sbValueChanged(int)));
   connect(sbDelegate, SIGNAL(sbd_editingFinished()), this,
-          SLOT(drawSelectionRects()));
+          SLOT(sbFinished()));
 
   CheckboxDelegate* cbDelegate = new CheckboxDelegate;
   table->setItemDelegateForColumn(6, cbDelegate);
@@ -212,81 +220,85 @@ ChildWidget::ChildWidget(QWidget* parent)
   rectangle = 0;
 
   rubberBand = new QRubberBand(QRubberBand::Rectangle, imageView);
+
+  m_undostack.SetRedoStack(&m_redostack);
+  bIsSpinBoxChanged = false;
+  bIsLineEditChanged = false;
 }
 
 void ChildWidget::readSettings() {
-    // Font for table
-    QSettings settings(QSettings::IniFormat, QSettings::UserScope,
-                       SETTING_ORGANIZATION, SETTING_APPLICATION);
-    QFont tableFont = settings.value("GUI/Font").value<QFont>();
+  // Font for table
+  QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                     SETTING_ORGANIZATION, SETTING_APPLICATION);
+  QFont tableFont = settings.value("GUI/Font").value<QFont>();
 
-    if (tableFont.family().isEmpty()) {
-      tableFont.setFamily(TABLE_FONT);
-      tableFont.setPointSize(TABLE_FONT_SIZE);
-    }
-    table->setFont(tableFont);
+  if (tableFont.family().isEmpty()) {
+    tableFont.setFamily(TABLE_FONT);
+    tableFont.setPointSize(TABLE_FONT_SIZE);
+  }
+  table->setFont(tableFont);
 
-    // Font for Image/balloons
-    if (settings.contains("GUI/UseTheSameFont") &&
-        settings.value("GUI/UseTheSameFont").toBool()) {
-      m_imageFont = tableFont;
-    } else {
-      m_imageFont = settings.value("GUI/ImageFont").value<QFont>();
-      if (m_imageFont.family().isEmpty()) {
-        m_imageFont.setFamily(TABLE_FONT);
-        m_imageFont.setPointSize(TABLE_FONT_SIZE);
-      }
+  // Font for Image/balloons
+  if (settings.contains("GUI/UseTheSameFont") &&
+      settings.value("GUI/UseTheSameFont").toBool()) {
+    m_imageFont = tableFont;
+  } else {
+    m_imageFont = settings.value("GUI/ImageFont").value<QFont>();
+    if (m_imageFont.family().isEmpty()) {
+      m_imageFont.setFamily(TABLE_FONT);
+      m_imageFont.setPointSize(TABLE_FONT_SIZE);
     }
-    m_imageFont.setPointSize(2 * m_imageFont.pointSize());
+  }
+  m_imageFont.setPointSize(2 * m_imageFont.pointSize());
 
-    if (settings.contains("GUI/ImageFontOffset")) {
-      fontOffset = settings.value("GUI/ImageFontOffset").toInt();
-    } else {
-      fontOffset = 16 * 2 - 15;
-    }
+  if (settings.contains("GUI/ImageFontOffset")) {
+    fontOffset = settings.value("GUI/ImageFontOffset").toInt();
+  } else {
+    fontOffset = 16 * 2 - 15;
+  }
 
-    if (settings.contains("GUI/BalloonCount")) {
-      balloonCount = settings.value("GUI/BalloonCount").toInt();
-    } else {
-      balloonCount = 13;
-    }
+  if (settings.contains("GUI/BalloonCount")) {
+    balloonCount = settings.value("GUI/BalloonCount").toInt();
+  } else {
+    balloonCount = 13;
+  }
 
-    if (settings.contains("GUI/ImageFontColor")) {
-      imageFontColor = settings.value("GUI/ImageFontColor").value<QColor>();
-    } else {
-      imageFontColor = Qt::red;
-    }
+  if (settings.contains("GUI/ImageFontColor")) {
+    imageFontColor = settings.value("GUI/ImageFontColor").value<QColor>();
+  } else {
+    imageFontColor = Qt::red;
+  }
 
-    if (settings.contains("GUI/Rectagle")) {
-      rectColor = settings.value("GUI/Rectagle").value<QColor>();
-    } else {
-      rectColor = Qt::red;
-    }
+  if (settings.contains("GUI/Rectagle")) {
+    rectColor = settings.value("GUI/Rectagle").value<QColor>();
+  } else {
+    rectColor = Qt::red;
+  }
 
-    if (settings.contains("GUI/Rectagle_fill")) {
-      rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
-    } else {
-      rectFillColor = Qt::red;
-      rectFillColor.setAlpha(127);
-    }
+  if (settings.contains("GUI/Rectagle_fill")) {
+    rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
+  } else {
+    rectFillColor = Qt::red;
+    rectFillColor.setAlpha(127);
+  }
 
-    if (settings.contains("GUI/Box")) {
-      boxColor = settings.value("GUI/Box").value<QColor>();
-    } else {
-      boxColor = Qt::green;
-    }
+  if (settings.contains("GUI/Box")) {
+    boxColor = settings.value("GUI/Box").value<QColor>();
+  } else {
+    boxColor = Qt::green;
+  }
 
-    if (settings.contains("GUI/BackgroundColor")) {
-      backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
-    } else {
-      backgroundColor = (Qt::gray);
-    }
-    imageView->setBackgroundBrush(backgroundColor);
+  if (settings.contains("GUI/BackgroundColor")) {
+    backgroundColor = settings.value("GUI/BackgroundColor").value<QColor>();
+  } else {
+    backgroundColor = (Qt::gray);
+  }
+  imageView->setBackgroundBrush(backgroundColor);
 
-    if (model->rowCount() > 0) {
-        table->resizeRowsToContents();
-        calculateTableWidth();
-    }
+  if (model->rowCount() > 0) {
+    table->resizeRowsToContents();
+    calculateTableWidth();
+  }
 }
 
 void ChildWidget::calculateTableWidth() {
@@ -900,12 +912,25 @@ void ChildWidget::setItalic(bool v) {
   QFont letterFont;
 
   foreach(index, indexes) {
-    letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
-                             Qt::FontRole).value<QFont>();
-    letterFont.setItalic(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                   Qt::FontRole);
-    model->setData(model->index(index.row(), 6, QModelIndex()), v);
+    //IsItalic?
+    bool current = model->index(index.row(), 6).data().toBool();
+    if (current != v) {
+      UndoItem ui;
+      ui.m_eop = euoChange;
+      ui.m_origrow = index.row();
+
+      for (int ii = 0; ii < 9; ii++)
+        ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
+
+      m_undostack.push(ui);
+
+      letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                               Qt::FontRole).value<QFont>();
+      letterFont.setItalic(v);
+      model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                     Qt::FontRole);
+      model->setData(model->index(index.row(), 6, QModelIndex()), v);
+    }
   }
 }
 
@@ -915,12 +940,26 @@ void ChildWidget::setBolded(bool v) {
   QFont letterFont;
 
   foreach(index, indexes) {
-    letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
-                             Qt::FontRole).value<QFont>();
-    letterFont.setBold(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                   Qt::FontRole);
-    model->setData(model->index(index.row(), 7, QModelIndex()), v);
+    //IsBool?
+    bool current = model->index(index.row(), 7).data().toBool();
+    if (current != v) {
+      UndoItem ui;
+      ui.m_eop = euoChange;
+      ui.m_origrow = index.row();
+
+      for (int ii = 0; ii < 9; ii++)
+        ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
+
+      m_undostack.push(ui);
+
+      letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                               Qt::FontRole).value<QFont>();
+      letterFont.setBold(v);
+
+      model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                     Qt::FontRole);
+      model->setData(model->index(index.row(), 7, QModelIndex()), v);
+    }
   }
 }
 
@@ -930,12 +969,25 @@ void ChildWidget::setUnderline(bool v) {
   QFont letterFont;
 
   foreach(index, indexes) {
-    letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
-                             Qt::FontRole).value<QFont>();
-    letterFont.setUnderline(v);
-    model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
-                   Qt::FontRole);
-    model->setData(model->index(index.row(), 8, QModelIndex()), v);
+    //IsUnderLine?
+    bool current = model->index(index.row(), 8).data().toBool();
+    if (current != v) {
+      UndoItem ui;
+      ui.m_eop = euoChange;
+      ui.m_origrow = index.row();
+
+      for (int ii = 0; ii < 9; ii++)
+        ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
+
+      m_undostack.push(ui);
+
+      letterFont = model->data(model->index(index.row(), 0, QModelIndex()),
+                               Qt::FontRole).value<QFont>();
+      letterFont.setUnderline(v);
+      model->setData(model->index(index.row(), 0, QModelIndex()), letterFont,
+                     Qt::FontRole);
+      model->setData(model->index(index.row(), 8, QModelIndex()), v);
+    }
   }
 }
 
@@ -1364,33 +1416,40 @@ void ChildWidget::insertSymbol() {
   if (leftBorder > rightBorder)  // end of line or overlapping boxes
     rightBorder = leftBorder +
                   (leftBorder - model->index(index.row(), 1).data().toInt());
-  model->insertRow(index.row() + 1);
-  model->setData(model->index(index.row() + 1, 0), "*");
-  model->setData(model->index(index.row() + 1, 1), leftBorder);
-  model->setData(model->index(index.row() + 1, 2),
-                 model->index(index.row(), 2).data().toInt());
-  model->setData(model->index(index.row() + 1, 3), rightBorder);
-  model->setData(model->index(index.row() + 1, 4),
-                 model->index(index.row(), 4).data().toInt());
-  model->setData(model->index(index.row() + 1, 5),
-                 model->index(index.row(), 5).data().toInt());
-  model->setData(model->index(index.row() + 1, 6),
-                 model->index(index.row(), 6).data().toBool());
-  model->setData(model->index(index.row() + 1, 7),
-                 model->index(index.row(), 7).data().toBool());
-  model->setData(model->index(index.row() + 1, 8),
-                 model->index(index.row(), 8).data().toBool());
 
-  QGraphicsRectItem* rectItem = createModelItemBox(index.row() + 1);
-  if (boxesVisible)
-    rectItem->show();
-  table->setCurrentIndex(model->index(index.row() + 1, 0));
-  table->setFocus();
+  int newrow = index.row() + 1;
+  model->insertRow(newrow);
+  model->setData(model->index(newrow, 0), "*");
+  model->setData(model->index(newrow, 1), leftBorder);
+  model->setData(model->index(newrow, 2),
+                 model->index(index.row(), 2).data().toInt());
+  model->setData(model->index(newrow, 3), rightBorder);
+  model->setData(model->index(newrow, 4),
+                 model->index(index.row(), 4).data().toInt());
+  model->setData(model->index(newrow, 5),
+                 model->index(index.row(), 5).data().toInt());
+  model->setData(model->index(newrow, 6),
+                 model->index(index.row(), 6).data().toBool());
+  model->setData(model->index(newrow, 7),
+                 model->index(index.row(), 7).data().toBool());
+  model->setData(model->index(newrow, 8),
+                 model->index(index.row(), 8).data().toBool());
 
   UndoItem ui;
   ui.m_eop = euoAdd;
-  ui.m_origrow = index.row() + 1;
+  ui.m_origrow = newrow;
+
+  //For redo
+  for (int ii = 0; ii < 9; ii++)
+    ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
+
   m_undostack.push(ui);
+
+  QGraphicsRectItem* rectItem = createModelItemBox(newrow);
+  if (boxesVisible)
+    rectItem->show();
+  table->setCurrentIndex(model->index(newrow, 0));
+  table->setFocus();
 
   drawSelectionRects();
 }
@@ -1476,6 +1535,16 @@ void ChildWidget::joinSymbol() {
   }
 
   int targetRow = indexes.front().row();
+
+  UndoItem ui;
+  ui.m_eop = euoChange;
+  ui.m_origrow = targetRow;
+
+  for (int ii = 0; ii < 9; ii++)
+    ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
+
+  m_undostack.push(ui);
+
   model->setData(model->index(targetRow, 0), letter);
   model->setData(model->index(targetRow, 1), left);
   model->setData(model->index(targetRow, 2), bottom);
@@ -1488,15 +1557,33 @@ void ChildWidget::joinSymbol() {
   updateModelItemBox(targetRow);
 
   selectionModel->clearSelection();
-  for (int i = indexes.size() - 1; i >= 1; --i) {
-    int row = indexes[i].row();
-    deleteModelItemBox(row);
-    model->removeRow(row);
+
+  int rowstodelete = indexes.size();
+  int rownum = indexes.front().row();
+
+  //Keep the first row with joined data
+  rownum++;
+  rowstodelete--;
+
+  for (int i = rowstodelete; i > 0; i--) {
+    deleteSymbolByRow(rownum);
   }
 
   table->setCurrentIndex(model->index(targetRow, 0));
   table->setFocus();
   drawSelectionRects();
+}
+
+void ChildWidget::deleteSymbolByRow(int row) {
+  UndoItem ui;
+  ui.m_eop = euoDelete;
+  ui.m_origrow = row;
+  for (int j = 0; j < 9; ++j)
+    ui.m_vdata[j] = model->index(ui.m_origrow, j).data();
+  m_undostack.push(ui);
+
+  deleteModelItemBox(ui.m_origrow);
+  model->removeRow(ui.m_origrow);
 }
 
 void ChildWidget::deleteSymbol() {
@@ -1506,16 +1593,11 @@ void ChildWidget::deleteSymbol() {
   // This prevents deselecting dead rows in selectionChanged() on removeRow()
   selectionModel->clearSelection();
 
-  for (int i = indexes.size() - 1; i >= 0; --i) {
-    UndoItem ui;
-    ui.m_eop = euoDelete;
-    ui.m_origrow = indexes[i].row();
-    for (int j = 0; j < 9; ++j)
-      ui.m_vdata[j] = model->index(ui.m_origrow, j).data();
-    m_undostack.push(ui);
+  int rowstodelete = indexes.size();
+  int rownum = indexes.front().row();
 
-    deleteModelItemBox(ui.m_origrow);
-    model->removeRow(ui.m_origrow);
+  for (int i = rowstodelete; i > 0; i--) {
+    deleteSymbolByRow(rownum);
   }
 
   if (model->rowCount() != 0) {
@@ -1804,6 +1886,28 @@ void ChildWidget::cbFontToggleProxy(bool checked, int column) {
   }
 }
 
+void ChildWidget::letterStartEdit() {
+  QModelIndex index = selectionModel->currentIndex();
+  int row = index.row();
+  if (!bIsLineEditChanged) {
+    //First event. Save undo
+    UndoItem ui;
+    ui.m_eop = euoChange;
+    ui.m_origrow = row;
+
+    for (int i = 0; i < 9; i++)
+      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+    m_undostack.push(ui);
+
+    bIsLineEditChanged = true;
+  }
+}
+
+void ChildWidget::letterEditFinished() {
+  bIsLineEditChanged = false;
+}
+
 void ChildWidget::sbValueChanged(int sbdValue) {
   QModelIndex index = selectionModel->currentIndex();
   int row = index.row();
@@ -1830,17 +1934,27 @@ void ChildWidget::sbValueChanged(int sbdValue) {
     break;
   }
 
-  UndoItem ui;
-  ui.m_eop = euoChange;
-  ui.m_origrow = row;
+  if (!bIsSpinBoxChanged) {
+    //First event. Save undo
+    UndoItem ui;
+    ui.m_eop = euoChange;
+    ui.m_origrow = row;
 
-  for (int i = 0; i < 9; i++)
-    ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+    for (int i = 0; i < 9; i++)
+      ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
-  m_undostack.push(ui);
+    m_undostack.push(ui);
+
+    bIsSpinBoxChanged = true;
+  }
 
   modelItemBox(row)->setRect(QRectF(QPoint(left, top), QPointF(right, bottom)));
+
   imageView->ensureVisible(modelItemBox(row));
+}
+
+void ChildWidget::sbFinished() {
+  bIsSpinBoxChanged = false;
 }
 
 void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
@@ -1876,6 +1990,10 @@ void ChildWidget::findPrev(const QString &symbol,
 
 bool ChildWidget::isUndoAvailable() {
   return m_undostack.isEmpty() ? false : true;
+}
+
+bool ChildWidget::isRedoAvailable() {
+  return m_redostack.isEmpty() ? false : true;
 }
 
 void ChildWidget::undo() {
@@ -1915,7 +2033,7 @@ void ChildWidget::undo() {
     undoMoveBack(ui);
     break;
   default:
-    // Nothing to dofor other cases. Report error.
+    // Nothing to do for other cases. Report error.
 
     QMessageBox::warning(
       this,
@@ -1923,10 +2041,13 @@ void ChildWidget::undo() {
       "Invalid undo operation.");
     break;
   }
+
+  emit boxChanged();  // update toolbar/menu
 }
 
 // Delete item as undo operation of add
-void ChildWidget::undoDelete(UndoItem& ui) {
+void ChildWidget::undoDelete(UndoItem& ui, bool bIsRedo) {
+  selectionModel->clearSelection();
   deleteModelItemBox(ui.m_origrow);
   model->removeRow(ui.m_origrow);
 
@@ -1940,50 +2061,187 @@ void ChildWidget::undoDelete(UndoItem& ui) {
   table->setCurrentIndex(model->index(newfocusrow, 0));
   table->setFocus();
   drawSelectionRects();
+
+  if (bIsRedo)
+    m_undostack.push(ui,false);
+  else
+    m_redostack.push(ui);
 }
 
 // Add back item as undo operation of delete
-void ChildWidget::undoAdd(UndoItem& ui) {
+void ChildWidget::undoAdd(UndoItem& ui, bool bIsRedo) {
   model->insertRow(ui.m_origrow);
-  undoEdit(ui);
+  undoEdit(ui,bIsRedo);
 }
 
 // Put back edited values
-void ChildWidget::undoEdit(UndoItem& ui) {
-  for (int i = 0; i < 9; i++)
-    model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
-  if (ui.m_eop == euoDelete)
+void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
+  if (ui.m_eop == euoChange) {
+    if (bIsRedo) {
+      for (int i = 0; i < 9; i++)
+        model->setData(model->index(ui.m_origrow, i), ui.m_vextradata[i]);
+    } else {
+      //Save for redo
+      for (int ii = 0; ii < 9; ii++)
+        ui.m_vextradata[ii] = model->index(ui.m_origrow, ii).data();
+
+      for (int i = 0; i < 9; i++)
+        model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
+    }
+  } else {
+    for (int i = 0; i < 9; i++)
+      model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
+  }
+
+  if (ui.m_eop == euoDelete || (bIsRedo && ui.m_eop == euoAdd)) {
     createModelItemBox(ui.m_origrow);
-  else
+  } else
     updateModelItemBox(ui.m_origrow);
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
   table->setFocus();
   drawSelectionRects();
+
+  if (bIsRedo)
+    m_undostack.push(ui,false);
+  else
+    m_redostack.push(ui);
 }
 
 // Re-join split rows
-void ChildWidget::undoJoin(UndoItem& ui) {
+void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
+  //Save data for redo
+  UndoItem rui;
+  rui.m_eop = euoJoin;
+  rui.m_origrow = ui.m_origrow;
+  rui.m_extrarow = ui.m_extrarow;
+
+  for (int i = 0; i < 9; i++) {
+    rui.m_vdata[i] = model->index(rui.m_origrow, i).data();
+    rui.m_vextradata[i] = model->index(rui.m_extrarow, i).data();
+  }
+
   deleteModelItemBox(ui.m_extrarow);
   model->removeRow(ui.m_extrarow);
-  undoEdit(ui);
+
+  updateModelItemBox(ui.m_origrow);
+
+  for (int i = 0; i < 9; i++)
+    model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
+
+  table->setCurrentIndex(model->index(ui.m_origrow, 0));
+  table->setFocus();
+  drawSelectionRects();
+
+  if (bIsRedo)
+    m_undostack.push(rui,false);
+  else
+    m_redostack.push(rui);
 }
 
 // Split back joined lines
-void ChildWidget::undoSplit(UndoItem& ui) {
+void ChildWidget::undoSplit(UndoItem& ui, bool bIsRedo) {
+  //Save data for redo
+  UndoItem rui;
+  rui.m_eop = euoSplit;
+  rui.m_origrow = ui.m_origrow;
+  rui.m_extrarow = ui.m_origrow + 1;
+
+  for (int i = 0; i < 9; i++) {
+    rui.m_vdata[i] = model->index(rui.m_origrow, i).data();
+  }
+
   model->insertRow(ui.m_extrarow);
-  for (int i = 0; i < 9; i++)
+  for (int i = 0; i < 9; i++) {
     model->setData(model->index(ui.m_extrarow, i), ui.m_vextradata[i]);
+    model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
+  }
+  updateModelItemBox(ui.m_origrow);
   createModelItemBox(ui.m_extrarow);
 
-  undoEdit(ui);
+  table->setCurrentIndex(model->index(ui.m_origrow, 0));
+  table->setFocus();
+  drawSelectionRects();
+
+  if (bIsRedo)
+    m_undostack.push(rui,false);
+  else
+    m_redostack.push(rui);
 }
 
 // Put replaced rows back to original location
-void ChildWidget::undoMoveBack(UndoItem& ui) {
-  for (int i = 0; i < 9; i++)
-    model->setData(model->index(ui.m_extrarow, i), ui.m_vextradata[i]);
+void ChildWidget::undoMoveBack(UndoItem& ui, bool bIsRedo) {
+  int firstrow = ui.m_origrow;
+  int secondrow = ui.m_extrarow;
+
+  if (bIsRedo) {
+    firstrow = ui.m_extrarow;
+    secondrow = ui.m_origrow;
+  }
+
+  for (int i = 0; i < 9; i++) {
+    model->setData(model->index(firstrow, i), ui.m_vdata[i]);
+    model->setData(model->index(secondrow, i), ui.m_vextradata[i]);
+  }
+  updateModelItemBox(ui.m_origrow);
   updateModelItemBox(ui.m_extrarow);
 
-  undoEdit(ui);
+  table->setCurrentIndex(model->index(firstrow, 0));
+  table->setFocus();
+
+  drawSelectionRects();
+
+  if (bIsRedo)
+    m_undostack.push(ui,false);
+  else
+    m_redostack.push(ui);
+}
+
+void ChildWidget::redo() {
+  if (m_redostack.isEmpty()) {
+    emit boxChanged();  // update toolbar/menu to disable undo action
+    // TODO(all): it is not working perfectly (are there some "ghost" undo
+    // actions?). Maybe we need to implement UndoStackView similar to
+    // http://doc-snapshot.qt-project.org/4.8/demos-undo.html
+    return;
+  }
+
+  UndoItem ui = m_redostack.pop();
+
+  switch (ui.m_eop) {
+  case euoAdd:
+    // Item was added. Reverse is remove it. Redo: Add it again, with values
+    undoAdd(ui,true);
+    break;
+  case euoDelete:
+    // Item was deleted. Reverse is put it back. Redo: delete it again
+    undoDelete(ui,true);
+    break;
+  case euoChange:
+    // Item was edited. Put back old values.
+    undoEdit(ui,true);
+    break;
+  case euoJoin:
+    // Two items joined. Split back.
+    undoSplit(ui,true);
+    break;
+  case euoSplit:
+    // Item split in two. Join back.
+    undoJoin(ui,true);
+    break;
+  case euoReplace:
+    // Two item changed places. Change places back.
+    undoMoveBack(ui,true);
+    break;
+  default:
+    // Nothing to dofor other cases. Report error.
+
+    QMessageBox::warning(
+      this,
+      SETTING_APPLICATION,
+      "Invalid redo operation.");
+    break;
+  }
+
+  emit boxChanged();
 }

@@ -24,6 +24,7 @@
     <file alias="22x22/help-about.svg">icons/QBE-Tango/help-browser.svg</file>
     <file alias="22x22/find.svg">icons/QBE-Tango/edit-find.svg</file>
     <file alias="22x22/undo.svg">icons/QBE-Tango/edit-undo.svg</file>
+    <file alias="22x22/redo.svg">icons/QBE-Tango/edit-redo.svg</file>
     <file alias="22x22/fonts.svg">icons/QBE-Tango/font-x-generic.svg</file>
 
     <file alias="24x24/zoom-width.png">icons/QBE-Faenza/zoom-width.png</file>

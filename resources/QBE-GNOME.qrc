@@ -23,6 +23,7 @@
     <file alias="24x24/help-about.png">icons/QBE-GNOME/help-about.png</file>
     <file alias="24x24/find.png">icons/QBE-GNOME/edit-find.png</file>
     <file alias="24x24/undo.png">icons/QBE-GNOME/edit-undo.png</file>
+    <file alias="24x24/redo.png">icons/QBE-GNOME/edit-redo.png</file>
     <file alias="24x24/fonts.png">icons/QBE-GNOME/preferences-desktop-font.png</file>
     <file alias="24x24/key_bindings.png">icons/QBE-GNOME/preferences-desktop-keyboard-shortcuts.png</file>
     <file alias="24x24/settings.png">icons/QBE-GNOME/preferences-system.png</file>
