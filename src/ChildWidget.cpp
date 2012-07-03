@@ -1521,6 +1521,14 @@ void ChildWidget::joinSymbol() {
   bool italic = false;
   bool bold = false;
   bool underline = false;
+
+  int targetRow = indexes.front().row();
+
+  QStack<UndoItem> joinstack;
+  UndoItem tempJoin;
+  tempJoin.m_origrow = targetRow;
+  tempJoin.m_eop = euoChange;
+
   for (int i = 0; i < indexes.size(); ++i) {
     int row = indexes[i].row();
     letter += model->data(model->index(row, 0)).toString();
@@ -1532,18 +1540,19 @@ void ChildWidget::joinSymbol() {
     italic = italic || model->data(model->index(row, 6)).toBool();
     bold = bold || model->data(model->index(row, 7)).toBool();
     underline = underline || model->data(model->index(row, 8)).toBool();
+
+    tempJoin.m_vdata[0] = letter;
+    tempJoin.m_vdata[1] = left;
+    tempJoin.m_vdata[2] = bottom;
+    tempJoin.m_vdata[3] = right;
+    tempJoin.m_vdata[4] = top;
+    tempJoin.m_vdata[5] = page;
+    tempJoin.m_vdata[6] = italic;
+    tempJoin.m_vdata[7] = bold;
+    tempJoin.m_vdata[8] = underline;
+
+    joinstack.push_front(tempJoin);
   }
-
-  int targetRow = indexes.front().row();
-
-  UndoItem ui;
-  ui.m_eop = euoChange;
-  ui.m_origrow = targetRow;
-
-  for (int ii = 0; ii < 9; ii++)
-    ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
-
-  m_undostack.push(ui);
 
   model->setData(model->index(targetRow, 0), letter);
   model->setData(model->index(targetRow, 1), left);
@@ -1566,6 +1575,7 @@ void ChildWidget::joinSymbol() {
   rowstodelete--;
 
   for (int i = rowstodelete; i > 0; i--) {
+      m_undostack.push(joinstack.pop());
     deleteSymbolByRow(rownum);
   }
 
