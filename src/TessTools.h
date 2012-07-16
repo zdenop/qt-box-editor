@@ -23,8 +23,8 @@
 #ifndef SRC_INCLUDE_TESSTOOLS_H_
 #define SRC_INCLUDE_TESSTOOLS_H_
 
-#include <baseapi.h>
-#include <allheaders.h>
+#include <tesseract/baseapi.h>
+#include <leptonica/allheaders.h>
 #include "TessTools.h"
 #include <QtCore/QString>
 #include <QtGui/QImage>

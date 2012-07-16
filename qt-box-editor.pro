@@ -58,6 +58,8 @@ RESOURCES = resources/application.qrc \
     resources/QBE-Oxygen.qrc \
     resources/QBE-Tango.qrc
 
+LIBS += -llept -ltesseract
+
 win32: {
     DESTDIR = ./win32
     #DIR_SEPARATOR = \
@@ -69,13 +71,11 @@ win32: {
     DEFINES += WINDOWS __BLOB_T_DEFINED
     #QMAKE_LFLAGS.gcc += -static-libgcc # -static
     RC_FILE = resources/win.rc
-    INCLUDEPATH +=  win32-external/include/tesseract/ \
-                    win32-external/include/leptonica/
-    LIBS += -ltesseract -llept -lws2_32 -Lwin32-external/lib
+    INCLUDEPATH +=  win32-external/include/
+    LIBS += -lws2_32 -Lwin32-external/lib
 }
 
 unix: {
-    INCLUDEPATH += /usr/include/leptonica /usr/local/include/tesseract/
-    LIBS += -llept -ltesseract
+
 }
 

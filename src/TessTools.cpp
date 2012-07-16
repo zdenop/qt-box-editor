@@ -20,12 +20,10 @@
 *
 **********************************************************************/
 
-#include <baseapi.h>
-#include <allheaders.h>
-#include <strngs.h>
+#include <tesseract/strngs.h>
+#include <locale.h>
 #include "TessTools.h"
 #include "Settings.h"
-#include <locale.h>
 
 #include <QtGui/QApplication>
 #include <QWidget>
