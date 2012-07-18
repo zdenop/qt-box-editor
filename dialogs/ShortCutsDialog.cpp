@@ -4,7 +4,7 @@
 * Author:      Zdenko Podobny
 * Created:     2011-03-21
 *
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2012, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -37,9 +37,10 @@ ShortCutsDialog::ShortCutsDialog(QWidget* parent)
                         "<br/>"
                         "<b>CTRL + B</b> — set symbol as <b>bold</b><br/>"
                         "<b>CTRL + I</b> — set symbol as <i>italic</i><br/>"
-                        "<b>CTRL + U</b> — set symbol as <u>undelined</u><br/>"
+                        "<b>CTRL + U</b> — set symbol as <u>underlined</u><br/>"
                         "<br/>"
-                        "<b>CTRL + H</b> — display all symbols on image<br/>"
+                        "<b>CTRL + Z</b> — undo last change<br/>"
+                        "<b>CTRL + Y</b> — redo last undo<br/>"
                         "<br/>"
                         "<b>CTRL + +/-</b> — zoom image<br/>"
                         "<b>CTRL + *</b> — zoom image to original scale<br/>"
@@ -56,9 +57,15 @@ ShortCutsDialog::ShortCutsDialog(QWidget* parent)
                         "<b>CTRL + D</b> — direct type mode<br/>"
                         "<br/>"
                         "<b>CTRL + arrows up/down</b> — move symbol up/down in"
-                        "table<br/>"
+                        " table<br/>"
                         "<b>CTRL + G</b> — go to row id…<br/>"
                         "<b>CTRL + M</b> — Move row to row id…<br/>"
                         "<b>CTRL + T</b> — setting dialog<br/>"
+                        "<br/>"
+                        "<b>CTRL + F</b> — find symbol<br/>"
+                        "<br/>"
+                        "<b>CTRL + L</b> — show/hide balloon symbols on image<br/>"
+                        "<b>CTRL + H</b> — show/hide all boxes on image<br/>"
+                        "<b>CTRL + R</b> — draw/hide rectangle on image<br/>"
                         "</p>"));
 }

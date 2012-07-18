@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.09dev
+VERSION = 1.09
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -12,8 +12,8 @@ INCLUDEPATH += ./ \
     src
 
 QT += network \
-    svg \
-    testlib
+    svg #\
+    # testlib
 
 CONFIG += release
 
@@ -63,7 +63,8 @@ LIBS += -llept -ltesseract
 win32: {
     DESTDIR = ./win32
     #DIR_SEPARATOR = \
-    CONFIG += static release embed_manifest_exe
+    # CONFIG += static release embed_manifest_exe
+    CONFIG += release embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti -static
     #QTPLUGIN += qsvg # image formats

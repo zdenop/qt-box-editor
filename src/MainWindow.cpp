@@ -1002,8 +1002,8 @@ void MainWindow::createMenus() {
   editMenu->addAction(underlineAct);
   editMenu->addSeparator();
   editMenu->addAction(insertAct);
-  editMenu->addAction(splitAct);
   editMenu->addAction(joinAct);
+  editMenu->addAction(splitAct);
   editMenu->addAction(deleteAct);
   editMenu->addSeparator();
   editMenu->addAction(moveUpAct);

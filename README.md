@@ -57,3 +57,14 @@ joinRow.svg and splitRow.svg are adapted icons of lmproulx icons [Convergent](ht
 gnome-edit-find.svg is from [Wikipedia](http://en.wikipedia.org/wiki/File:Gnome-edit-find.svg).
 
 Other icons/artwork were created for Qt Box Editor and they are released under Apache License, Version 2.0.
+
+
+Distribution
+------------
+
+For Windows users there is binary a version in [Download](https://github.com/zdenop/qt-box-editor/downloads) section. From version 1.09 distribution is split to 2 part:
+* qt-box-editor executable (e.g. qt-box-editor-1.09.exe) - share build
+* qt-box-editor dependecies (e.g. qt-box-editor-1.09-dependecies.zip) - needed 3rd party libraries to run qt-box editor.
+There is a hope that qt-box-editor dependecies can be used for next few qt-box-editor releases.
+
+On other platforms you need to build qt-box-editor from source. You will need QT4, leptonica and tesseract.

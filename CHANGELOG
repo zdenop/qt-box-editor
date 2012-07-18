@@ -1,3 +1,17 @@
+1.09
+- implemented icontheme change option + 3 additional themes (gnome, tango,
+  oxygen)
+- implemented option to change QT Style
+- implemented redo (thanks to Z. Gofer)
+- improved undo (thanks to Z. Gofer)
+- Rubber band selection with Ctrl + mouse click and drag from image 
+  (thanks to D. Silaev)
+- multiline join and delete (thanks to D. Silaev)
+- baloon effect - posibility to define how many symbols will be displayed 
+  (thanks to D. Silaev)
+- exteded settings for more customisation
+- several fixed of segfault 
+
 1.08
 - show/hide columns with font formatting (thanks to D. Silaev)
 - char table col width management, Font column fixes (thanks to D. Silaev)
