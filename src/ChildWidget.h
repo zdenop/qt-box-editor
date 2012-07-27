@@ -29,6 +29,7 @@
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
+#include <QtCore/QFileSystemWatcher>
 #include <QtCore/QSettings>
 #include <QtCore/QTextStream>
 #include <QtCore/qmath.h>
@@ -175,6 +176,7 @@ class ChildWidget : public QSplitter {
     void findPrev(const QString &symbol, Qt::CaseSensitivity mc);
 
   private:
+    void initTable();
     void deleteSymbolByRow(int row);
     void undoDelete(UndoItem& ui, bool bIsRedo = false);
     void undoAdd(UndoItem& ui, bool bIsRedo = false);
@@ -195,6 +197,7 @@ class ChildWidget : public QSplitter {
     void emitBoxChanged();
     void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
     void drawSelectionRects();
+    void slotfileChanged(const QString& fileName);
 
   private:
     int fontOffset;
@@ -206,6 +209,7 @@ class ChildWidget : public QSplitter {
     QGraphicsItem* m_message;
     FindDialog *f_dialog;
     DrawRectangle *m_DrawRectangle;
+    QFileSystemWatcher *fileWatcher;
 
     void moveSymbolRow(int direction);
     QList<QTableWidgetItem*> takeRow(int row);

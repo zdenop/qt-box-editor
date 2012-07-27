@@ -47,65 +47,12 @@ int my_max(int arg1, int arg2) {
 
 ChildWidget::ChildWidget(QWidget* parent)
   : QSplitter(Qt::Horizontal, parent) {
-  model = new QStandardItemModel(0, 10, this);
-  //  model->setHeaderData(-1, Qt::Horizontal, tr("Row"));
-  model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
-  model->setHeaderData(1, Qt::Horizontal, tr("Left"));
-  model->setHeaderData(2, Qt::Horizontal, tr("Bottom"));
-  model->setHeaderData(3, Qt::Horizontal, tr("Right"));
-  model->setHeaderData(4, Qt::Horizontal, tr("Top"));
-  model->setHeaderData(5, Qt::Horizontal, tr("Page"));
-  model->setHeaderData(6, Qt::Horizontal, tr("Italic"));
-  model->setHeaderData(7, Qt::Horizontal, tr("Bold"));
-  model->setHeaderData(8, Qt::Horizontal, tr("Underline"));
-  model->setHeaderData(9, Qt::Horizontal, tr("<Hidden> BB"));
-
   table = new QTableView;
-  table->setModel(model);
   table->resize(1, 1);
   table->setAlternatingRowColors(true);
-  selectionModel = new QItemSelectionModel(model);
-  connect(
-    selectionModel,
-    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-    this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
-  table->setSelectionModel(selectionModel);
-  table->setSelectionBehavior(QAbstractItemView::SelectRows);
-  table->setSelectionMode(QAbstractItemView::ExtendedSelection);
   table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-
-  table->hideColumn(5);
-  table->hideColumn(6);
-  table->hideColumn(7);
-  table->hideColumn(8);
-  table->hideColumn(9);
   table->installEventFilter(this);  // installs event filter
-
-  LineEditDelegate* leDelegate = new LineEditDelegate;
-  table->setItemDelegateForColumn(0,leDelegate);
-
-  connect(leDelegate,SIGNAL(led_editstarted()),this,
-          SLOT(letterStartEdit()));
-  connect(leDelegate,SIGNAL(led_editfinished()),this,
-          SLOT(letterEditFinished()));
-
-  SpinBoxDelegate* sbDelegate = new SpinBoxDelegate;
-  // TODO(zdenop): setMaximum for delegates after changing box
-  table->setItemDelegateForColumn(1, sbDelegate);
-  table->setItemDelegateForColumn(2, sbDelegate);
-  table->setItemDelegateForColumn(3, sbDelegate);
-  table->setItemDelegateForColumn(4, sbDelegate);
-  connect(sbDelegate, SIGNAL(sbd_valueChanged(int)), this,
-          SLOT(sbValueChanged(int)));
-  connect(sbDelegate, SIGNAL(sbd_editingFinished()), this,
-          SLOT(sbFinished()));
-
-  CheckboxDelegate* cbDelegate = new CheckboxDelegate;
-  table->setItemDelegateForColumn(6, cbDelegate);
-  table->setItemDelegateForColumn(7, cbDelegate);
-  table->setItemDelegateForColumn(8, cbDelegate);
-  connect(cbDelegate, SIGNAL(toggled(bool, int)), this,
-          SLOT(cbFontToggleProxy(bool, int)));
+  initTable();
 
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
@@ -224,6 +171,65 @@ ChildWidget::ChildWidget(QWidget* parent)
   m_undostack.SetRedoStack(&m_redostack);
   bIsSpinBoxChanged = false;
   bIsLineEditChanged = false;
+
+  fileWatcher = new QFileSystemWatcher();
+  connect(fileWatcher, SIGNAL(fileChanged(const QString&)), this,
+          SLOT(slotfileChanged(const QString&)));
+}
+
+void ChildWidget::initTable() {
+  model = new QStandardItemModel(0, 10, this);
+  model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
+  model->setHeaderData(1, Qt::Horizontal, tr("Left"));
+  model->setHeaderData(2, Qt::Horizontal, tr("Bottom"));
+  model->setHeaderData(3, Qt::Horizontal, tr("Right"));
+  model->setHeaderData(4, Qt::Horizontal, tr("Top"));
+  model->setHeaderData(5, Qt::Horizontal, tr("Page"));
+  model->setHeaderData(6, Qt::Horizontal, tr("Italic"));
+  model->setHeaderData(7, Qt::Horizontal, tr("Bold"));
+  model->setHeaderData(8, Qt::Horizontal, tr("Underline"));
+  model->setHeaderData(9, Qt::Horizontal, tr("<Hidden> BB"));
+  table->setModel(model);
+  selectionModel = new QItemSelectionModel(model);
+  connect(
+    selectionModel,
+    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+    this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
+  table->setSelectionModel(selectionModel);
+  table->setSelectionBehavior(QAbstractItemView::SelectRows);
+  table->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  table->hideColumn(5);
+  table->hideColumn(6);
+  table->hideColumn(7);
+  table->hideColumn(8);
+  table->hideColumn(9);
+
+  LineEditDelegate* leDelegate = new LineEditDelegate;
+  table->setItemDelegateForColumn(0,leDelegate);
+
+  connect(leDelegate,SIGNAL(led_editstarted()),this,
+          SLOT(letterStartEdit()));
+  connect(leDelegate,SIGNAL(led_editfinished()),this,
+          SLOT(letterEditFinished()));
+
+  SpinBoxDelegate* sbDelegate = new SpinBoxDelegate;
+  // TODO(zdenop): setMaximum for delegates after changing box
+  table->setItemDelegateForColumn(1, sbDelegate);
+  table->setItemDelegateForColumn(2, sbDelegate);
+  table->setItemDelegateForColumn(3, sbDelegate);
+  table->setItemDelegateForColumn(4, sbDelegate);
+  connect(sbDelegate, SIGNAL(sbd_valueChanged(int)), this,
+          SLOT(sbValueChanged(int)));
+  connect(sbDelegate, SIGNAL(sbd_editingFinished()), this,
+          SLOT(sbFinished()));
+
+  CheckboxDelegate* cbDelegate = new CheckboxDelegate;
+  table->setItemDelegateForColumn(6, cbDelegate);
+  table->setItemDelegateForColumn(7, cbDelegate);
+  table->setItemDelegateForColumn(8, cbDelegate);
+  connect(cbDelegate, SIGNAL(toggled(bool, int)), this,
+          SLOT(cbFontToggleProxy(bool, int)));
 }
 
 void ChildWidget::readSettings() {
@@ -345,6 +351,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
   }
 
   setCurrentBoxFile(boxFileName);
+  fileWatcher->addPath(boxFileName);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
   modified = false;
   emit modifiedChanged();
@@ -461,11 +468,41 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
                            file.errorString()));
     return false;
   }
-
   QTextStream in(&file);
   fillTableData(in);
   file.close();
   return true;
+}
+
+void ChildWidget::slotfileChanged(const QString &fileName) {
+  switch (QMessageBox::question(
+            this,
+            tr("Warning: File was modified..."),
+            tr("File '%1' was modified outside of %2.\nReload it?\n\n" \
+               "Warning: This operation can not be undone!")
+            .arg(fileName).arg(SETTING_APPLICATION),
+            QMessageBox::Yes |
+            QMessageBox::No |
+            QMessageBox::No)) {
+  case QMessageBox::Yes: {
+    bool showFontColumns = isFontColumnsShown();
+    model->clear();
+    delete selectionModel;
+    delete model;
+    initTable();
+    setShowFontColumns(showFontColumns);
+    loadBoxes(fileName);
+    drawSelectionRects();
+    modified = false;
+    emit modifiedChanged();
+    fileWatcher->addPath(fileName);
+    break;
+  }
+  case QMessageBox::No:
+  case QMessageBox::Cancel:
+  default:
+    break;
+  }
 }
 
 bool ChildWidget::save(const QString& fileName) {
@@ -1575,7 +1612,7 @@ void ChildWidget::joinSymbol() {
   rowstodelete--;
 
   for (int i = rowstodelete; i > 0; i--) {
-      m_undostack.push(joinstack.pop());
+    m_undostack.push(joinstack.pop());
     deleteSymbolByRow(rownum);
   }
 
