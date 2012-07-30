@@ -402,6 +402,15 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
     if (!line.isEmpty()) {
       QFont letterFont;
       QStringList pieces = line.split(" ", QString::SkipEmptyParts);
+      // we support only 3.0x format structure
+      if (pieces.size() != 6) {
+          QMessageBox::warning(this, SETTING_APPLICATION,
+                               tr("File can not be loaded because of wrong " \
+                                  "(non tesseract-ocr 3.02) box " \
+                                  "file format at line '%1'!").arg(row + 1));
+          QApplication::restoreOverrideCursor();
+          return false;
+      }
       QString letter = pieces.value(0);
       bool bold = false, italic = false, underline = false;
       // formating is present only in case there are more than 2 letters
@@ -469,7 +478,9 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
     return false;
   }
   QTextStream in(&file);
-  fillTableData(in);
+  if (!fillTableData(in)) {
+      return false;
+  }
   file.close();
   return true;
 }
