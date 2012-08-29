@@ -1788,6 +1788,8 @@ void ChildWidget::documentWasModified() {
 }
 
 void ChildWidget::emitBoxChanged() {
+  clearBalloons();
+  updateBalloons();
   emit boxChanged();
 }
 
