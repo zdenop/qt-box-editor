@@ -192,14 +192,6 @@ class ChildWidget : public QSplitter {
     void clearBalloons();
     void updateBalloons();
 
-  private slots:
-    void documentWasModified();
-    void emitBoxChanged();
-    void selectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-    void drawSelectionRects();
-    void slotfileChanged(const QString& fileName);
-
-  private:
     int fontOffset;
     QColor rectColor;
     QColor rectFillColor;
@@ -216,8 +208,20 @@ class ChildWidget : public QSplitter {
     QList<QTableWidgetItem*> takeRow(int row);
     void calculateTableWidth();
 
-  protected:
+  private slots:
+    void documentWasModified();
+    void emitBoxChanged();
+    void selectionChanged(const QItemSelection& selected,
+                          const QItemSelection& deselected);
+    void drawSelectionRects();
+    void slotfileChanged(const QString& fileName);
 
+  signals:
+    void boxChanged();
+    void modifiedChanged();
+    void zoomRatioChanged(qreal);
+
+  protected:
     void directType(QKeyEvent* event);
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
@@ -230,12 +234,6 @@ class ChildWidget : public QSplitter {
 
     QString strippedName(const QString& fullFileName);
 
-  signals:
-    void boxChanged();
-    void modifiedChanged();
-    void zoomRatioChanged(qreal);
-
-  protected:
     QGraphicsScene* imageScene;
     QGraphicsView* imageView;
     QGraphicsItem* imageItem;
@@ -272,7 +270,7 @@ class ChildWidget : public QSplitter {
 
     template<class T>
     class UndoStack : public QStack<T> {
-    public:
+      public:
         void SetRedoStack(QStack<T>* pRedoStack) {
             m_pRedoStack = pRedoStack;
         }
@@ -288,7 +286,7 @@ class ChildWidget : public QSplitter {
             QStack<T>::push(t);
         }
 
-    private:
+      private:
         QStack<T>*  m_pRedoStack;
     };
 
