@@ -171,10 +171,7 @@ ChildWidget::ChildWidget(QWidget* parent)
   m_undostack.SetRedoStack(&m_redostack);
   bIsSpinBoxChanged = false;
   bIsLineEditChanged = false;
-
-  fileWatcher = new QFileSystemWatcher();
-  connect(fileWatcher, SIGNAL(fileChanged(const QString&)), this,
-          SLOT(slotfileChanged(const QString&)));
+  fileWatcher = 0;
 }
 
 void ChildWidget::initTable() {
@@ -341,7 +338,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
   imageHeight = image.height();
   imageWidth = image.width();
   setCurrentImageFile(fileName);
-  QString boxFileName = QFileInfo(fileName).path() + QDir::separator()
+  QString boxFileName = QFileInfo(fileName).path() + "/"  // QDir::separator()
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
@@ -351,7 +348,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
   }
 
   setCurrentBoxFile(boxFileName);
-  fileWatcher->addPath(boxFileName);
+  setFileWatcher(boxFileName);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
   modified = false;
   emit modifiedChanged();
@@ -485,6 +482,17 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
   return true;
 }
 
+void ChildWidget::setFileWatcher(const QString & fileName) {
+    if (fileWatcher) {
+        fileWatcher->removePaths(fileWatcher->files());
+    } else {
+        fileWatcher = new QFileSystemWatcher(this);
+        connect(fileWatcher, SIGNAL(fileChanged(const QString &)),
+            this, SLOT(slotfileChanged(const QString &)));
+    }
+    fileWatcher->addPath(fileName);
+}
+
 void ChildWidget::slotfileChanged(const QString &fileName) {
   switch (QMessageBox::question(
             this,
@@ -506,7 +514,6 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
     drawSelectionRects();
     modified = false;
     emit modifiedChanged();
-    fileWatcher->addPath(fileName);
     break;
   }
   case QMessageBox::No:
@@ -518,13 +525,17 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
 
 bool ChildWidget::save(const QString& fileName) {
   QFile file(fileName);
-
   if (!file.open(QFile::WriteOnly | QFile::Text)) {
     QMessageBox::warning(
       this,
       SETTING_APPLICATION,
       tr("Cannot write file %1:\n%2.").arg(boxFile).arg(file.errorString()));
     return false;
+  }
+
+  if (fileWatcher) {
+      delete fileWatcher;
+      fileWatcher = 0;
   }
 
   QTextStream out(&file);
@@ -550,12 +561,12 @@ bool ChildWidget::save(const QString& fileName) {
     out << letter << " " << left << " " << imageHeight - bottom << " "
         << right << " " << imageHeight - top << " " << page << "\n";
   }
-
+  file.close();
   QApplication::restoreOverrideCursor();
 
   modified = false;
   emit modifiedChanged();
-
+  setFileWatcher(fileName);
   return true;
 }
 
@@ -1896,6 +1907,8 @@ void ChildWidget::closeEvent(QCloseEvent* event) {
   if (!maybeSave()) {
     event->ignore();
   }
+  if (fileWatcher)
+    delete fileWatcher;
   if (f_dialog)
     delete f_dialog;
 }

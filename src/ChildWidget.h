@@ -210,6 +210,7 @@ class ChildWidget : public QSplitter {
     FindDialog *f_dialog;
     DrawRectangle *m_DrawRectangle;
     QFileSystemWatcher *fileWatcher;
+    void setFileWatcher(const QString & fileName);
 
     void moveSymbolRow(int direction);
     QList<QTableWidgetItem*> takeRow(int row);
