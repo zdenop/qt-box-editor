@@ -1807,6 +1807,8 @@ void ChildWidget::emitBoxChanged() {
 void ChildWidget::selectionChanged(const QItemSelection& /*selected*/, const QItemSelection& deselected) {
   // Set deselected bboxes' colors back to normal
   QModelIndexList indexes = deselected.indexes();
+  if (!modelItemBox())
+    return;
   for (int i = 0; i < indexes.size(); ++i)
     if (indexes[i].column() == 0) {
       modelItemBox(indexes[i].row())->setPen(QPen(boxColor));
@@ -1889,13 +1891,15 @@ void ChildWidget::drawSelectionRects() {
 
   if (!indexes.empty()) {
     clearBalloons();
-
     for (int i = 0; i < indexes.size(); ++i) {
       QGraphicsRectItem* rectItem = modelItemBox(indexes[i].row());
-      rectItem->setPen(QPen(rectColor));
-      rectItem->show();
+      if (rectItem) {
+        rectItem->setPen(QPen(rectColor));
+        rectItem->show();
+      }
     }
-    imageView->ensureVisible(modelItemBox());
+    if (modelItemBox())
+      imageView->ensureVisible(modelItemBox());
 
     if (symbolShown == true && indexes.size() == 1)
       updateBalloons();
