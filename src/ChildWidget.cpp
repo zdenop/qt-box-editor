@@ -1371,28 +1371,51 @@ void ChildWidget::moveSymbolRow(int direction) {
   if (currentRow < 0)
     return;
 
-  // check where if we are if move is possible top/bottom
+  // check top/bottom movements
   if (direction < 0 && currentRow == 0) {
     return;
   } else if (direction > 0 && currentRow == model->rowCount()) {
     return;
   } else {
-    UndoItem ui;
-    ui.m_eop = euoReplace;
-    ui.m_origrow = currentRow;
-    ui.m_extrarow = currentRow + direction;
+    if (abs(direction) == 1) {  // This works only for moveUp/moveDown!!!
+      UndoItem ui;
+      ui.m_eop = euoReplace;
+      ui.m_origrow = currentRow;
+      ui.m_extrarow = currentRow + direction;
 
-    for (int j = 0; j < 9; j++) {
-      ui.m_vdata[j] = model->index(currentRow, j).data();
-      ui.m_vextradata[j] = model->index(ui.m_extrarow, j).data();
+      for (int j = 0; j < 9; j++) {
+        ui.m_vdata[j] = model->index(currentRow, j).data();
+        ui.m_vextradata[j] = model->index(ui.m_extrarow, j).data();
 
-      model->setData(model->index(ui.m_extrarow, j), ui.m_vdata[j]);
-      model->setData(model->index(ui.m_origrow, j), ui.m_vextradata[j]);
+        model->setData(model->index(ui.m_extrarow, j), ui.m_vdata[j]);
+        model->setData(model->index(ui.m_origrow, j), ui.m_vextradata[j]);
+      }
+
+      m_undostack.push(ui);
+      // activate new row
+      table->setCurrentIndex(model->index(ui.m_extrarow, 0));
+    } else {
+      // TODO(zdenop): implement undo, or rewrite whole function
+      int newRow = currentRow + direction;
+      if (direction > 0) // insertRow change row id!
+        newRow++;
+      else
+        currentRow++;
+      model->insertRow(newRow);
+
+      for (int i = 0; i < (model->columnCount() - 1); ++i) {
+        model->setData(model->index(newRow, i),
+                       model->index(currentRow, i).data());
+      }
+
+      QGraphicsRectItem* rectItem = createModelItemBox(newRow);
+      // activate new row
+      table->setCurrentIndex(model->index(newRow, 0));
+      if (boxesVisible)
+        rectItem->show();
+      // delete original row
+      model->removeRow(currentRow);
     }
-
-    m_undostack.push(ui);
-    // activate new row
-    table->setCurrentIndex(model->index(ui.m_extrarow, 0));
     drawSelectionRects();
   }
 }
@@ -1706,11 +1729,7 @@ void ChildWidget::moveTo() {
       destRow = model->rowCount() - 1;
   }
 
-  if ((destRow - sourceRow) > 0)
-    moveSymbolRow(destRow - sourceRow);
-  else
-    moveSymbolRow(destRow - sourceRow);
-
+  moveSymbolRow(destRow - sourceRow);
   table->resizeRowToContents(destRow);
 }
 
