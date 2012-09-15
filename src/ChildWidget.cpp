@@ -1245,6 +1245,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event) {
 
   // Rubber band
   if (event->modifiers() == Qt::ControlModifier) {
+    setCursor(Qt::CrossCursor);
     rbOrigin = imageView->mapFromParent(event->pos());
     rubberBand->setGeometry(QRect(rbOrigin, QSize()));
     rubberBand->show();
@@ -1291,6 +1292,7 @@ void ChildWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
+  setCursor(Qt::ArrowCursor);
   releaseMouse();
   rubberBand->hide();
 
