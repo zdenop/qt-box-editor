@@ -1363,7 +1363,7 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
         } // end case KeyPress
 
     case QEvent::GraphicsSceneMouseMove: {
-        rubberBand->setGeometry(QRect(QPoint(30, 30), QSize(10, 10)));
+        rubberBand->setGeometry(QRect(QPoint(0, 0), QSize(0, 0)));
         rubberBand->show();
         return true;
         } // end case GraphicsSceneMouseMove
