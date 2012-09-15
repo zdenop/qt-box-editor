@@ -35,6 +35,7 @@
 #include "dialogs/FindDialog.h"
 #include "dialogs/DrawRectangle.h"
 
+
 Q_DECLARE_METATYPE(QGraphicsRectItem*)
 
 int my_min(int arg1, int arg2) {
@@ -56,7 +57,9 @@ ChildWidget::ChildWidget(QWidget* parent)
 
   // Make graphics Scene and View
   imageScene = new QGraphicsScene;
+  imageScene->installEventFilter(this);
   imageView = new QGraphicsView(imageScene);
+  imageView->setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
   imageView->setRenderHints(QPainter::Antialiasing |
                             QPainter::SmoothPixmapTransform);
   imageView->setAttribute(Qt::WA_TranslucentBackground, true);
@@ -1333,35 +1336,41 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
 }
 
 bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
-  if (event->type() == QEvent::KeyRelease) {
-    // transforms QEvent into QKeyEvent
-    QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
-    if (pKeyEvent->modifiers() & Qt::ControlModifier) {
-      switch (pKeyEvent->key()) {
-      case Qt::Key_C: {
-        copyFromCell();
-        break;
-      }
-      case Qt::Key_V: {
-        pasteToCell();
-        break;
-      }
-      }
-      pKeyEvent->accept();
-      return true;
-    } else if (directTypingMode) {
-      directType(pKeyEvent);
-    } else {
-      return QWidget::eventFilter(object, pKeyEvent);
-    }
-  } else if (event->type() == QEvent::GraphicsSceneMouseMove) {
-    rubberBand->setGeometry(QRect(QPoint(30, 30), QSize(10, 10)));
-    rubberBand->show();
-    return true;
-  }
+    switch(event->type())  {
+    case QEvent::KeyPress: {
+        // transforms QEvent into QKeyEvent
+        QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
+        if (pKeyEvent->modifiers() & Qt::ControlModifier) {
+            switch (pKeyEvent->key()) {
+            case Qt::Key_C: {
+                copyFromCell();
+                break;
+            }
+            case Qt::Key_V: {
+                pasteToCell();
+                break;
+            }
+            }
+            pKeyEvent->accept();
+            return true;
+        } else if (directTypingMode) {
+            directType(pKeyEvent);
+        } else {
+            return QWidget::eventFilter(object, pKeyEvent);
+        }
+        } // end case KeyPress
 
-  return false;
-}
+    case QEvent::GraphicsSceneMouseMove: {
+        rubberBand->setGeometry(QRect(QPoint(30, 30), QSize(10, 10)));
+        rubberBand->show();
+        return true;
+        } // end case GraphicsSceneMouseMove
+
+    default:
+         return false;
+    } // end switch
+    return false;
+  }
 
 void ChildWidget::moveSymbolRow(int direction) {
   QModelIndex index = selectionModel->currentIndex();
