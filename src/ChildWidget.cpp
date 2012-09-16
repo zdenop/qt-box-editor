@@ -1338,7 +1338,7 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
 }
 
 bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
-    switch(event->type())  {
+    switch (event->type())  {
     case QEvent::KeyPress: {
         // transforms QEvent into QKeyEvent
         QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
@@ -1360,17 +1360,34 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
         } else {
             return QWidget::eventFilter(object, pKeyEvent);
         }
-        } // end case KeyPress
+        }  // end case KeyPress
 
     case QEvent::GraphicsSceneMouseMove: {
         rubberBand->setGeometry(QRect(QPoint(0, 0), QSize(0, 0)));
         rubberBand->show();
         return true;
-        } // end case GraphicsSceneMouseMove
+        }  // end case GraphicsSceneMouseMove
 
+    case QEvent::GraphicsSceneWheel: {
+        QGraphicsSceneWheelEvent *wheelEvent =
+                        static_cast<QGraphicsSceneWheelEvent*>(event);
+        if (wheelEvent->modifiers().testFlag(Qt::ControlModifier)) {
+            int delta = wheelEvent->delta();
+            if (delta > 0) {
+                imageView->scale(1.10, 1.10);
+            } else {
+                imageView->scale(1/1.10, 1/1.10);
+            }
+            wheelEvent->accept();
+            getZoom();
+            return true;
+        } else {
+            return false;
+        }
+        }  // end case GraphicsSceneWheel
     default:
          return false;
-    } // end switch
+    }  // end switch
     return false;
   }
 

@@ -40,6 +40,7 @@
 #include <QtGui/QCloseEvent>
 #include <QtGui/QGraphicsRectItem>
 #include <QtGui/QGraphicsScene>
+#include <QtGui/QGraphicsSceneWheelEvent>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QHeaderView>
 #include <QtGui/QMessageBox>
