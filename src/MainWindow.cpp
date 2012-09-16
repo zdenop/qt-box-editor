@@ -117,7 +117,7 @@ void MainWindow::addChild(const QString& imageFileName) {
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
       connect(child, SIGNAL(zoomRatioChanged(qreal)), this,
               SLOT(zoomRatioChanged(qreal)));
-      child->getZoom();
+      child->setZoomStatus();
       // save path of open image file
       QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                          SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -652,7 +652,7 @@ void MainWindow::updateCommandActions() {
   if (activeChild()) {
     _utfCodeLabel->setText(activeChild()->getSymbolHexCode());
     _boxsize->setText(activeChild()->getBoxSize());
-    activeChild()->getZoom();
+    activeChild()->setZoomStatus();
   }
 }
 

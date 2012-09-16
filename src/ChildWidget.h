@@ -135,7 +135,7 @@ class ChildWidget : public QSplitter {
     void setBolded(bool v);
     void setItalic(bool v);
     void setUnderline(bool v);
-    void getZoom();
+    void setZoomStatus();
     void setZoom(float scale);
     void setDirectTypingMode(bool v);
     void setShowFontColumns(bool v);

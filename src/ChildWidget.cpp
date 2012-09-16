@@ -1066,7 +1066,7 @@ void ChildWidget::setSelectionRect() {
   imageFont.setPointSize((imageFont.pointSize() * 2));
 }
 
-void ChildWidget::getZoom() {
+void ChildWidget::setZoomStatus() {
   qreal _zoomratio = imageView->transform().m11();
   emit zoomRatioChanged(_zoomratio);
 }
@@ -1084,14 +1084,14 @@ void ChildWidget::zoomIn() {
   imageView->scale(1.2, 1.2);
   if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
-  getZoom();
+  setZoomStatus();
 }
 
 void ChildWidget::zoomOut() {
   imageView->scale(1 / 1.2, 1 / 1.2);
   if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
-  getZoom();
+  setZoomStatus();
 }
 
 void ChildWidget::zoomToFit() {
@@ -1141,7 +1141,7 @@ void ChildWidget::zoomToSelection() {
     if (selectionModel->hasSelection())
       imageView->ensureVisible(modelItemBox());
     imageView->centerOn(modelItemBox());
-    getZoom();
+    setZoomStatus();
   }
 }
 
@@ -1379,7 +1379,7 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
                 imageView->scale(1/1.10, 1/1.10);
             }
             wheelEvent->accept();
-            getZoom();
+            setZoomStatus();
             return true;
         } else {
             return false;
