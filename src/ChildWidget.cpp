@@ -1189,10 +1189,13 @@ void ChildWidget::drawRectangle(bool checked) {
 }
 
 QGraphicsRectItem* ChildWidget::modelItemBox(int row) {
-  //Warning: calling func has to check if there is selection!
-  if (row == -1)
-    row = table->selectionModel()->selectedRows().last().row();
-  return model->index(row, 9).data().value<QGraphicsRectItem*>();
+    if (selectionModel->hasSelection()) {
+      if (row == -1)
+        row = table->selectionModel()->selectedRows().last().row();
+      return model->index(row, 9).data().value<QGraphicsRectItem*>();
+    } else {
+    return NULL;
+    }
 }
 
 QGraphicsRectItem* ChildWidget::createModelItemBox(int row) {
