@@ -92,6 +92,43 @@ struct BalloonSymbol {
     QGraphicsTextItem* halo[haloCompCount];
 };
 
+// Eight geometric directions
+enum Dir8m { dirNone = -1, dirE = 0, dirNE, dirN, dirNW, dirW, dirSW, dirS, dirSE, dirCount };
+
+// Implements bbox resize feature by bbox boundary mouse dragging
+class DragResizer : public QObject, QGraphicsItemGroup {
+    Q_OBJECT
+
+private:
+    // Distance from bbox boundary (in and out) where resize mouse cursor appears
+    static const int gripMargin = 3;
+    // Cursor shapes inside drag rectangles
+    static const Qt::CursorShape gripCursor[dirCount];
+
+    // Drag rectangles
+    QGraphicsRectItem* gripRect[dirCount];
+
+    // Processes messages from all drag rectangles
+    bool sceneEventFilter(QGraphicsItem* watched, QEvent* event);
+
+public:
+    // Stores current boundary
+    QRect rect;
+
+    // Returns true if drag rectangles are currently active
+    bool enabled();
+
+    // Creates and attaches rectangles to scene
+    void init(QGraphicsScene* scene);
+    // Calculates all drag rectangles based on given bbox rectangle and activates them
+    void setFromRect(const QRect& arect);
+    // Deactivates drag rectangles
+    void disable();
+
+signals:
+    void changed();
+};
+
 class ChildWidget : public QSplitter {
     Q_OBJECT
 
@@ -153,7 +190,7 @@ class ChildWidget : public QSplitter {
     void drawRectangle(bool checked);
     void readSettings();
 
-  public slots:
+public slots:
     void updateColWidthsOnSplitter(int pos, int index);
 
     void letterStartEdit();
@@ -175,6 +212,8 @@ class ChildWidget : public QSplitter {
     void find();
     void findNext(const QString &symbol, Qt::CaseSensitivity mc);
     void findPrev(const QString &symbol, Qt::CaseSensitivity mc);
+
+    void boxDragChanged();
 
   private:
     void initTable();
@@ -214,7 +253,7 @@ class ChildWidget : public QSplitter {
     void emitBoxChanged();
     void selectionChanged(const QItemSelection& selected,
                           const QItemSelection& deselected);
-    void drawSelectionRects();
+    void updateSelectionRects();
     void slotfileChanged(const QString& fileName);
 
   signals:
@@ -268,6 +307,8 @@ class ChildWidget : public QSplitter {
 
     QRubberBand* rubberBand;
     QPoint rbOrigin;
+
+    DragResizer* resizer;
 
     template<class T>
     class UndoStack : public QStack<T> {

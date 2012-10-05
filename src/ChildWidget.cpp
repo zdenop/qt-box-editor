@@ -35,9 +35,10 @@
 #include "dialogs/FindDialog.h"
 #include "dialogs/DrawRectangle.h"
 
-
+// This allows storing QGraphicsRectItem's in table model data
 Q_DECLARE_METATYPE(QGraphicsRectItem*)
 
+// Min/max macros
 int my_min(int arg1, int arg2) {
   return((arg1 < arg2) ? arg1 : arg2);
 }
@@ -45,6 +46,109 @@ int my_min(int arg1, int arg2) {
 int my_max(int arg1, int arg2) {
   return((arg1 > arg2) ? arg1 : arg2);
 }
+
+// STATICS INITIALIZATION
+const Qt::CursorShape DragResizer::gripCursor[dirCount] = { Qt::SizeHorCursor, Qt::SizeBDiagCursor, Qt::SizeVerCursor, Qt::SizeFDiagCursor,
+                                                            Qt::SizeHorCursor, Qt::SizeBDiagCursor, Qt::SizeVerCursor, Qt::SizeFDiagCursor };
+
+////////////////////////////////////////////////////////////////////////////////
+
+void DragResizer::init(QGraphicsScene* scene) {
+    // NOTE: QGraphicsScene takes ownership for all these objects
+
+    // This is required to be able to process all drag rectangles' messages
+    scene->addItem(this);
+
+    for(int i = 0; i < dirCount; ++i) {
+      gripRect[i] = scene->addRect(0, 0, 0, 0, QPen(/*QColor(Qt::black)*/Qt::NoPen), QBrush(Qt::NoBrush));
+      gripRect[i]->setCursor(gripCursor[i]);
+      gripRect[i]->setZValue(5);
+      // Store direction in data key #0
+      gripRect[i]->setData(0, i);
+      gripRect[i]->installSceneEventFilter(this);
+    }
+
+    disable();
+}
+
+void DragResizer::setFromRect(const QRect& arect) {
+  rect = arect;
+
+  gripRect[dirE]->setRect(rect.right() - gripMargin, rect.top() + gripMargin + 1, 2*gripMargin + 1, rect.height() - 2*gripMargin - 2);
+  gripRect[dirNE]->setRect(rect.right() - gripMargin, rect.top() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
+  gripRect[dirN]->setRect(rect.left() + gripMargin + 1, rect.top() - gripMargin, rect.width() - 2*gripMargin - 2, 2*gripMargin + 1);
+  gripRect[dirNW]->setRect(rect.left() - gripMargin, rect.top() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
+  gripRect[dirW]->setRect(rect.left() - gripMargin, rect.top() + gripMargin + 1, 2*gripMargin + 1, rect.height() - 2*gripMargin - 2);
+  gripRect[dirSW]->setRect(rect.left() - gripMargin, rect.bottom() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
+  gripRect[dirS]->setRect(rect.left() + gripMargin + 1, rect.bottom() - gripMargin, rect.width() - 2*gripMargin - 2, 2*gripMargin + 1);
+  gripRect[dirSE]->setRect(rect.right() - gripMargin, rect.bottom() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
+
+  for(int i = 0; i < dirCount; ++i)
+    gripRect[i]->setVisible(true);
+}
+
+void DragResizer::disable() {
+  for(int i = 0; i < dirCount; ++i)
+    gripRect[i]->setVisible(false);
+}
+
+bool DragResizer::enabled() {
+    return gripRect[0]->isVisible();
+}
+
+bool DragResizer::sceneEventFilter(QGraphicsItem* watched, QEvent* event) {
+    QGraphicsRectItem* rectItem = static_cast<QGraphicsRectItem*>(watched);
+    QGraphicsSceneMouseEvent* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+
+    QRectF tmpRect;
+    QPoint gripPt;
+
+    switch(event->type()) {
+    case QEvent::GraphicsSceneMouseMove:
+        // Shift rect item by pixel delta since prev mouse move event
+        tmpRect = rectItem->rect();
+        tmpRect.translate(mouseEvent->scenePos() - mouseEvent->lastScenePos());
+        rectItem->setRect(tmpRect);
+
+        gripPt = rectItem->rect().center().toPoint();
+
+        switch(watched->data(0).toInt()) {
+        case dirE:
+            rect.setRight(gripPt.x()); break;
+        case dirNE:
+            rect.setTopRight(gripPt); break;
+        case dirN:
+            rect.setTop(gripPt.y()); break;
+        case dirNW:
+            rect.setTopLeft(gripPt); break;
+        case dirW:
+            rect.setLeft(gripPt.x()); break;
+        case dirSW:
+            rect.setBottomLeft(gripPt); break;
+        case dirS:
+            rect.setBottom(gripPt.y()); break;
+        case dirSE:
+            rect.setBottomRight(gripPt); break;
+        default:
+            break;
+        }
+
+        emit changed();
+
+        return true;
+    case QEvent::GraphicsSceneMousePress:
+        return true;
+    case QEvent::GraphicsSceneMouseRelease:
+        setFromRect(rect);
+        return true;
+    default:
+        break;
+    }
+
+    return false;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 ChildWidget::ChildWidget(QWidget* parent)
   : QSplitter(Qt::Horizontal, parent) {
@@ -64,6 +168,10 @@ ChildWidget::ChildWidget(QWidget* parent)
                             QPainter::SmoothPixmapTransform);
   imageView->setAttribute(Qt::WA_TranslucentBackground, true);
   imageView->setAutoFillBackground(true);
+
+  resizer = new DragResizer;
+  resizer->init(imageScene);
+  connect(resizer, SIGNAL(changed()), this, SLOT(boxDragChanged()));
 
   readSettings();
 
@@ -514,7 +622,7 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
     initTable();
     setShowFontColumns(showFontColumns);
     loadBoxes(fileName);
-    drawSelectionRects();
+    updateSelectionRects();
     modified = false;
     emit modifiedChanged();
     break;
@@ -1150,7 +1258,7 @@ void ChildWidget::showSymbol() {
     symbolShown = true;
   else
     symbolShown = false;
-  drawSelectionRects();
+  updateSelectionRects();
 }
 
 void ChildWidget::drawRectangle(bool checked) {
@@ -1163,7 +1271,7 @@ void ChildWidget::drawRectangle(bool checked) {
     if (ret) {
       QRect newCoords = m_DrawRectangle->getRectangle();
       if (rectangle) {
-        qDebug() << "Something went wrong. Object rectangle should not exists!";
+        qDebug() << "Something went wrong. Object rectangle should not exist!";
       }
       rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
                                       newCoords.width(), newCoords.height(),
@@ -1232,7 +1340,7 @@ void ChildWidget::drawBoxes() {
   for (int row = 0; row < model->rowCount(); ++row)
     modelItemBox(row)->setVisible(boxesVisible);
   if (boxesVisible)
-    drawSelectionRects();
+    updateSelectionRects();
 }
 
 void ChildWidget::mousePressEvent(QMouseEvent* event) {
@@ -1333,7 +1441,7 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
   }   // if rubber band
 
   table->setFocus();
-  drawSelectionRects();
+  updateSelectionRects();
   // Focus the last symbol in the selection
   if (!table->selectionModel()->hasSelection())
     table->selectionModel()->setCurrentIndex(table->selectionModel()->selectedRows().last(),
@@ -1364,11 +1472,9 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
             return QWidget::eventFilter(object, pKeyEvent);
         }
         }  // end case KeyPress
-
     case QEvent::GraphicsSceneMouseMove: {
         rubberBand->setGeometry(QRect(QPoint(0, 0), QSize(0, 0)));
         rubberBand->show();
-        return true;
         }  // end case GraphicsSceneMouseMove
 
     case QEvent::GraphicsSceneWheel: {
@@ -1447,7 +1553,7 @@ void ChildWidget::moveSymbolRow(int direction) {
       // delete original row
       model->removeRow(currentRow);
     }
-    drawSelectionRects();
+    updateSelectionRects();
   }
 }
 
@@ -1483,7 +1589,7 @@ void ChildWidget::pasteToCell() {
   if (directTypingMode)
     table->setCurrentIndex(model->index(index.row() + 1, 0));
 
-  drawSelectionRects();
+  updateSelectionRects();
 }
 
 void ChildWidget::directType(QKeyEvent* event) {
@@ -1515,7 +1621,7 @@ void ChildWidget::directType(QKeyEvent* event) {
     }
   }
   event->accept();
-  drawSelectionRects();
+  updateSelectionRects();
 }
 
 void ChildWidget::insertSymbol() {
@@ -1564,7 +1670,7 @@ void ChildWidget::insertSymbol() {
   table->setCurrentIndex(model->index(newrow, 0));
   table->setFocus();
 
-  drawSelectionRects();
+  updateSelectionRects();
 }
 
 void ChildWidget::splitSymbol() {
@@ -1608,7 +1714,7 @@ void ChildWidget::splitSymbol() {
   QGraphicsRectItem* rectItem = createModelItemBox(index.row() + 1);
   if (boxesVisible)
     rectItem->show();
-  drawSelectionRects();
+  updateSelectionRects();
 }
 
 void ChildWidget::joinSymbol() {
@@ -1694,7 +1800,7 @@ void ChildWidget::joinSymbol() {
 
   table->setCurrentIndex(model->index(targetRow, 0));
   table->setFocus();
-  drawSelectionRects();
+  updateSelectionRects();
 }
 
 void ChildWidget::deleteSymbolByRow(int row) {
@@ -1728,7 +1834,7 @@ void ChildWidget::deleteSymbol() {
     table->setCurrentIndex(model->index(afterRow, 0));
   }
   table->setFocus();
-  drawSelectionRects();
+  updateSelectionRects();
   documentWasModified();
 }
 
@@ -1780,7 +1886,7 @@ void ChildWidget::goToRow() {
 
     table->setCurrentIndex(model->index(row, 0));
     table->setFocus();
-    drawSelectionRects();
+    updateSelectionRects();
   }
 }
 
@@ -1865,7 +1971,7 @@ void ChildWidget::selectionChanged(const QItemSelection& /*selected*/, const QIt
       if (!boxesVisible)
         modelItemBox(indexes[i].row())->hide();
     }
-  drawSelectionRects();
+  updateSelectionRects();
 
   emit boxChanged();
 }
@@ -1903,6 +2009,7 @@ void ChildWidget::updateBalloons() {
     QString letter = model->index(i, 0).data().toString();
     int left = model->index(i, 1).data().toInt();
     int top = model->index(i, 4).data().toInt();
+    // TODO: Bad when (i == 0)
     int botPrev = model->index(i-1, 2).data().toInt();
     if (top > botPrev) {
       baseline = top; //new line? => problem with '", o'
@@ -1936,7 +2043,7 @@ void ChildWidget::updateBalloons() {
   }   // for i (idx)
 }
 
-void ChildWidget::drawSelectionRects() {
+void ChildWidget::updateSelectionRects() {
   QModelIndexList indexes = table->selectionModel()->selectedRows();
 
   if (!indexes.empty()) {
@@ -1951,10 +2058,16 @@ void ChildWidget::drawSelectionRects() {
     if (modelItemBox())
       imageView->ensureVisible(modelItemBox());
 
-    if (symbolShown == true && indexes.size() == 1)
+    if (symbolShown == true && indexes.size() == 1) {
       updateBalloons();
-  } else
+      resizer->setFromRect(modelItemBox()->rect().toRect());
+    }
+    else
+        resizer->disable();
+  } else {
     clearBalloons();
+    resizer->disable();
+  }
 }
 
 void ChildWidget::closeEvent(QCloseEvent* event) {
@@ -1996,8 +2109,6 @@ QString ChildWidget::strippedName(const QString& fullFileName) {
 }
 
 void ChildWidget::cbFontToggleProxy(bool checked, int column) {
-  QModelIndexList selectedIndexes = selectionModel->selectedRows();
-  QModelIndex index = selectedIndexes.first();
   switch (column) {
   case 6 :
     setItalic(checked);
@@ -2084,6 +2195,20 @@ void ChildWidget::sbFinished() {
   bIsSpinBoxChanged = false;
 }
 
+void ChildWidget::boxDragChanged() {
+    QModelIndex index = selectionModel->currentIndex();
+
+    if (!index.isValid())
+      return;
+
+    int row = index.row();
+    model->setData(model->index(row, 1, QModelIndex()), resizer->rect.left());
+    model->setData(model->index(row, 2, QModelIndex()), resizer->rect.bottom());
+    model->setData(model->index(row, 3, QModelIndex()), resizer->rect.right());
+    model->setData(model->index(row, 4, QModelIndex()), resizer->rect.top());
+    modelItemBox()->setRect(resizer->rect);
+}
+
 void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
   int row = table->currentIndex().row() + 1;
   while (row < model->rowCount()) {
@@ -2091,7 +2216,7 @@ void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
     if (letter.contains(symbol, mc)) {
       table->setCurrentIndex(model->index(row, 0));
       table->setFocus();
-      drawSelectionRects();
+      updateSelectionRects();
       return;
     }
     ++row;
@@ -2107,7 +2232,7 @@ void ChildWidget::findPrev(const QString &symbol,
     if (letter.contains(symbol, mc)) {
       table->setCurrentIndex(model->index(row, 0));
       table->setFocus();
-      drawSelectionRects();
+      updateSelectionRects();
       return;
     }
     --row;
@@ -2187,7 +2312,7 @@ void ChildWidget::undoDelete(UndoItem& ui, bool bIsRedo) {
 
   table->setCurrentIndex(model->index(newfocusrow, 0));
   table->setFocus();
-  drawSelectionRects();
+  updateSelectionRects();
 
   if (bIsRedo)
     m_undostack.push(ui,false);
@@ -2227,7 +2352,7 @@ void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
   table->setFocus();
-  drawSelectionRects();
+  updateSelectionRects();
 
   if (bIsRedo)
     m_undostack.push(ui,false);
@@ -2258,7 +2383,7 @@ void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
   table->setFocus();
-  drawSelectionRects();
+  updateSelectionRects();
 
   if (bIsRedo)
     m_undostack.push(rui,false);
@@ -2288,7 +2413,7 @@ void ChildWidget::undoSplit(UndoItem& ui, bool bIsRedo) {
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
   table->setFocus();
-  drawSelectionRects();
+  updateSelectionRects();
 
   if (bIsRedo)
     m_undostack.push(rui,false);
@@ -2316,7 +2441,7 @@ void ChildWidget::undoMoveBack(UndoItem& ui, bool bIsRedo) {
   table->setCurrentIndex(model->index(firstrow, 0));
   table->setFocus();
 
-  drawSelectionRects();
+  updateSelectionRects();
 
   if (bIsRedo)
     m_undostack.push(ui,false);
