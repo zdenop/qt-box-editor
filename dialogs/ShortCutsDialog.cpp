@@ -26,7 +26,7 @@ ShortCutsDialog::ShortCutsDialog(QWidget* parent)
   : QDialog(parent) {
   setupUi(this);
   textEdit -> setHtml(tr(
-                        "<h1>Editor shortcuts:</h1>"
+                        "<h1>Editor shortcuts</h1>"
                         "<p><b>F1</b> — this help<br/>"
                         "<b>Ins</b> — insert symbol below current symbol<br/>"
                         "<b>Del</b> — delete current symbol<br/>"
@@ -57,15 +57,27 @@ ShortCutsDialog::ShortCutsDialog(QWidget* parent)
                         "<b>CTRL + D</b> — direct type mode<br/>"
                         "<br/>"
                         "<b>CTRL + arrows up/down</b> — move symbol up/down in"
-                        " table<br/>"
+                            " table<br/>"
                         "<b>CTRL + G</b> — go to row id…<br/>"
                         "<b>CTRL + M</b> — Move row to row id…<br/>"
                         "<b>CTRL + T</b> — setting dialog<br/>"
                         "<br/>"
                         "<b>CTRL + F</b> — find symbol<br/>"
                         "<br/>"
-                        "<b>CTRL + L</b> — show/hide balloon symbols on image<br/>"
+                        "<b>CTRL + L</b> — show/hide balloon symbols on "
+                            "image<br/>"
                         "<b>CTRL + H</b> — show/hide all boxes on image<br/>"
                         "<b>CTRL + R</b> — draw/hide rectangle on image<br/>"
+                        "</p>"
+                        "<hr/>"
+                        "<h1>Mouse tips for image area</h1>"
+                        "<p><b>CTRL + wheel</b> — zoom in/out<br/>"
+                        "<b>CTRL + left button click</b> (on symbol) — "
+                            "select/highlight symbol<br/>"
+                        "<b>CTRL + left button click and drag</b> — add "
+                            "symbols to selections<br/>"
+                        "<b>Left button click and drag symbol border</b> — "
+                            "change symbol box. Works with single symbol "
+                            "selection only.<br/>"
                         "</p>"));
 }
