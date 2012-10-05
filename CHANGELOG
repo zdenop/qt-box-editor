@@ -1,3 +1,11 @@
+1.10
+- implemented bbox drag resizing (thanks to D. Silaev)
+- implement zoom in/out with CTRL + mouse wheel
+- watch for modified file outside of program
+- set CrossCursor for rubberBand selection
+- fix for moveTo function
+- fix crash for joinSymbol/add check for selection in modelItemBox
+
 1.09
 - implemented icontheme change option + 3 additional themes (gnome, tango,
   oxygen)
