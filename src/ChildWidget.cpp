@@ -1337,6 +1337,9 @@ void ChildWidget::deleteModelItemBox(int row) {
 
 void ChildWidget::drawBoxes() {
   boxesVisible = !boxesVisible;
+  // workaround:  modelItemBox(row) requires selection to not segfault
+  if (!selectionModel->hasSelection())
+      table->setCurrentIndex(model->index(0, 0));
   for (int row = 0; row < model->rowCount(); ++row)
     modelItemBox(row)->setVisible(boxesVisible);
   if (boxesVisible)
