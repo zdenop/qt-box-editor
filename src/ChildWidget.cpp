@@ -38,6 +38,9 @@
 // This allows storing QGraphicsRectItem's in table model data
 Q_DECLARE_METATYPE(QGraphicsRectItem*)
 
+// Print debug message
+int DMESS = 11;
+
 // Min/max macros
 int my_min(int arg1, int arg2) {
   return((arg1 < arg2) ? arg1 : arg2);
@@ -57,6 +60,7 @@ const Qt::CursorShape DragResizer::gripCursor[dirCount] = {
 ////////////////////////////////////////////////////////////////////////////////
 
 void DragResizer::init(QGraphicsScene* scene) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // NOTE: QGraphicsScene takes ownership for all these objects
 
   // This is required to be able to process all drag rectangles' messages
@@ -77,6 +81,7 @@ void DragResizer::init(QGraphicsScene* scene) {
 }
 
 void DragResizer::setFromRect(const QRect& arect) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   rect = arect;
 
   gripRect[dirE]->setRect(rect.right() - gripMargin,
@@ -117,15 +122,18 @@ void DragResizer::setFromRect(const QRect& arect) {
 }
 
 void DragResizer::disable() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   for (int i = 0; i < dirCount; ++i)
     gripRect[i]->setVisible(false);
 }
 
 bool DragResizer::enabled() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return gripRect[0]->isVisible();
 }
 
 bool DragResizer::sceneEventFilter(QGraphicsItem* watched, QEvent* event) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QGraphicsRectItem* rectItem = static_cast<QGraphicsRectItem*>(watched);
   QGraphicsSceneMouseEvent* mouseEvent =
           static_cast<QGraphicsSceneMouseEvent*>(event);
@@ -190,6 +198,7 @@ bool DragResizer::sceneEventFilter(QGraphicsItem* watched, QEvent* event) {
 
 ChildWidget::ChildWidget(QWidget* parent)
   : QSplitter(Qt::Horizontal, parent) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   table = new QTableView;
   table->resize(1, 1);
   table->setAlternatingRowColors(true);
@@ -324,6 +333,7 @@ ChildWidget::ChildWidget(QWidget* parent)
 }
 
 void ChildWidget::initTable() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   model = new QStandardItemModel(0, 10, this);
   model->setHeaderData(0, Qt::Horizontal, tr("Letter"));
   model->setHeaderData(1, Qt::Horizontal, tr("Left"));
@@ -379,6 +389,7 @@ void ChildWidget::initTable() {
 }
 
 void ChildWidget::readSettings() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // Font for table
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -454,6 +465,7 @@ void ChildWidget::readSettings() {
 }
 
 void ChildWidget::calculateTableWidth() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // set optimum size of table
   table->resizeColumnsToContents();
   int tableVisibleWidth = 0;
@@ -473,10 +485,12 @@ void ChildWidget::calculateTableWidth() {
   setSizes(splitterSizes);
 }
 void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   table->horizontalHeader()->resizeSections(QHeaderView::Stretch);
 }
 
 bool ChildWidget::loadImage(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QImage image(fileName);
 
   if (image.isNull()) {
@@ -509,6 +523,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
 }
 
 bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& img) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   switch (QMessageBox::question(
             this,
             tr("Missing file"),
@@ -538,6 +553,7 @@ bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& img) {
 }
 
 bool ChildWidget::fillTableData(QTextStream &boxdata) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   boxdata.setCodec("UTF-8");
   QString line;
   int row = 0;
@@ -615,6 +631,7 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
 }
 
 bool ChildWidget::loadBoxes(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QFile file(fileName);
 
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -632,6 +649,7 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
 }
 
 void ChildWidget::setFileWatcher(const QString & fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (fileWatcher) {
     fileWatcher->removePaths(fileWatcher->files());
   } else {
@@ -643,6 +661,7 @@ void ChildWidget::setFileWatcher(const QString & fileName) {
 }
 
 void ChildWidget::slotfileChanged(const QString &fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   switch (QMessageBox::question(
             this,
             tr("Warning: File was modified..."),
@@ -673,6 +692,7 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
 }
 
 bool ChildWidget::save(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QFile file(fileName);
   if (!file.open(QFile::WriteOnly | QFile::Text)) {
     QMessageBox::warning(
@@ -720,6 +740,7 @@ bool ChildWidget::save(const QString& fileName) {
 }
 
 bool ChildWidget::splitToFeatureBF(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // Todo(zdenop): there must be a smarter way how to do this
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -802,6 +823,7 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
 }
 
 bool ChildWidget::saveString(const QString& fileName, const QString& qData) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QFile file(fileName);
 
   if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -820,6 +842,7 @@ bool ChildWidget::saveString(const QString& fileName, const QString& qData) {
 }
 
 bool ChildWidget::importSPLToChild(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QFile file(fileName);
 
   if (!file.open(QFile::ReadOnly | QFile::Text)) {
@@ -871,6 +894,7 @@ bool ChildWidget::importSPLToChild(const QString& fileName) {
 
 
 bool ChildWidget::importTextToChild(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // TODO(zdenop): code clean up, and join with importSPLToChild
 
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -968,6 +992,7 @@ bool ChildWidget::importTextToChild(const QString& fileName) {
    * margin.
 */
 bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QFile file(fileName);
 
   if (!file.open(QFile::WriteOnly | QFile::Text)) {
@@ -1052,10 +1077,12 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
 }
 
 bool ChildWidget::isBoxSelected() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return selectionModel->hasSelection();
 }
 
 bool ChildWidget::isItalic() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid()) {
@@ -1065,6 +1092,7 @@ bool ChildWidget::isItalic() {
 }
 
 bool ChildWidget::isBold() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid()) {
@@ -1074,6 +1102,7 @@ bool ChildWidget::isBold() {
 }
 
 bool ChildWidget::isUnderLine() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid()) {
@@ -1083,22 +1112,27 @@ bool ChildWidget::isUnderLine() {
 }
 
 bool ChildWidget::isShowSymbol() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return symbolShown;
 }
 
 bool ChildWidget::isDirectTypingMode() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return directTypingMode;
 }
 
 bool ChildWidget::isFontColumnsShown() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return (!table->isColumnHidden(6));
 }
 
 void ChildWidget::setDirectTypingMode(bool v) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   directTypingMode = v;
 }
 
 void ChildWidget::setShowFontColumns(bool v) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   table->setColumnHidden(6, !v);
   table->setColumnHidden(7, !v);
   table->setColumnHidden(8, !v);
@@ -1107,14 +1141,17 @@ void ChildWidget::setShowFontColumns(bool v) {
 }
 
 bool ChildWidget::isDrawBoxes() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return boxesVisible;
 }
 
 bool ChildWidget::isDrawRect() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return drawnRectangle;
 }
 
 void ChildWidget::setItalic(bool v) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndexList indexes = table->selectionModel()->selectedRows();
   QModelIndex index;
   QFont letterFont;
@@ -1143,6 +1180,7 @@ void ChildWidget::setItalic(bool v) {
 }
 
 void ChildWidget::setBolded(bool v) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndexList indexes = table->selectionModel()->selectedRows();
   QModelIndex index;
   QFont letterFont;
@@ -1172,6 +1210,7 @@ void ChildWidget::setBolded(bool v) {
 }
 
 void ChildWidget::setUnderline(bool v) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndexList indexes = table->selectionModel()->selectedRows();
   QModelIndex index;
   QFont letterFont;
@@ -1200,6 +1239,7 @@ void ChildWidget::setUnderline(bool v) {
 }
 
 void ChildWidget::setSelectionRect() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
   QFont imageFont = settings.value("GUI/ImageFont").value<QFont>();
@@ -1213,11 +1253,13 @@ void ChildWidget::setSelectionRect() {
 }
 
 void ChildWidget::setZoomStatus() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   qreal _zoomratio = imageView->transform().m11();
   emit zoomRatioChanged(_zoomratio);
 }
 
 void ChildWidget::setZoom(float scale) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QTransform transform;
 
   transform.scale(scale, scale);
@@ -1227,6 +1269,7 @@ void ChildWidget::setZoom(float scale) {
 }
 
 void ChildWidget::zoomIn() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   imageView->scale(1.2, 1.2);
   if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
@@ -1234,6 +1277,7 @@ void ChildWidget::zoomIn() {
 }
 
 void ChildWidget::zoomOut() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   imageView->scale(1 / 1.2, 1 / 1.2);
   if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
@@ -1241,6 +1285,7 @@ void ChildWidget::zoomOut() {
 }
 
 void ChildWidget::zoomToFit() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   float viewWidth = imageView->viewport()->width();
   float viewHeight = imageView->viewport()->height();
   float zoomFactor;
@@ -1257,6 +1302,7 @@ void ChildWidget::zoomToFit() {
 }
 
 void ChildWidget::zoomToHeight() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   float viewHeight = imageView->viewport()->height();
   float zoomFactor = viewHeight / imageHeight;
 
@@ -1266,6 +1312,7 @@ void ChildWidget::zoomToHeight() {
 }
 
 void ChildWidget::zoomToWidth() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   float viewWidth = imageView->viewport()->width();
   float zoomFactor = viewWidth / imageWidth;
 
@@ -1275,12 +1322,14 @@ void ChildWidget::zoomToWidth() {
 }
 
 void ChildWidget::zoomOriginal() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   setZoom(1);
   if (selectionModel->hasSelection())
     imageView->ensureVisible(modelItemBox());
 }
 
 void ChildWidget::zoomToSelection() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (selectionModel->hasSelection()) {
     imageView->fitInView(modelItemBox(), Qt::KeepAspectRatio);
     imageView->scale(1 / 1.1, 1 / 1.1);    // make small border
@@ -1292,6 +1341,7 @@ void ChildWidget::zoomToSelection() {
 }
 
 void ChildWidget::showSymbol() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (symbolShown == false)
     symbolShown = true;
   else
@@ -1300,6 +1350,7 @@ void ChildWidget::showSymbol() {
 }
 
 void ChildWidget::drawRectangle(bool checked) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (checked) {
     if (!m_DrawRectangle) {
       m_DrawRectangle = new DrawRectangle(this, userFriendlyCurrentFile(),
@@ -1335,6 +1386,7 @@ void ChildWidget::drawRectangle(bool checked) {
 }
 
 QGraphicsRectItem* ChildWidget::modelItemBox(int row) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (selectionModel->hasSelection()) {
     if (row == -1)
       row = table->selectionModel()->selectedRows().last().row();
@@ -1345,6 +1397,7 @@ QGraphicsRectItem* ChildWidget::modelItemBox(int row) {
 }
 
 QGraphicsRectItem* ChildWidget::createModelItemBox(int row) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   int left = model->index(row, 1).data().toInt();
   int bottom = model->index(row, 2).data().toInt();
   int right = model->index(row, 3).data().toInt();
@@ -1360,6 +1413,7 @@ QGraphicsRectItem* ChildWidget::createModelItemBox(int row) {
 }
 
 void ChildWidget::updateModelItemBox(int row) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   int left = model->index(row, 1).data().toInt();
   int bottom = model->index(row, 2).data().toInt();
   int right = model->index(row, 3).data().toInt();
@@ -1368,12 +1422,14 @@ void ChildWidget::updateModelItemBox(int row) {
 }
 
 void ChildWidget::deleteModelItemBox(int row) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QGraphicsRectItem* rectItem = modelItemBox(row);
   imageScene->removeItem(rectItem);
   delete rectItem;
 }
 
 void ChildWidget::drawBoxes() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   boxesVisible = !boxesVisible;
   // workaround:  modelItemBox(row) requires selection to not segfault
   if (!selectionModel->hasSelection())
@@ -1385,6 +1441,7 @@ void ChildWidget::drawBoxes() {
 }
 
 void ChildWidget::mousePressEvent(QMouseEvent* event) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // zoom should be proportional => m11=m22
   qreal zoomFactor = imageView->transform().m22();
   QPointF mouseCoordinates = imageView->mapToScene(event->pos());
@@ -1421,6 +1478,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event) {
 }
 
 void ChildWidget::mouseMoveEvent(QMouseEvent* event) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QPoint topleft;
   QPoint botright;
   QPoint rbCurPoint = imageView->mapFromParent(event->pos());
@@ -1442,6 +1500,7 @@ void ChildWidget::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   setCursor(Qt::ArrowCursor);
   releaseMouse();
   rubberBand->hide();
@@ -1495,6 +1554,7 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
 }
 
 bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   switch (event->type())  {
   case QEvent::KeyPress: {
     // transforms QEvent into QKeyEvent
@@ -1547,6 +1607,7 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
 }
 
 void ChildWidget::moveSymbolRow(int direction) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   int currentRow = index.row();
@@ -1604,11 +1665,13 @@ void ChildWidget::moveSymbolRow(int direction) {
 }
 
 void ChildWidget::copyFromCell() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QClipboard* clipboard = QApplication::clipboard();
   clipboard->setText(table->currentIndex().data().toString());
 }
 
 void ChildWidget::pasteToCell() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   const QClipboard* clipboard = QApplication::clipboard();
   QModelIndex index = selectionModel->currentIndex();
 
@@ -1639,6 +1702,7 @@ void ChildWidget::pasteToCell() {
 }
 
 void ChildWidget::directType(QKeyEvent* event) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.column() > 0) {
@@ -1672,6 +1736,7 @@ void ChildWidget::directType(QKeyEvent* event) {
 }
 
 void ChildWidget::insertSymbol() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
   if (!index.isValid())
     return;
@@ -1721,6 +1786,7 @@ void ChildWidget::insertSymbol() {
 }
 
 void ChildWidget::splitSymbol() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
   if (!index.isValid())
     return;
@@ -1765,6 +1831,7 @@ void ChildWidget::splitSymbol() {
 }
 
 void ChildWidget::joinSymbol() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndexList indexes = selectionModel->selectedRows();
   if (indexes.empty())
     return;
@@ -1851,6 +1918,7 @@ void ChildWidget::joinSymbol() {
 }
 
 void ChildWidget::deleteSymbolByRow(int row) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   UndoItem ui;
   ui.m_eop = euoDelete;
   ui.m_origrow = row;
@@ -1863,6 +1931,7 @@ void ChildWidget::deleteSymbolByRow(int row) {
 }
 
 void ChildWidget::deleteSymbol() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndexList indexes = selectionModel->selectedRows();
   if (indexes.empty())
     return;
@@ -1887,14 +1956,17 @@ void ChildWidget::deleteSymbol() {
 }
 
 void ChildWidget::moveUp() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   moveSymbolRow(-1);
 }
 
 void ChildWidget::moveDown() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   moveSymbolRow(1);
 }
 
 void ChildWidget::moveTo() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (table->currentIndex().row() < 0)
     return;
 
@@ -1919,6 +1991,7 @@ void ChildWidget::moveTo() {
 }
 
 void ChildWidget::goToRow() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   GetRowIDDialog dialog(this);
   int row;
   if (dialog.exec()) {
@@ -1939,6 +2012,7 @@ void ChildWidget::goToRow() {
 }
 
 void ChildWidget::find() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (!f_dialog) {
     f_dialog = new FindDialog(this, userFriendlyCurrentFile());
     connect(f_dialog, SIGNAL(findNext(const QString &,
@@ -1957,11 +2031,13 @@ void ChildWidget::find() {
 }
 
 QString ChildWidget::userFriendlyCurrentFile() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return strippedName(boxFile);
 }
 
 /* Get symbol string and convert it to hexadecimal codes */
 QString ChildWidget::getSymbolHexCode() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid()) {
@@ -1979,6 +2055,7 @@ QString ChildWidget::getSymbolHexCode() {
 
 /* Get size of box */
 QString ChildWidget::getBoxSize() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.isValid()) {
@@ -1994,15 +2071,18 @@ QString ChildWidget::getBoxSize() {
 }
 
 QString ChildWidget::currentBoxFile() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return QFileInfo(boxFile).canonicalFilePath();
 }
 
 void ChildWidget::documentWasModified() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   modified = true;
   emit modifiedChanged();
 }
 
 void ChildWidget::emitBoxChanged() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   clearBalloons();
   updateBalloons();
   emit boxChanged();
@@ -2010,6 +2090,7 @@ void ChildWidget::emitBoxChanged() {
 
 void ChildWidget::selectionChanged(const QItemSelection& /*selected*/,
                                    const QItemSelection& deselected) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // Set deselected bboxes' colors back to normal
   QModelIndexList indexes = deselected.indexes();
   if (!modelItemBox())
@@ -2026,6 +2107,7 @@ void ChildWidget::selectionChanged(const QItemSelection& /*selected*/,
 }
 
 void ChildWidget::clearBalloons() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   for (int i = 0; i < balloons.size(); ++i) {
     imageScene->removeItem(balloons[i].symbol);
     delete balloons[i].symbol;
@@ -2038,6 +2120,7 @@ void ChildWidget::clearBalloons() {
 }
 
 void ChildWidget::updateBalloons() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   int idx = table->selectionModel()->selectedRows().last().row();
   int min_idx = my_max(idx - balloonCount/2, 0);
   int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
@@ -2101,6 +2184,7 @@ void ChildWidget::updateBalloons() {
 }
 
 void ChildWidget::updateSelectionRects() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndexList indexes = table->selectionModel()->selectedRows();
 
   if (!indexes.empty()) {
@@ -2128,6 +2212,7 @@ void ChildWidget::updateSelectionRects() {
 }
 
 void ChildWidget::closeEvent(QCloseEvent* event) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (!maybeSave()) {
     event->ignore();
   }
@@ -2138,6 +2223,7 @@ void ChildWidget::closeEvent(QCloseEvent* event) {
 }
 
 bool ChildWidget::maybeSave() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (isModified()) {
     QMessageBox::StandardButton ret;
     ret = QMessageBox::warning(this, SETTING_APPLICATION,
@@ -2154,18 +2240,22 @@ bool ChildWidget::maybeSave() {
 }
 
 void ChildWidget::setCurrentImageFile(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   imageFile = QFileInfo(fileName).canonicalFilePath();
 }
 
 void ChildWidget::setCurrentBoxFile(const QString& fileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   boxFile = QFileInfo(fileName).canonicalFilePath();
 }
 
 QString ChildWidget::strippedName(const QString& fullFileName) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return QFileInfo(fullFileName).fileName();
 }
 
 void ChildWidget::cbFontToggleProxy(bool checked, int column) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   switch (column) {
   case 6 :
     setItalic(checked);
@@ -2182,6 +2272,7 @@ void ChildWidget::cbFontToggleProxy(bool checked, int column) {
 }
 
 void ChildWidget::letterStartEdit() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
   int row = index.row();
   if (!bIsLineEditChanged) {
@@ -2200,10 +2291,12 @@ void ChildWidget::letterStartEdit() {
 }
 
 void ChildWidget::letterEditFinished() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   bIsLineEditChanged = false;
 }
 
 void ChildWidget::sbValueChanged(int sbdValue) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
   int row = index.row();
 
@@ -2249,10 +2342,12 @@ void ChildWidget::sbValueChanged(int sbdValue) {
 }
 
 void ChildWidget::sbFinished() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   bIsSpinBoxChanged = false;
 }
 
 void ChildWidget::boxDragChanged() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (!index.isValid())
@@ -2267,6 +2362,7 @@ void ChildWidget::boxDragChanged() {
 }
 
 void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   int row = table->currentIndex().row() + 1;
   while (row < model->rowCount()) {
     QString letter = model->index(row, 0).data().toString();
@@ -2283,6 +2379,7 @@ void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
 
 void ChildWidget::findPrev(const QString &symbol,
                            Qt::CaseSensitivity mc) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   int row = table->currentIndex().row() - 1;
   while (row >= 0) {
     QString letter = model->index(row, 0).data().toString();
@@ -2298,14 +2395,17 @@ void ChildWidget::findPrev(const QString &symbol,
 }
 
 bool ChildWidget::isUndoAvailable() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return m_undostack.isEmpty() ? false : true;
 }
 
 bool ChildWidget::isRedoAvailable() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   return m_redostack.isEmpty() ? false : true;
 }
 
 void ChildWidget::undo() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (m_undostack.isEmpty()) {
     emit boxChanged();  // update toolbar/menu to disable undo action
     // TODO(all): it is not working perfectly (are there some "ghost" undo
@@ -2356,6 +2456,7 @@ void ChildWidget::undo() {
 
 // Delete item as undo operation of add
 void ChildWidget::undoDelete(UndoItem& ui, bool bIsRedo) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   selectionModel->clearSelection();
   deleteModelItemBox(ui.m_origrow);
   model->removeRow(ui.m_origrow);
@@ -2379,12 +2480,14 @@ void ChildWidget::undoDelete(UndoItem& ui, bool bIsRedo) {
 
 // Add back item as undo operation of delete
 void ChildWidget::undoAdd(UndoItem& ui, bool bIsRedo) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   model->insertRow(ui.m_origrow);
   undoEdit(ui, bIsRedo);
 }
 
 // Put back edited values
 void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (ui.m_eop == euoChange) {
     if (bIsRedo) {
       for (int i = 0; i < 9; i++)
@@ -2419,6 +2522,7 @@ void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
 
 // Re-join split rows
 void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // Save data for redo
   UndoItem rui;
   rui.m_eop = euoJoin;
@@ -2450,6 +2554,7 @@ void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
 
 // Split back joined lines
 void ChildWidget::undoSplit(UndoItem& ui, bool bIsRedo) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // Save data for redo
   UndoItem rui;
   rui.m_eop = euoSplit;
@@ -2480,6 +2585,7 @@ void ChildWidget::undoSplit(UndoItem& ui, bool bIsRedo) {
 
 // Put replaced rows back to original location
 void ChildWidget::undoMoveBack(UndoItem& ui, bool bIsRedo) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   int firstrow = ui.m_origrow;
   int secondrow = ui.m_extrarow;
 
@@ -2507,6 +2613,7 @@ void ChildWidget::undoMoveBack(UndoItem& ui, bool bIsRedo) {
 }
 
 void ChildWidget::redo() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (m_redostack.isEmpty()) {
     emit boxChanged();  // update toolbar/menu to disable undo action
     // TODO(all): it is not working perfectly (are there some "ghost" undo
