@@ -1446,7 +1446,7 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
   table->setFocus();
   updateSelectionRects();
   // Focus the last symbol in the selection
-  if (!table->selectionModel()->hasSelection())
+  if (!table->selectionModel()->hasSelection() && table->selectionModel()->selection().size() > 0)
     table->selectionModel()->setCurrentIndex(table->selectionModel()->selectedRows().last(),
         QItemSelectionModel::NoUpdate);
 }
