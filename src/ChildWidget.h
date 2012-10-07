@@ -23,8 +23,8 @@
 *
 **********************************************************************/
 
-#ifndef SRC_INCLUDE_CHILDWIDGET_H_
-#define SRC_INCLUDE_CHILDWIDGET_H_
+#ifndef SRC_CHILDWIDGET_H_
+#define SRC_CHILDWIDGET_H_
 
 #include <QtCore/QDebug>
 #include <QtCore/QDir>
@@ -64,12 +64,12 @@ class FindDialog;
 class DrawRectangle;
 
 enum undoOperation {
-    euoAdd=1,
-    euoDelete=2,
-    euoChange=4,
-    euoJoin=8,
-    euoSplit=16,
-    euoReplace=32
+    euoAdd = 1,
+    euoDelete = 2,
+    euoChange = 4,
+    euoJoin = 8,
+    euoSplit = 16,
+    euoReplace = 32
 };
 
 struct UndoItem {
@@ -93,14 +93,16 @@ struct BalloonSymbol {
 };
 
 // Eight geometric directions
-enum Dir8m { dirNone = -1, dirE = 0, dirNE, dirN, dirNW, dirW, dirSW, dirS, dirSE, dirCount };
+enum Dir8m { dirNone = -1, dirE = 0, dirNE, dirN, dirNW, dirW, dirSW, dirS,
+             dirSE, dirCount };
 
 // Implements bbox resize feature by bbox boundary mouse dragging
 class DragResizer : public QObject, QGraphicsItemGroup {
     Q_OBJECT
 
-private:
-    // Distance from bbox boundary (in and out) where resize mouse cursor appears
+  private:
+    // Distance from bbox boundary (in and out)
+    // where resize mouse cursor appears
     static const int gripMargin = 3;
     // Cursor shapes inside drag rectangles
     static const Qt::CursorShape gripCursor[dirCount];
@@ -111,7 +113,7 @@ private:
     // Processes messages from all drag rectangles
     bool sceneEventFilter(QGraphicsItem* watched, QEvent* event);
 
-public:
+  public:
     // Stores current boundary
     QRect rect;
 
@@ -120,12 +122,13 @@ public:
 
     // Creates and attaches rectangles to scene
     void init(QGraphicsScene* scene);
-    // Calculates all drag rectangles based on given bbox rectangle and activates them
+    // Calculates all drag rectangles based on given bbox rectangle
+    // and activates them
     void setFromRect(const QRect& arect);
     // Deactivates drag rectangles
     void disable();
 
-signals:
+  signals:
     void changed();
 };
 
@@ -190,7 +193,7 @@ class ChildWidget : public QSplitter {
     void drawRectangle(bool checked);
     void readSettings();
 
-public slots:
+  public slots:
     void updateColWidthsOnSplitter(int pos, int index);
 
     void letterStartEdit();
@@ -317,14 +320,14 @@ public slots:
             m_pRedoStack = pRedoStack;
         }
 
-        //Overide
+        // Overide
         void push(const T &t, bool bClearRedo = true) {
-            //When a new undo item is push we need
-            //To clear the redo stack.
+            // When a new undo item is push we need
+            // To clear the redo stack.
             if (m_pRedoStack && bClearRedo) {
                 m_pRedoStack->clear();
             }
-            //Now call base class implementation
+            // Now call base class implementation
             QStack<T>::push(t);
         }
 
@@ -336,7 +339,6 @@ public slots:
     QStack<UndoItem> m_redostack;
     bool bIsSpinBoxChanged;
     bool bIsLineEditChanged;
-
 };
 
-#endif   // SRC_INCLUDE_CHILDWIDGET_H_
+#endif  // SRC_CHILDWIDGET_H_

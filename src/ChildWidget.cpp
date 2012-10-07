@@ -48,104 +48,142 @@ int my_max(int arg1, int arg2) {
 }
 
 // STATICS INITIALIZATION
-const Qt::CursorShape DragResizer::gripCursor[dirCount] = { Qt::SizeHorCursor, Qt::SizeBDiagCursor, Qt::SizeVerCursor, Qt::SizeFDiagCursor,
-                                                            Qt::SizeHorCursor, Qt::SizeBDiagCursor, Qt::SizeVerCursor, Qt::SizeFDiagCursor };
+const Qt::CursorShape DragResizer::gripCursor[dirCount] = {
+  Qt::SizeHorCursor, Qt::SizeBDiagCursor, Qt::SizeVerCursor,
+  Qt::SizeFDiagCursor,
+  Qt::SizeHorCursor, Qt::SizeBDiagCursor, Qt::SizeVerCursor,
+  Qt::SizeFDiagCursor};
 
 ////////////////////////////////////////////////////////////////////////////////
 
 void DragResizer::init(QGraphicsScene* scene) {
-    // NOTE: QGraphicsScene takes ownership for all these objects
+  // NOTE: QGraphicsScene takes ownership for all these objects
 
-    // This is required to be able to process all drag rectangles' messages
-    scene->addItem(this);
+  // This is required to be able to process all drag rectangles' messages
+  scene->addItem(this);
 
-    for(int i = 0; i < dirCount; ++i) {
-      gripRect[i] = scene->addRect(0, 0, 0, 0, QPen(/*QColor(Qt::black)*/Qt::NoPen), QBrush(Qt::NoBrush));
-      gripRect[i]->setCursor(gripCursor[i]);
-      gripRect[i]->setZValue(5);
-      // Store direction in data key #0
-      gripRect[i]->setData(0, i);
-      gripRect[i]->installSceneEventFilter(this);
-    }
+  for (int i = 0; i < dirCount; ++i) {
+    gripRect[i] = scene->addRect(0, 0, 0, 0,
+                                 QPen(/*QColor(Qt::black)*/Qt::NoPen),
+                                 QBrush(Qt::NoBrush));
+    gripRect[i]->setCursor(gripCursor[i]);
+    gripRect[i]->setZValue(5);
+    // Store direction in data key #0
+    gripRect[i]->setData(0, i);
+    gripRect[i]->installSceneEventFilter(this);
+  }
 
-    disable();
+  disable();
 }
 
 void DragResizer::setFromRect(const QRect& arect) {
   rect = arect;
 
-  gripRect[dirE]->setRect(rect.right() - gripMargin, rect.top() + gripMargin + 1, 2*gripMargin + 1, rect.height() - 2*gripMargin - 2);
-  gripRect[dirNE]->setRect(rect.right() - gripMargin, rect.top() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
-  gripRect[dirN]->setRect(rect.left() + gripMargin + 1, rect.top() - gripMargin, rect.width() - 2*gripMargin - 2, 2*gripMargin + 1);
-  gripRect[dirNW]->setRect(rect.left() - gripMargin, rect.top() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
-  gripRect[dirW]->setRect(rect.left() - gripMargin, rect.top() + gripMargin + 1, 2*gripMargin + 1, rect.height() - 2*gripMargin - 2);
-  gripRect[dirSW]->setRect(rect.left() - gripMargin, rect.bottom() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
-  gripRect[dirS]->setRect(rect.left() + gripMargin + 1, rect.bottom() - gripMargin, rect.width() - 2*gripMargin - 2, 2*gripMargin + 1);
-  gripRect[dirSE]->setRect(rect.right() - gripMargin, rect.bottom() - gripMargin, 2*gripMargin + 1, 2*gripMargin + 1);
+  gripRect[dirE]->setRect(rect.right() - gripMargin,
+                          rect.top() + gripMargin + 1,
+                          2*gripMargin + 1,
+                          rect.height() - 2*gripMargin - 2);
+  gripRect[dirNE]->setRect(rect.right() - gripMargin,
+                           rect.top() - gripMargin,
+                           2*gripMargin + 1,
+                           2*gripMargin + 1);
+  gripRect[dirN]->setRect(rect.left() + gripMargin + 1,
+                          rect.top() - gripMargin,
+                          rect.width() - 2*gripMargin - 2,
+                          2*gripMargin + 1);
+  gripRect[dirNW]->setRect(rect.left() - gripMargin,
+                           rect.top() - gripMargin,
+                           2*gripMargin + 1,
+                           2*gripMargin + 1);
+  gripRect[dirW]->setRect(rect.left() - gripMargin,
+                          rect.top() + gripMargin + 1,
+                          2*gripMargin + 1,
+                          rect.height() - 2*gripMargin - 2);
+  gripRect[dirSW]->setRect(rect.left() - gripMargin,
+                           rect.bottom() - gripMargin,
+                           2*gripMargin + 1,
+                           2*gripMargin + 1);
+  gripRect[dirS]->setRect(rect.left() + gripMargin + 1,
+                          rect.bottom() - gripMargin,
+                          rect.width() - 2*gripMargin - 2,
+                          2*gripMargin + 1);
+  gripRect[dirSE]->setRect(rect.right() - gripMargin,
+                           rect.bottom() - gripMargin,
+                           2*gripMargin + 1,
+                           2*gripMargin + 1);
 
-  for(int i = 0; i < dirCount; ++i)
+  for (int i = 0; i < dirCount; ++i)
     gripRect[i]->setVisible(true);
 }
 
 void DragResizer::disable() {
-  for(int i = 0; i < dirCount; ++i)
+  for (int i = 0; i < dirCount; ++i)
     gripRect[i]->setVisible(false);
 }
 
 bool DragResizer::enabled() {
-    return gripRect[0]->isVisible();
+  return gripRect[0]->isVisible();
 }
 
 bool DragResizer::sceneEventFilter(QGraphicsItem* watched, QEvent* event) {
-    QGraphicsRectItem* rectItem = static_cast<QGraphicsRectItem*>(watched);
-    QGraphicsSceneMouseEvent* mouseEvent = static_cast<QGraphicsSceneMouseEvent*>(event);
+  QGraphicsRectItem* rectItem = static_cast<QGraphicsRectItem*>(watched);
+  QGraphicsSceneMouseEvent* mouseEvent =
+          static_cast<QGraphicsSceneMouseEvent*>(event);
 
-    QRectF tmpRect;
-    QPoint gripPt;
+  QRectF tmpRect;
+  QPoint gripPt;
 
-    switch(event->type()) {
-    case QEvent::GraphicsSceneMouseMove:
-        // Shift rect item by pixel delta since prev mouse move event
-        tmpRect = rectItem->rect();
-        tmpRect.translate(mouseEvent->scenePos() - mouseEvent->lastScenePos());
-        rectItem->setRect(tmpRect);
+  switch (event->type()) {
+  case QEvent::GraphicsSceneMouseMove:
+    // Shift rect item by pixel delta since prev mouse move event
+    tmpRect = rectItem->rect();
+    tmpRect.translate(mouseEvent->scenePos() - mouseEvent->lastScenePos());
+    rectItem->setRect(tmpRect);
 
-        gripPt = rectItem->rect().center().toPoint();
+    gripPt = rectItem->rect().center().toPoint();
 
-        switch(watched->data(0).toInt()) {
-        case dirE:
-            rect.setRight(gripPt.x()); break;
-        case dirNE:
-            rect.setTopRight(gripPt); break;
-        case dirN:
-            rect.setTop(gripPt.y()); break;
-        case dirNW:
-            rect.setTopLeft(gripPt); break;
-        case dirW:
-            rect.setLeft(gripPt.x()); break;
-        case dirSW:
-            rect.setBottomLeft(gripPt); break;
-        case dirS:
-            rect.setBottom(gripPt.y()); break;
-        case dirSE:
-            rect.setBottomRight(gripPt); break;
-        default:
-            break;
-        }
-
-        emit changed();
-
-        return true;
-    case QEvent::GraphicsSceneMousePress:
-        return true;
-    case QEvent::GraphicsSceneMouseRelease:
-        setFromRect(rect);
-        return true;
+    switch (watched->data(0).toInt()) {
+    case dirE:
+      rect.setRight(gripPt.x());
+      break;
+    case dirNE:
+      rect.setTopRight(gripPt);
+      break;
+    case dirN:
+      rect.setTop(gripPt.y());
+      break;
+    case dirNW:
+      rect.setTopLeft(gripPt);
+      break;
+    case dirW:
+      rect.setLeft(gripPt.x());
+      break;
+    case dirSW:
+      rect.setBottomLeft(gripPt);
+      break;
+    case dirS:
+      rect.setBottom(gripPt.y());
+      break;
+    case dirSE:
+      rect.setBottomRight(gripPt);
+      break;
     default:
-        break;
+      break;
     }
 
-    return false;
+    emit changed();
+
+    return true;
+  case QEvent::GraphicsSceneMousePress:
+    return true;
+  case QEvent::GraphicsSceneMouseRelease:
+    setFromRect(rect);
+    return true;
+  default:
+    break;
+  }
+
+  return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -263,8 +301,8 @@ ChildWidget::ChildWidget(QWidget* parent)
   addWidget(imageView);
   setStretchFactor(indexOf(table), 0);
   setStretchFactor(indexOf(imageView), 1);
-  connect(this, SIGNAL(splitterMoved(int,int)), this,
-          SLOT(updateColWidthsOnSplitter(int,int)));
+  connect(this, SIGNAL(splitterMoved(int, int)), this,
+          SLOT(updateColWidthsOnSplitter(int, int)));
 
   setSelectionRect();
   widgetWidth = parent->size().width();
@@ -314,11 +352,11 @@ void ChildWidget::initTable() {
   table->hideColumn(9);
 
   LineEditDelegate* leDelegate = new LineEditDelegate;
-  table->setItemDelegateForColumn(0,leDelegate);
+  table->setItemDelegateForColumn(0, leDelegate);
 
-  connect(leDelegate,SIGNAL(led_editstarted()),this,
+  connect(leDelegate, SIGNAL(led_editstarted()), this,
           SLOT(letterStartEdit()));
-  connect(leDelegate,SIGNAL(led_editfinished()),this,
+  connect(leDelegate, SIGNAL(led_editfinished()), this,
           SLOT(letterEditFinished()));
 
   SpinBoxDelegate* sbDelegate = new SpinBoxDelegate;
@@ -512,12 +550,12 @@ bool ChildWidget::fillTableData(QTextStream &boxdata) {
       QStringList pieces = line.split(" ", QString::SkipEmptyParts);
       // we support only 3.0x format structure
       if (pieces.size() != 6) {
-          QMessageBox::warning(this, SETTING_APPLICATION,
-                               tr("File can not be loaded because of wrong " \
-                                  "(non tesseract-ocr 3.02) box " \
-                                  "file format at line '%1'!").arg(row + 1));
-          QApplication::restoreOverrideCursor();
-          return false;
+        QMessageBox::warning(this, SETTING_APPLICATION,
+                             tr("File can not be loaded because of wrong " \
+                                "(non tesseract-ocr 3.02) box " \
+                                "file format at line '%1'!").arg(row + 1));
+        QApplication::restoreOverrideCursor();
+        return false;
       }
       QString letter = pieces.value(0);
       bool bold = false, italic = false, underline = false;
@@ -587,21 +625,21 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
   }
   QTextStream in(&file);
   if (!fillTableData(in)) {
-      return false;
+    return false;
   }
   file.close();
   return true;
 }
 
 void ChildWidget::setFileWatcher(const QString & fileName) {
-    if (fileWatcher) {
-        fileWatcher->removePaths(fileWatcher->files());
-    } else {
-        fileWatcher = new QFileSystemWatcher(this);
-        connect(fileWatcher, SIGNAL(fileChanged(const QString &)),
+  if (fileWatcher) {
+    fileWatcher->removePaths(fileWatcher->files());
+  } else {
+    fileWatcher = new QFileSystemWatcher(this);
+    connect(fileWatcher, SIGNAL(fileChanged(const QString &)),
             this, SLOT(slotfileChanged(const QString &)));
-    }
-    fileWatcher->addPath(fileName);
+  }
+  fileWatcher->addPath(fileName);
 }
 
 void ChildWidget::slotfileChanged(const QString &fileName) {
@@ -645,8 +683,8 @@ bool ChildWidget::save(const QString& fileName) {
   }
 
   if (fileWatcher) {
-      delete fileWatcher;
-      fileWatcher = 0;
+    delete fileWatcher;
+    fileWatcher = 0;
   }
 
   QTextStream out(&file);
@@ -1082,7 +1120,7 @@ void ChildWidget::setItalic(bool v) {
   QFont letterFont;
 
   foreach(index, indexes) {
-    //IsItalic?
+    // IsItalic?
     bool current = model->index(index.row(), 6).data().toBool();
     if (current != v) {
       UndoItem ui;
@@ -1110,7 +1148,7 @@ void ChildWidget::setBolded(bool v) {
   QFont letterFont;
 
   foreach(index, indexes) {
-    //IsBool?
+    // IsBool?
     bool current = model->index(index.row(), 7).data().toBool();
     if (current != v) {
       UndoItem ui;
@@ -1139,7 +1177,7 @@ void ChildWidget::setUnderline(bool v) {
   QFont letterFont;
 
   foreach(index, indexes) {
-    //IsUnderLine?
+    // IsUnderLine?
     bool current = model->index(index.row(), 8).data().toBool();
     if (current != v) {
       UndoItem ui;
@@ -1207,7 +1245,7 @@ void ChildWidget::zoomToFit() {
   float viewHeight = imageView->viewport()->height();
   float zoomFactor;
   float ratio = viewWidth / viewHeight;
-  float aspectRatio = (float) imageWidth / imageHeight;
+  float aspectRatio = static_cast<float>(imageWidth / imageHeight);
 
   if (ratio > aspectRatio) {
     zoomFactor = viewHeight / imageHeight;
@@ -1297,13 +1335,13 @@ void ChildWidget::drawRectangle(bool checked) {
 }
 
 QGraphicsRectItem* ChildWidget::modelItemBox(int row) {
-    if (selectionModel->hasSelection()) {
-      if (row == -1)
-        row = table->selectionModel()->selectedRows().last().row();
-      return model->index(row, 9).data().value<QGraphicsRectItem*>();
-    } else {
+  if (selectionModel->hasSelection()) {
+    if (row == -1)
+      row = table->selectionModel()->selectedRows().last().row();
+    return model->index(row, 9).data().value<QGraphicsRectItem*>();
+  } else {
     return NULL;
-    }
+  }
 }
 
 QGraphicsRectItem* ChildWidget::createModelItemBox(int row) {
@@ -1339,7 +1377,7 @@ void ChildWidget::drawBoxes() {
   boxesVisible = !boxesVisible;
   // workaround:  modelItemBox(row) requires selection to not segfault
   if (!selectionModel->hasSelection())
-      table->setCurrentIndex(model->index(0, 0));
+    table->setCurrentIndex(model->index(0, 0));
   for (int row = 0; row < model->rowCount(); ++row)
     modelItemBox(row)->setVisible(boxesVisible);
   if (boxesVisible)
@@ -1364,9 +1402,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event) {
     rubberBand->setGeometry(QRect(rbOrigin, QSize()));
     rubberBand->show();
     grabMouse();
-  }
-  // BB click selection
-  else if (event->modifiers() == Qt::NoModifier) {
+  } else if (event->modifiers() == Qt::NoModifier) {  // BB click selection
     for (int row = 0; row < model->rowCount(); ++row) {
       int left = model->index(row, 1).data().toInt();
       int bottom = model->index(row, 2).data().toInt();
@@ -1381,7 +1417,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event) {
         table->setFocus();
       }
     }
-  } // else (BB selection)
+  }  // else (BB selection)
 }
 
 void ChildWidget::mouseMoveEvent(QMouseEvent* event) {
@@ -1420,88 +1456,95 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
       int right = model->index(row, 3).data().toInt();
       int top = model->index(row, 4).data().toInt();
 
-      if (left <= pos.x() && pos.x() <= right && top <= pos.y() && pos.y() <= bottom) {
+      if (left <= pos.x() && pos.x() <= right &&
+              top <= pos.y() && pos.y() <= bottom) {
         table->selectionModel()->select(model->index(row, 0),
-                                        QItemSelectionModel::Toggle | QItemSelectionModel::Rows);
+                                        QItemSelectionModel::Toggle |
+                                        QItemSelectionModel::Rows);
         break;
       }
     }  // for row
-  }   // if click
-  // If rubber band - add to selection
-  else {
+  // end of if click
+  } else {  // If rubber band - add to selection
     QRect rect(rubberBand->pos(), rubberBand->size());
     QPoint topleft = imageView->mapToScene(rect.topLeft()).toPoint();
     QPoint botright = imageView->mapToScene(rect.bottomRight()).toPoint();
     QItemSelection selection;
     for (int row = 0; row < model->rowCount(); ++row) {
-      int cx = (model->index(row, 1).data().toInt() + model->index(row, 3).data().toInt())/2;
-      int cy = (model->index(row, 2).data().toInt() + model->index(row, 4).data().toInt())/2;
+      int cx = (model->index(row, 1).data().toInt() +
+                model->index(row, 3).data().toInt())/2;
+      int cy = (model->index(row, 2).data().toInt() +
+                model->index(row, 4).data().toInt())/2;
 
-      if (cx >= topleft.x() && cx <= botright.x() && cy >= topleft.y() && cy <= botright.y())
+      if (cx >= topleft.x() && cx <= botright.x() && cy >= topleft.y() &&
+              cy <= botright.y())
         selection.push_back(QItemSelectionRange(model->index(row, 0)));
     }
-    table->selectionModel()->select(selection, QItemSelectionModel::Select | QItemSelectionModel::Rows);
+    table->selectionModel()->select(selection, QItemSelectionModel::Select |
+                                    QItemSelectionModel::Rows);
   }   // if rubber band
 
   table->setFocus();
   updateSelectionRects();
   // Focus the last symbol in the selection
-  if (!table->selectionModel()->hasSelection() && table->selectionModel()->selection().size() > 0)
-    table->selectionModel()->setCurrentIndex(table->selectionModel()->selectedRows().last(),
-        QItemSelectionModel::NoUpdate);
+  if (!table->selectionModel()->hasSelection() &&
+      table->selectionModel()->selection().size() > 0)
+    table->selectionModel()->setCurrentIndex(
+      table->selectionModel()->selectedRows().last(),
+      QItemSelectionModel::NoUpdate);
 }
 
 bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
-    switch (event->type())  {
-    case QEvent::KeyPress: {
-        // transforms QEvent into QKeyEvent
-        QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
-        if (pKeyEvent->modifiers() & Qt::ControlModifier) {
-            switch (pKeyEvent->key()) {
-            case Qt::Key_C: {
-                copyFromCell();
-                break;
-            }
-            case Qt::Key_V: {
-                pasteToCell();
-                break;
-            }
-            }
-            pKeyEvent->accept();
-            return true;
-        } else if (directTypingMode) {
-            directType(pKeyEvent);
-        } else {
-            return QWidget::eventFilter(object, pKeyEvent);
-        }
-        }  // end case KeyPress
-    case QEvent::GraphicsSceneMouseMove: {
-        rubberBand->setGeometry(QRect(QPoint(0, 0), QSize(0, 0)));
-        rubberBand->show();
-        }  // end case GraphicsSceneMouseMove
+  switch (event->type())  {
+  case QEvent::KeyPress: {
+    // transforms QEvent into QKeyEvent
+    QKeyEvent* pKeyEvent = static_cast<QKeyEvent*>(event);
+    if (pKeyEvent->modifiers() & Qt::ControlModifier) {
+      switch (pKeyEvent->key()) {
+      case Qt::Key_C: {
+        copyFromCell();
+        break;
+      }
+      case Qt::Key_V: {
+        pasteToCell();
+        break;
+      }
+      }
+      pKeyEvent->accept();
+      return true;
+    } else if (directTypingMode) {
+      directType(pKeyEvent);
+    } else {
+      return QWidget::eventFilter(object, pKeyEvent);
+    }
+  }  // end case KeyPress
+  case QEvent::GraphicsSceneMouseMove: {
+    rubberBand->setGeometry(QRect(QPoint(0, 0), QSize(0, 0)));
+    rubberBand->show();
+  }  // end case GraphicsSceneMouseMove
 
-    case QEvent::GraphicsSceneWheel: {
-        QGraphicsSceneWheelEvent *wheelEvent =
-                        static_cast<QGraphicsSceneWheelEvent*>(event);
-        if (wheelEvent->modifiers().testFlag(Qt::ControlModifier)) {
-            int delta = wheelEvent->delta();
-            if (delta > 0) {
-                imageView->scale(1.10, 1.10);
-            } else {
-                imageView->scale(1/1.10, 1/1.10);
-            }
-            wheelEvent->accept();
-            setZoomStatus();
-            return true;
-        } else {
-            return false;
-        }
-        }  // end case GraphicsSceneWheel
-    default:
-         return false;
-    }  // end switch
+  case QEvent::GraphicsSceneWheel: {
+    QGraphicsSceneWheelEvent *wheelEvent =
+      static_cast<QGraphicsSceneWheelEvent*>(event);
+    if (wheelEvent->modifiers().testFlag(Qt::ControlModifier)) {
+      int delta = wheelEvent->delta();
+      if (delta > 0) {
+        imageView->scale(1.10, 1.10);
+      } else {
+        imageView->scale(1/1.10, 1/1.10);
+      }
+      wheelEvent->accept();
+      setZoomStatus();
+      return true;
+    } else {
+      return false;
+    }
+  }  // end case GraphicsSceneWheel
+  default:
     return false;
-  }
+  }  // end switch
+  return false;
+}
 
 void ChildWidget::moveSymbolRow(int direction) {
   QModelIndex index = selectionModel->currentIndex();
@@ -1537,7 +1580,7 @@ void ChildWidget::moveSymbolRow(int direction) {
     } else {
       // TODO(zdenop): implement undo, or rewrite whole function
       int newRow = currentRow + direction;
-      if (direction > 0) // insertRow change row id!
+      if (direction > 0)  // insertRow change row id!
         newRow++;
       else
         currentRow++;
@@ -1604,7 +1647,8 @@ void ChildWidget::directType(QKeyEvent* event) {
     if (!event->text().toAscii().trimmed().isEmpty() &&
         (event->key() !=  Qt::Key_Delete))  {
       // enter only text
-      if ((event->key() ==  Qt::Key_Enter) || (event->key() ==  Qt::Key_Return)) {
+      if ((event->key() ==  Qt::Key_Enter) ||
+              (event->key() ==  Qt::Key_Return)) {
         // enter/return move to next row
         table->setCurrentIndex(model->index(index.row() + 1, 0));
       } else  {
@@ -1661,7 +1705,7 @@ void ChildWidget::insertSymbol() {
   ui.m_eop = euoAdd;
   ui.m_origrow = newrow;
 
-  //For redo
+  // For redo
   for (int ii = 0; ii < 9; ii++)
     ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
 
@@ -1792,7 +1836,7 @@ void ChildWidget::joinSymbol() {
   int rowstodelete = indexes.size();
   int rownum = indexes.front().row();
 
-  //Keep the first row with joined data
+  // Keep the first row with joined data
   rownum++;
   rowstodelete--;
 
@@ -1833,7 +1877,8 @@ void ChildWidget::deleteSymbol() {
   }
 
   if (model->rowCount() != 0) {
-    int afterRow = my_min(indexes.back().row() - indexes.size() + 1, model->rowCount() - 1);
+    int afterRow = my_min(indexes.back().row() - indexes.size() + 1,
+                          model->rowCount() - 1);
     table->setCurrentIndex(model->index(afterRow, 0));
   }
   table->setFocus();
@@ -1963,7 +2008,8 @@ void ChildWidget::emitBoxChanged() {
   emit boxChanged();
 }
 
-void ChildWidget::selectionChanged(const QItemSelection& /*selected*/, const QItemSelection& deselected) {
+void ChildWidget::selectionChanged(const QItemSelection& /*selected*/,
+                                   const QItemSelection& deselected) {
   // Set deselected bboxes' colors back to normal
   QModelIndexList indexes = deselected.indexes();
   if (!modelItemBox())
@@ -1996,7 +2042,7 @@ void ChildWidget::updateBalloons() {
   int min_idx = my_max(idx - balloonCount/2, 0);
   int max_idx = my_min(idx + balloonCount/2, model->rowCount() - 1);
 
-  //calculate baseline for symbols based on selected symbol
+  // calculate baseline for symbols based on selected symbol
   int baseline = 0;
   for (int i = min_idx; i <= max_idx; ++i) {
     if (baseline == 0) {
@@ -2012,10 +2058,10 @@ void ChildWidget::updateBalloons() {
     QString letter = model->index(i, 0).data().toString();
     int left = model->index(i, 1).data().toInt();
     int top = model->index(i, 4).data().toInt();
-    // TODO: Bad when (i == 0)
+    // TODO(daemons2000): Bad when (i == 0)
     int botPrev = model->index(i-1, 2).data().toInt();
     if (top > botPrev) {
-      baseline = top; //new line? => problem with '", o'
+      baseline = top;  // new line? => problem with '", o'
     }
 
     balloons.back().symbol = imageScene->addText(letter, m_imageFont);
@@ -2033,14 +2079,22 @@ void ChildWidget::updateBalloons() {
       curHalo->setDefaultTextColor(Qt::white);
       curHalo->setZValue(3);
     }
-    balloons.back().halo[0]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(1,  0));
-    balloons.back().halo[1]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(1,  1));
-    balloons.back().halo[2]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(0,  1));
-    balloons.back().halo[3]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1,  1));
-    balloons.back().halo[4]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1,  0));
-    balloons.back().halo[5]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(-1, -1));
-    balloons.back().halo[6]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(0, -1));
-    balloons.back().halo[7]->setPos(curSymbol->pos() + BalloonSymbol::haloShift*QPoint(1, -1));
+    balloons.back().halo[0]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(1, 0));
+    balloons.back().halo[1]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(1, 1));
+    balloons.back().halo[2]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(0, 1));
+    balloons.back().halo[3]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(-1, 1));
+    balloons.back().halo[4]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(-1, 0));
+    balloons.back().halo[5]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(-1, -1));
+    balloons.back().halo[6]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(0, -1));
+    balloons.back().halo[7]->setPos(curSymbol->pos() +
+                                    BalloonSymbol::haloShift*QPoint(1, -1));
     for (int j = 0; j < BalloonSymbol::haloCompCount; ++j)
       balloons.back().halo[j]->setVisible(true);
   }   // for i (idx)
@@ -2064,9 +2118,9 @@ void ChildWidget::updateSelectionRects() {
     if (symbolShown == true && indexes.size() == 1) {
       updateBalloons();
       resizer->setFromRect(modelItemBox()->rect().toRect());
+    } else {
+      resizer->disable();
     }
-    else
-        resizer->disable();
   } else {
     clearBalloons();
     resizer->disable();
@@ -2131,7 +2185,7 @@ void ChildWidget::letterStartEdit() {
   QModelIndex index = selectionModel->currentIndex();
   int row = index.row();
   if (!bIsLineEditChanged) {
-    //First event. Save undo
+    // First event. Save undo
     UndoItem ui;
     ui.m_eop = euoChange;
     ui.m_origrow = row;
@@ -2176,7 +2230,7 @@ void ChildWidget::sbValueChanged(int sbdValue) {
   }
 
   if (!bIsSpinBoxChanged) {
-    //First event. Save undo
+    // First event. Save undo
     UndoItem ui;
     ui.m_eop = euoChange;
     ui.m_origrow = row;
@@ -2199,17 +2253,17 @@ void ChildWidget::sbFinished() {
 }
 
 void ChildWidget::boxDragChanged() {
-    QModelIndex index = selectionModel->currentIndex();
+  QModelIndex index = selectionModel->currentIndex();
 
-    if (!index.isValid())
-      return;
+  if (!index.isValid())
+    return;
 
-    int row = index.row();
-    model->setData(model->index(row, 1, QModelIndex()), resizer->rect.left());
-    model->setData(model->index(row, 2, QModelIndex()), resizer->rect.bottom());
-    model->setData(model->index(row, 3, QModelIndex()), resizer->rect.right());
-    model->setData(model->index(row, 4, QModelIndex()), resizer->rect.top());
-    modelItemBox()->setRect(resizer->rect);
+  int row = index.row();
+  model->setData(model->index(row, 1, QModelIndex()), resizer->rect.left());
+  model->setData(model->index(row, 2, QModelIndex()), resizer->rect.bottom());
+  model->setData(model->index(row, 3, QModelIndex()), resizer->rect.right());
+  model->setData(model->index(row, 4, QModelIndex()), resizer->rect.top());
+  modelItemBox()->setRect(resizer->rect);
 }
 
 void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
@@ -2318,7 +2372,7 @@ void ChildWidget::undoDelete(UndoItem& ui, bool bIsRedo) {
   updateSelectionRects();
 
   if (bIsRedo)
-    m_undostack.push(ui,false);
+    m_undostack.push(ui, false);
   else
     m_redostack.push(ui);
 }
@@ -2326,7 +2380,7 @@ void ChildWidget::undoDelete(UndoItem& ui, bool bIsRedo) {
 // Add back item as undo operation of delete
 void ChildWidget::undoAdd(UndoItem& ui, bool bIsRedo) {
   model->insertRow(ui.m_origrow);
-  undoEdit(ui,bIsRedo);
+  undoEdit(ui, bIsRedo);
 }
 
 // Put back edited values
@@ -2336,7 +2390,7 @@ void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
       for (int i = 0; i < 9; i++)
         model->setData(model->index(ui.m_origrow, i), ui.m_vextradata[i]);
     } else {
-      //Save for redo
+      // Save for redo
       for (int ii = 0; ii < 9; ii++)
         ui.m_vextradata[ii] = model->index(ui.m_origrow, ii).data();
 
@@ -2348,9 +2402,9 @@ void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
       model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
   }
 
-  if (ui.m_eop == euoDelete || (bIsRedo && ui.m_eop == euoAdd)) {
+  if (ui.m_eop == euoDelete || (bIsRedo && ui.m_eop == euoAdd))
     createModelItemBox(ui.m_origrow);
-  } else
+  else
     updateModelItemBox(ui.m_origrow);
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
@@ -2358,14 +2412,14 @@ void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
   updateSelectionRects();
 
   if (bIsRedo)
-    m_undostack.push(ui,false);
+    m_undostack.push(ui, false);
   else
     m_redostack.push(ui);
 }
 
 // Re-join split rows
 void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
-  //Save data for redo
+  // Save data for redo
   UndoItem rui;
   rui.m_eop = euoJoin;
   rui.m_origrow = ui.m_origrow;
@@ -2389,14 +2443,14 @@ void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
   updateSelectionRects();
 
   if (bIsRedo)
-    m_undostack.push(rui,false);
+    m_undostack.push(rui, false);
   else
     m_redostack.push(rui);
 }
 
 // Split back joined lines
 void ChildWidget::undoSplit(UndoItem& ui, bool bIsRedo) {
-  //Save data for redo
+  // Save data for redo
   UndoItem rui;
   rui.m_eop = euoSplit;
   rui.m_origrow = ui.m_origrow;
@@ -2419,7 +2473,7 @@ void ChildWidget::undoSplit(UndoItem& ui, bool bIsRedo) {
   updateSelectionRects();
 
   if (bIsRedo)
-    m_undostack.push(rui,false);
+    m_undostack.push(rui, false);
   else
     m_redostack.push(rui);
 }
@@ -2447,7 +2501,7 @@ void ChildWidget::undoMoveBack(UndoItem& ui, bool bIsRedo) {
   updateSelectionRects();
 
   if (bIsRedo)
-    m_undostack.push(ui,false);
+    m_undostack.push(ui, false);
   else
     m_redostack.push(ui);
 }
@@ -2466,27 +2520,27 @@ void ChildWidget::redo() {
   switch (ui.m_eop) {
   case euoAdd:
     // Item was added. Reverse is remove it. Redo: Add it again, with values
-    undoAdd(ui,true);
+    undoAdd(ui, true);
     break;
   case euoDelete:
     // Item was deleted. Reverse is put it back. Redo: delete it again
-    undoDelete(ui,true);
+    undoDelete(ui, true);
     break;
   case euoChange:
     // Item was edited. Put back old values.
-    undoEdit(ui,true);
+    undoEdit(ui, true);
     break;
   case euoJoin:
     // Two items joined. Split back.
-    undoSplit(ui,true);
+    undoSplit(ui, true);
     break;
   case euoSplit:
     // Item split in two. Join back.
-    undoJoin(ui,true);
+    undoJoin(ui, true);
     break;
   case euoReplace:
     // Two item changed places. Change places back.
-    undoMoveBack(ui,true);
+    undoMoveBack(ui, true);
     break;
   default:
     // Nothing to dofor other cases. Report error.
