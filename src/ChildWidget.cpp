@@ -1574,6 +1574,8 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
       return true;
     } else if (directTypingMode) {
       directType(pKeyEvent);
+      pKeyEvent->accept();
+      return true;
     } else {
       return QWidget::eventFilter(object, pKeyEvent);
     }
@@ -1731,7 +1733,6 @@ void ChildWidget::directType(QKeyEvent* event) {
       }
     }
   }
-  event->accept();
   updateSelectionRects();
 }
 
