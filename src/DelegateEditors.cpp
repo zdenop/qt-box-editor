@@ -115,9 +115,7 @@ LineEditDelegate::LineEditDelegate(QObject* parent)
   : QItemDelegate(parent) {
 }
 
-QWidget* LineEditDelegate::createEditor(QWidget *parent,
-                                        const QStyleOptionViewItem &option,
-                                        const QModelIndex &index) const {
+QWidget* LineEditDelegate::createEditor(QWidget *parent) const {
   QLineEdit* editor = new QLineEdit(parent);
 
   connect(editor,SIGNAL(textEdited(QString)),SIGNAL(led_editstarted()));

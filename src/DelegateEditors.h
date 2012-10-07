@@ -75,8 +75,7 @@ class LineEditDelegate : public QItemDelegate
 
   public:
     LineEditDelegate(QObject* parent = 0);
-    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option,
-                          const QModelIndex& index) const;
+    QWidget* createEditor(QWidget* parent) const;
 
   signals:
     void led_editstarted();
