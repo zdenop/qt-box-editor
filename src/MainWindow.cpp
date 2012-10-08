@@ -900,12 +900,12 @@ void MainWindow::createActions() {
 
   moveUpAct = new QAction(QIcon::fromTheme("up"),
                           tr("Move row &up"), this);
-  moveUpAct->setShortcut(Qt::CTRL | Qt::Key_Up);
+  moveUpAct->setShortcut(Qt::ALT | Qt::Key_Up);
   connect(moveUpAct, SIGNAL(triggered()), this, SLOT(moveUp()));
 
   moveDownAct = new QAction(QIcon::fromTheme("down"),
                             tr("Move row &down"), this);
-  moveDownAct->setShortcut(Qt::CTRL | Qt::Key_Down);
+  moveDownAct->setShortcut(Qt::ALT | Qt::Key_Down);
   connect(moveDownAct, SIGNAL(triggered()), this, SLOT(moveDown()));
 
   moveToAct = new QAction(QIcon::fromTheme("moveTo"),
