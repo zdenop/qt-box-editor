@@ -39,7 +39,7 @@
 Q_DECLARE_METATYPE(QGraphicsRectItem*)
 
 // Print debug message
-int DMESS = 11;
+int DMESS = 10;
 
 // Min/max macros
 int my_min(int arg1, int arg2) {
@@ -1423,7 +1423,9 @@ void ChildWidget::updateModelItemBox(int row) {
 
 void ChildWidget::deleteModelItemBox(int row) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  QGraphicsRectItem* rectItem = modelItemBox(row);
+  // we can not use modelItemBox(row) because we clear selections...
+  QGraphicsRectItem* rectItem =
+          model->index(row, 9).data().value<QGraphicsRectItem*>();
   imageScene->removeItem(rectItem);
   delete rectItem;
 }
@@ -1545,6 +1547,7 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
 
   table->setFocus();
   updateSelectionRects();
+
   // Focus the last symbol in the selection
   if (!table->selectionModel()->hasSelection() &&
       table->selectionModel()->selection().size() > 0)
@@ -2095,8 +2098,15 @@ void ChildWidget::selectionChanged(const QItemSelection& /*selected*/,
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   // Set deselected bboxes' colors back to normal
   QModelIndexList indexes = deselected.indexes();
-  if (!modelItemBox())
+  if (!modelItemBox()) {
+    // hide rectangle of last selected item
+    if (!indexes.empty()) {
+        QGraphicsRectItem* rectItem =
+           model->index(indexes[0].row(), 9).data().value<QGraphicsRectItem*>();
+        rectItem->hide();
+    }
     return;
+  }
   for (int i = 0; i < indexes.size(); ++i)
     if (indexes[i].column() == 0) {
       modelItemBox(indexes[i].row())->setPen(QPen(boxColor));
