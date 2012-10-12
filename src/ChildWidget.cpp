@@ -1629,7 +1629,7 @@ void ChildWidget::moveSymbolRow(int direction) {
       ui.m_origrow = currentRow;
       ui.m_extrarow = currentRow + direction;
 
-      for (int j = 0; j < model->columnCount(); j++) {
+      for (int j = 0; j < model->columnCount() - 1; j++) {
         ui.m_vdata[j] = model->index(currentRow, j).data();
         ui.m_vextradata[j] = model->index(ui.m_extrarow, j).data();
 
