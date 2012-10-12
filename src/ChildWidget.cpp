@@ -1164,7 +1164,7 @@ void ChildWidget::setItalic(bool v) {
       ui.m_eop = euoChange;
       ui.m_origrow = index.row();
 
-      for (int ii = 0; ii < 9; ii++)
+      for (int ii = 0; ii < model->columnCount(); ii++)
         ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
 
       m_undostack.push(ui);
@@ -1193,7 +1193,7 @@ void ChildWidget::setBolded(bool v) {
       ui.m_eop = euoChange;
       ui.m_origrow = index.row();
 
-      for (int ii = 0; ii < 9; ii++)
+      for (int ii = 0; ii < model->columnCount(); ii++)
         ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
 
       m_undostack.push(ui);
@@ -1223,7 +1223,7 @@ void ChildWidget::setUnderline(bool v) {
       ui.m_eop = euoChange;
       ui.m_origrow = index.row();
 
-      for (int ii = 0; ii < 9; ii++)
+      for (int ii = 0; ii < model->columnCount(); ii++)
         ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
 
       m_undostack.push(ui);
@@ -1726,7 +1726,7 @@ void ChildWidget::directType(QKeyEvent* event) {
         ui.m_eop = euoChange;
         ui.m_origrow = index.row();
 
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < model->columnCount(); i++)
           ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
         m_undostack.push(ui);
@@ -1773,7 +1773,7 @@ void ChildWidget::insertSymbol() {
   ui.m_origrow = newrow;
 
   // For redo
-  for (int ii = 0; ii < 9; ii++)
+  for (int ii = 0; ii < model->columnCount(); ii++)
     ui.m_vdata[ii] = model->index(ui.m_origrow, ii).data();
 
   m_undostack.push(ui);
@@ -1798,7 +1798,7 @@ void ChildWidget::splitSymbol() {
   ui.m_origrow = index.row();
   ui.m_extrarow = ui.m_origrow + 1;
 
-  for (int i = 0; i < 9; i++)
+  for (int i = 0; i < model->columnCount(); i++)
     ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
   m_undostack.push(ui);
@@ -1924,7 +1924,7 @@ void ChildWidget::deleteSymbolByRow(int row) {
   UndoItem ui;
   ui.m_eop = euoDelete;
   ui.m_origrow = row;
-  for (int j = 0; j < 9; ++j)
+  for (int j = 0; j < model->columnCount(); ++j)
     ui.m_vdata[j] = model->index(ui.m_origrow, j).data();
   m_undostack.push(ui);
 
@@ -2283,7 +2283,7 @@ void ChildWidget::letterStartEdit() {
     ui.m_eop = euoChange;
     ui.m_origrow = row;
 
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < model->columnCount(); i++)
       ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
     m_undostack.push(ui);
@@ -2330,7 +2330,7 @@ void ChildWidget::sbValueChanged(int sbdValue) {
     ui.m_eop = euoChange;
     ui.m_origrow = row;
 
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < model->columnCount(); i++)
       ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
     m_undostack.push(ui);
@@ -2492,18 +2492,18 @@ void ChildWidget::undoEdit(UndoItem& ui, bool bIsRedo) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (ui.m_eop == euoChange) {
     if (bIsRedo) {
-      for (int i = 0; i < 9; i++)
+      for (int i = 0; i < model->columnCount() - 1; i++)
         model->setData(model->index(ui.m_origrow, i), ui.m_vextradata[i]);
     } else {
       // Save for redo
-      for (int ii = 0; ii < 9; ii++)
+      for (int ii = 0; ii < model->columnCount() - 1; ii++)
         ui.m_vextradata[ii] = model->index(ui.m_origrow, ii).data();
 
-      for (int i = 0; i < 9; i++)
+      for (int i = 0; i < model->columnCount() -1 ; i++)
         model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
     }
   } else {
-    for (int i = 0; i < 9; i++)
+    for (int i = 0; i < model->columnCount() - 1; i++)
       model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
   }
 
@@ -2531,7 +2531,7 @@ void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
   rui.m_origrow = ui.m_origrow;
   rui.m_extrarow = ui.m_extrarow;
 
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < model->columnCount(); i++) {
     rui.m_vdata[i] = model->index(rui.m_origrow, i).data();
     rui.m_vextradata[i] = model->index(rui.m_extrarow, i).data();
   }
@@ -2541,7 +2541,7 @@ void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
 
   updateModelItemBox(ui.m_origrow);
 
-  for (int i = 0; i < 9; i++)
+  for (int i = 0; i < model->columnCount(); i++)
     model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
@@ -2563,12 +2563,12 @@ void ChildWidget::undoSplit(UndoItem& ui, bool bIsRedo) {
   rui.m_origrow = ui.m_origrow;
   rui.m_extrarow = ui.m_origrow + 1;
 
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < model->columnCount(); i++) {
     rui.m_vdata[i] = model->index(rui.m_origrow, i).data();
   }
 
   model->insertRow(ui.m_extrarow);
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < model->columnCount(); i++) {
     model->setData(model->index(ui.m_extrarow, i), ui.m_vextradata[i]);
     model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
   }
@@ -2596,7 +2596,7 @@ void ChildWidget::undoMoveBack(UndoItem& ui, bool bIsRedo) {
     secondrow = ui.m_origrow;
   }
 
-  for (int i = 0; i < 9; i++) {
+  for (int i = 0; i < model->columnCount() - 1; i++) {
     model->setData(model->index(firstrow, i), ui.m_vdata[i]);
     model->setData(model->index(secondrow, i), ui.m_vextradata[i]);
   }
