@@ -1681,7 +1681,7 @@ void ChildWidget::pasteToCell() {
   ui.m_eop = euoChange;
   ui.m_origrow = index.row();
 
-  for (int i = 0; i < 9; i++)
+  for (int i = 0; i < model->columnCount(); i++)
     ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
 
   // do not paste string to int fields
@@ -1700,6 +1700,7 @@ void ChildWidget::pasteToCell() {
   if (directTypingMode)
     table->setCurrentIndex(model->index(index.row() + 1, 0));
 
+  updateModelItemBox(index.row());
   updateSelectionRects();
 }
 
