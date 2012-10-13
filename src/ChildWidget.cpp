@@ -1665,6 +1665,8 @@ void ChildWidget::moveSymbolRow(int direction) {
       }
 
       m_undostack.push(ui);
+      updateModelItemBox(ui.m_extrarow);
+      updateModelItemBox(ui.m_origrow);
       // activate new row
       table->setCurrentIndex(model->index(ui.m_extrarow, 0));
     } else {
