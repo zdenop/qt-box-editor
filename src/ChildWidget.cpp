@@ -672,6 +672,7 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
             QMessageBox::No |
             QMessageBox::No)) {
   case QMessageBox::Yes: {
+    deleteModelItemBox(table->currentIndex().row());
     bool showFontColumns = isFontColumnsShown();
     model->clear();
     delete selectionModel;
