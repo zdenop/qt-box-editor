@@ -1576,9 +1576,7 @@ bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
       pKeyEvent->accept();
       return true;
     } else if (directTypingMode) {
-      directType(pKeyEvent);
-      pKeyEvent->accept();
-      return true;
+      return directType(pKeyEvent);
     } else {
       return QWidget::eventFilter(object, pKeyEvent);
     }
@@ -1707,37 +1705,42 @@ void ChildWidget::pasteToCell() {
   updateSelectionRects();
 }
 
-void ChildWidget::directType(QKeyEvent* event) {
+bool ChildWidget::directType(QKeyEvent* event) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndex index = selectionModel->currentIndex();
 
   if (index.column() > 0) {
     table->setCurrentIndex(model->index(index.row(), 0));
+    return true;
   } else {
     if (!event->text().toAscii().trimmed().isEmpty() &&
         (event->key() !=  Qt::Key_Delete))  {
       // enter only text
+      model->setData(model->index(index.row(), 0, QModelIndex()),
+                     event->text());
+
+      UndoItem ui;
+      ui.m_eop = euoChange;
+      ui.m_origrow = index.row();
+
+      for (int i = 0; i < model->columnCount(); i++)
+        ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
+
+      m_undostack.push(ui);
+      table->setCurrentIndex(model->index(index.row() + 1, 0));
+    } else {
       if ((event->key() ==  Qt::Key_Enter) ||
-              (event->key() ==  Qt::Key_Return)) {
+          (event->key() ==  Qt::Key_Return)) {
         // enter/return move to next row
         table->setCurrentIndex(model->index(index.row() + 1, 0));
-      } else  {
-        model->setData(model->index(index.row(), 0, QModelIndex()),
-                       event->text());
-
-        UndoItem ui;
-        ui.m_eop = euoChange;
-        ui.m_origrow = index.row();
-
-        for (int i = 0; i < model->columnCount(); i++)
-          ui.m_vdata[i] = model->index(ui.m_origrow, i).data();
-
-        m_undostack.push(ui);
-        table->setCurrentIndex(model->index(index.row() + 1, 0));
+      } else {
+        // no symbol, no enter (e.g. arrow keys
+        return false;
       }
     }
+    event->accept();
+    return true;
   }
-  updateSelectionRects();
 }
 
 void ChildWidget::insertSymbol() {

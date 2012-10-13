@@ -265,7 +265,7 @@ class ChildWidget : public QSplitter {
     void zoomRatioChanged(qreal);
 
   protected:
-    void directType(QKeyEvent* event);
+    bool directType(QKeyEvent* event);
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
