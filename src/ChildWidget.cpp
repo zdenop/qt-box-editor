@@ -662,6 +662,28 @@ void ChildWidget::setFileWatcher(const QString & fileName) {
 
 void ChildWidget::slotfileChanged(const QString &fileName) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  if (!QFile::exists(fileName)) {
+      switch (QMessageBox::question(
+                this,
+                tr("Warning: File was removed!"),
+                  tr("File '%1' was removed from disk." \
+                     " Do you want to store your current work to disk?")
+                .arg(fileName),
+                QMessageBox::Yes |
+                QMessageBox::No |
+                QMessageBox::No)) {
+    case QMessageBox::Yes: {
+          save(fileName);
+          break;
+      }
+      case QMessageBox::No:
+      case QMessageBox::Cancel:
+      default:
+        // inform user that saved copy does not match to QBE copy
+        documentWasModified();
+        break;
+      }
+    } else {
   switch (QMessageBox::question(
             this,
             tr("Warning: File was modified..."),
@@ -687,8 +709,11 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
   }
   case QMessageBox::No:
   case QMessageBox::Cancel:
+    // inform user that saved copy does not match to QBE copy
+    documentWasModified();
   default:
     break;
+  }
   }
 }
 
@@ -699,7 +724,7 @@ bool ChildWidget::save(const QString& fileName) {
     QMessageBox::warning(
       this,
       SETTING_APPLICATION,
-      tr("Cannot write file %1:\n%2.").arg(boxFile).arg(file.errorString()));
+      tr("Cannot write file %1:\n%2.").arg(fileName).arg(file.errorString()));
     return false;
   }
 
@@ -2081,7 +2106,7 @@ QString ChildWidget::getBoxSize() {
 
 QString ChildWidget::currentBoxFile() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  return QFileInfo(boxFile).canonicalFilePath();
+  return QFileInfo(boxFile).absoluteFilePath();
 }
 
 void ChildWidget::documentWasModified() {
