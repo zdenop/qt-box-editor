@@ -521,6 +521,32 @@ void MainWindow::slotSettings() {
   runSettingsDialog->exec();
 }
 
+void MainWindow::genBoxFile() {
+    QString currentFileName = activeChild()->currentBoxFile();
+    switch (QMessageBox::question(
+                    this,
+                    tr("Warning: Request to renerage box file!"),
+                      tr("Do you want to regenerate boxfile '%1'?\n"
+                         "This will replace boxfile stored on disk.\n\n" \
+                         "Warning: This operation can not be undone!")
+                    .arg(currentFileName),
+                    QMessageBox::Yes |
+                    QMessageBox::No |
+                    QMessageBox::No)) {
+        case QMessageBox::Yes: {
+              if (activeChild() && activeChild()->makeBoxFile(currentFileName))
+                statusBar()->showMessage(tr("Boxfile regenerated"), 2000);
+              break;
+          }
+          case QMessageBox::No:
+          case QMessageBox::Cancel:
+          default:
+            break;
+          }
+
+    //reLoad();
+}
+
 void MainWindow::checkForUpdate() {
   statusBar()->showMessage(tr("Checking for new version..."), 2000);
 
@@ -617,6 +643,7 @@ void MainWindow::handleClose(int i) {
 void MainWindow::updateMenus() {
   saveAsAct->setEnabled((activeChild()) != 0);
   reLoadAct->setEnabled((activeChild()) != 0);
+  genBoxAct->setEnabled((activeChild()) != 0);
   splitToFeatureBFAct->setEnabled((activeChild()) != 0);
   importPLSymAct->setEnabled((activeChild()) != 0);
   importTextSymAct->setEnabled((activeChild()) != 0);
@@ -981,6 +1008,11 @@ void MainWindow::createActions() {
   settingsAct->setToolTip(tr("Programm settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(slotSettings()));
 
+  genBoxAct = new QAction(tr("Generate boxfile"), this);
+  genBoxAct->setShortcut(tr("Ctrl+G"));
+  genBoxAct->setToolTip(tr("Re-generate boxfile for open image."));
+  connect(genBoxAct, SIGNAL(triggered()), this, SLOT(genBoxFile()));
+
   checkForUpdateAct = new QAction(tr("&Check for update"), this);
   checkForUpdateAct->setToolTip(tr("Check whether a newer version exits."));
   connect(checkForUpdateAct, SIGNAL(triggered()), this, SLOT(checkForUpdate()));
@@ -1057,6 +1089,9 @@ void MainWindow::createMenus() {
   viewMenu = menuBar()->addMenu(tr("&View"));
   updateViewMenu();
   connect(viewMenu, SIGNAL(aboutToShow()), this, SLOT(updateViewMenu()));
+
+  tessMenu = menuBar()->addMenu(tr("&Tesseract"));
+  tessMenu->addAction(genBoxAct);
 
   menuBar()->addSeparator();
 

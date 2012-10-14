@@ -534,14 +534,7 @@ bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& img) {
             QMessageBox::Cancel,
             QMessageBox::Cancel)) {
   case QMessageBox::Yes: {
-    TessTools tt;
-    QString str = tt.makeBoxes(img);
-    if (str == "")
-      return false;
-    QTextStream boxdata(&str);
-    if (!fillTableData(boxdata))
-      return false;
-    save(boxFileName);
+    makeBoxFile(boxFileName);
     break;
   }
   case QMessageBox::No:
@@ -549,6 +542,44 @@ bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& img) {
   default:
     return false;
   }
+  return true;
+}
+
+bool ChildWidget::makeBoxFile(const QString &boxFileName) {
+  // in case of regenerate makebox clear table first
+  if (model->rowCount() > 0) {
+      if (boxesVisible) {
+          drawBoxes();
+      }
+      deleteModelItemBox(table->currentIndex().row());
+      bool showFontColumns = isFontColumnsShown();
+      model->clear();
+      delete selectionModel;
+      delete model;
+      initTable();
+      setShowFontColumns(showFontColumns);
+  }
+
+  if (imageFile.isEmpty())
+      return false;
+
+  QImage image(imageFile);
+  TessTools tt;
+
+  QString str = tt.makeBoxes(image);
+
+  if (str == "")
+    return false;
+
+  QTextStream boxdata(&str);
+  if (!fillTableData(boxdata))
+    return false;
+  save(boxFileName);
+
+  updateSelectionRects();
+  modified = false;
+  emit modifiedChanged();
+
   return true;
 }
 
@@ -708,6 +739,9 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
 }
 
 bool ChildWidget::reload(const QString& fileName) {
+  if (boxesVisible) {
+    drawBoxes();
+  }
   deleteModelItemBox(table->currentIndex().row());
   bool showFontColumns = isFontColumnsShown();
   model->clear();

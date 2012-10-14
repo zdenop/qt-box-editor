@@ -171,6 +171,7 @@ class ChildWidget : public QSplitter {
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);
     bool qCreateBoxes(const QString &boxFileName, const QImage &img);
+    bool makeBoxFile(const QString &boxFileName);
     bool fillTableData(QTextStream& boxdata);
     void setSelectionRect();
     void setBolded(bool v);

@@ -82,6 +82,7 @@ class MainWindow : public QMainWindow {
     void save();
     void splitToFeatureBF();
     void saveAs();
+    void genBoxFile();
     void reLoad();
     void importPLSym();
     void importTextSym();
@@ -152,6 +153,7 @@ class MainWindow : public QMainWindow {
     QMenu* exportMenu;
     QMenu* editMenu;
     QMenu* viewMenu;
+    QMenu* tessMenu;
     QMenu* helpMenu;
 
     enum { MaxRecentFiles = 8 };
@@ -209,6 +211,7 @@ class MainWindow : public QMainWindow {
     QAction* drawRectAct;
     QAction* undoAct;
     QAction* redoAct;
+    QAction* genBoxAct;
     QAction* checkForUpdateAct;
     QAction* shortCutListAct;
     QAction* aboutAct;
