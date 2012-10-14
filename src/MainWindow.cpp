@@ -206,6 +206,34 @@ void MainWindow::saveAs() {
     statusBar()->showMessage(tr("File saved"), 2000);
 }
 
+void MainWindow::reLoad() {
+  QString currentFileName = activeChild()->currentBoxFile();
+  if (QFile::exists(currentFileName)) {
+      switch (QMessageBox::question(
+                this,
+                tr("Warning: Request to reload file!"),
+                  tr("Do you want to reload file '%1' from disk?\n\n" \
+                     "Warning: This operation can not be undone!")
+                .arg(currentFileName),
+                QMessageBox::Yes |
+                QMessageBox::No |
+                QMessageBox::No)) {
+    case QMessageBox::Yes: {
+          if (activeChild() && activeChild()->reload(currentFileName))
+            statusBar()->showMessage(tr("File reloaded"), 2000);
+          break;
+      }
+      case QMessageBox::No:
+      case QMessageBox::Cancel:
+      default:
+        break;
+      }
+    } else {
+      QMessageBox::question(this, tr("File was not find."),
+                            tr("File '%1' was not find.").arg(currentFileName));
+  }
+}
+
 void MainWindow::importPLSym() {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -588,6 +616,7 @@ void MainWindow::handleClose(int i) {
 
 void MainWindow::updateMenus() {
   saveAsAct->setEnabled((activeChild()) != 0);
+  reLoadAct->setEnabled((activeChild()) != 0);
   splitToFeatureBFAct->setEnabled((activeChild()) != 0);
   importPLSymAct->setEnabled((activeChild()) != 0);
   importTextSymAct->setEnabled((activeChild()) != 0);
@@ -736,6 +765,13 @@ void MainWindow::createActions() {
     tr("Save document after prompting the user for a file name."));
   saveAsAct->setEnabled(false);
   connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
+
+  reLoadAct = new QAction(tr("Reload boxfile"), this);
+  reLoadAct->setShortcut(tr("Ctrl+R"));
+  reLoadAct->setStatusTip(
+    tr("Reload file from disk."));
+  reLoadAct->setEnabled(false);
+  connect(reLoadAct, SIGNAL(triggered()), this, SLOT(reLoad()));
 
   importPLSymAct = new QAction(
     tr("I&mport file with one symbol per line"), this);
@@ -974,6 +1010,7 @@ void MainWindow::createMenus() {
   fileMenu->addAction(openAct);
   fileMenu->addAction(saveAct);
   fileMenu->addAction(saveAsAct);
+  fileMenu->addAction(reLoadAct);
   fileMenu->addSeparator();
   fileMenu->addAction(splitToFeatureBFAct);
   importMenu = fileMenu->addMenu(tr("&Import..."));

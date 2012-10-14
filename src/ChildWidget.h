@@ -161,6 +161,7 @@ class ChildWidget : public QSplitter {
         return imageFile;
     }
 
+    bool reload(const QString& fileName);
     bool save(const QString& fileName);
     bool splitToFeatureBF(const QString& fileName);
     bool saveString(const QString& fileName, const QString& qData);

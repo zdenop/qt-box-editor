@@ -694,17 +694,7 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
             QMessageBox::No |
             QMessageBox::No)) {
   case QMessageBox::Yes: {
-    deleteModelItemBox(table->currentIndex().row());
-    bool showFontColumns = isFontColumnsShown();
-    model->clear();
-    delete selectionModel;
-    delete model;
-    initTable();
-    setShowFontColumns(showFontColumns);
-    loadBoxes(fileName);
-    updateSelectionRects();
-    modified = false;
-    emit modifiedChanged();
+    reload(fileName);
     break;
   }
   case QMessageBox::No:
@@ -715,6 +705,23 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
     break;
   }
   }
+}
+
+bool ChildWidget::reload(const QString& fileName) {
+  deleteModelItemBox(table->currentIndex().row());
+  bool showFontColumns = isFontColumnsShown();
+  model->clear();
+  delete selectionModel;
+  delete model;
+
+  initTable();
+  setShowFontColumns(showFontColumns);
+  loadBoxes(fileName);
+  updateSelectionRects();
+
+  modified = false;
+  emit modifiedChanged();
+  return true;
 }
 
 bool ChildWidget::save(const QString& fileName) {

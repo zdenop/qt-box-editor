@@ -82,6 +82,7 @@ class MainWindow : public QMainWindow {
     void save();
     void splitToFeatureBF();
     void saveAs();
+    void reLoad();
     void importPLSym();
     void importTextSym();
     void symbolPerLine();
@@ -164,6 +165,7 @@ class MainWindow : public QMainWindow {
     QAction* saveAct;
     QAction* splitToFeatureBFAct;
     QAction* saveAsAct;
+    QAction* reLoadAct;
     QAction* importPLSymAct;
     QAction* importTextSymAct;
     QAction* symbolPerLineAct;
