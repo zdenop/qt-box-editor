@@ -37,12 +37,14 @@ public:
   QString makeBoxes(const QImage &qImage);
   static PIX* qImage2PIX(const QImage &qImage);
   static QImage PIX2qImage(PIX *pixImage);
+  static QImage GetThresholded(const QImage& qImage);
+  static const char *qString2Char(QString string);
   QList<QString> getLanguages(QString datapath);
 
 private:
-  QString getDataPath();
-  QString getLang();
-  void msg(QString messageText);
+  static QString getDataPath();
+  static QString getLang();
+  static void msg(QString messageText);
   static const char *kTrainedDataSuffix;
 };
 

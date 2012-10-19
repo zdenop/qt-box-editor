@@ -83,6 +83,7 @@ class MainWindow : public QMainWindow {
     void splitToFeatureBF();
     void saveAs();
     void genBoxFile();
+    void getBinImage();
     void reLoad();
     void importPLSym();
     void importTextSym();
@@ -212,6 +213,7 @@ class MainWindow : public QMainWindow {
     QAction* undoAct;
     QAction* redoAct;
     QAction* genBoxAct;
+    QAction* getBinAct;
     QAction* checkForUpdateAct;
     QAction* shortCutListAct;
     QAction* aboutAct;

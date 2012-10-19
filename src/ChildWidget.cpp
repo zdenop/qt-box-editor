@@ -1305,6 +1305,30 @@ void ChildWidget::setUnderline(bool v) {
   }
 }
 
+/*
+ * Replace original image with Thresholded image from tesseract
+ */
+void ChildWidget::binarizeImage() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  imageScene->removeItem(imageItem);
+  QImage image = gItem2qImage();
+  QImage bImage = TessTools::GetThresholded(image);
+  imageItem = imageScene->addPixmap(QPixmap::fromImage(bImage));
+}
+
+/*
+ * Convert QGraphicsItem to QImage
+ */
+QImage ChildWidget::gItem2qImage(){
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  QImage image(imageItem->boundingRect().size().toSize(),  QImage::Format_RGB32);
+  QPainter painter(&image);
+  QStyleOptionGraphicsItem styleOption;
+  imageItem->paint(&painter, &styleOption);
+  painter.end();
+  return image;
+}
+
 void ChildWidget::setSelectionRect() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,

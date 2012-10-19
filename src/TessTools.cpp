@@ -37,10 +37,22 @@
 
 const char *TessTools::kTrainedDataSuffix = "traineddata";
 
+// TODO(zdenop): Improve code here...
+
 TessTools::TessTools() {
 }
 
 TessTools::~TessTools() {
+}
+
+/*
+ * QString to const char
+ */
+const char *TessTools::qString2Char(QString string) {
+    //QByteArray byteArray = string.toAscii();
+    QByteArray byteArray = string.toUtf8();
+    char * constChar = byteArray.data();
+    return constChar;
 }
 
 /*!
@@ -53,19 +65,12 @@ QString TessTools::makeBoxes(const QImage& qImage) {
     msg("Unsupported image type");
     return "";
   }
-  tesseract::TessBaseAPI api;
 
   // http://code.google.com/p/tesseract-ocr/issues/detail?id=228
   setlocale(LC_NUMERIC, "C");
-
   // QString to  const char *
   QByteArray byteArray = getLang().toAscii();
   const char * apiLang = byteArray.data();
-
-  if (strcmp(apiLang, "") == 0) {
-      msg("You need to configure tesseract in Settings!");
-      return "";
-  }
 
   // workaroung if datapath/TESSDATA_PREFIX is set...
   #ifdef _WIN32
@@ -79,6 +84,7 @@ QString TessTools::makeBoxes(const QImage& qImage) {
   setenv("TESSDATA_PREFIX", datapath, 1);
   #endif
 
+  tesseract::TessBaseAPI api;
   if (api.Init(NULL, apiLang)) {
     msg("Could not initialize tesseract.\n");
     return "";
@@ -192,6 +198,35 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
   return result.rgbSwapped();
 }
 
+QImage TessTools::GetThresholded(const QImage& qImage) {
+    PIX * pixs = qImage2PIX(qImage);
+
+    // Set tessdata as Enviromental Variable to avoid problems
+    QByteArray byteArray1 = getDataPath().toUtf8();
+    #ifdef _WIN32
+    QString envQString = "TESSDATA_PREFIX=" + byteArray1 ;
+    const char * env = qString2Char(envQString);
+    putenv(env);
+    #else
+    const char * datapath = byteArray1.data();
+    setenv("TESSDATA_PREFIX", datapath, 1);
+    #endif
+
+    // TODO(zdenop): Why apiLang = qString2Char(getLang()) do not work???
+    QByteArray byteArray = getLang().toAscii();
+    const char * apiLang = byteArray.data();
+    setlocale(LC_NUMERIC, "C");
+
+    tesseract::TessBaseAPI api;
+    if (api.Init(NULL, apiLang)) {
+        msg("Could not initialize tesseract.\n");
+        return QImage();
+    }
+    api.SetImage(pixs);
+    PIX * pixq = api.GetThresholdedImage();
+    return PIX2qImage(pixq);
+}
+
 QString TessTools::getDataPath() {
     QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                        SETTING_ORGANIZATION, SETTING_APPLICATION);
@@ -208,6 +243,11 @@ QString TessTools::getLang() {
     QString lang;
     if (settings.contains("Tesseract/Lang")) {
         lang = settings.value("Tesseract/Lang").toString();
+    }
+
+    if (lang.isNull()) {
+        msg("You need to configure tesseract in Settings!");
+        return "";
     }
    return lang;
 }

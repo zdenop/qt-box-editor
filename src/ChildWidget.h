@@ -173,6 +173,7 @@ class ChildWidget : public QSplitter {
     bool qCreateBoxes(const QString &boxFileName, const QImage &img);
     bool makeBoxFile(const QString &boxFileName);
     bool fillTableData(QTextStream& boxdata);
+    void binarizeImage();
     void setSelectionRect();
     void setBolded(bool v);
     void setItalic(bool v);
@@ -278,6 +279,7 @@ class ChildWidget : public QSplitter {
     void setCurrentBoxFile(const QString& fileName);
 
     QString strippedName(const QString& fullFileName);
+    QImage gItem2qImage();
 
     QGraphicsScene* imageScene;
     QGraphicsView* imageView;

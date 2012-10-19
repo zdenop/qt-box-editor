@@ -543,8 +543,12 @@ void MainWindow::genBoxFile() {
           default:
             break;
           }
+}
 
-    //reLoad();
+void MainWindow::getBinImage() {
+    if (activeChild()) {
+      activeChild()->binarizeImage();
+    }
 }
 
 void MainWindow::checkForUpdate() {
@@ -644,6 +648,7 @@ void MainWindow::updateMenus() {
   saveAsAct->setEnabled((activeChild()) != 0);
   reLoadAct->setEnabled((activeChild()) != 0);
   genBoxAct->setEnabled((activeChild()) != 0);
+  getBinAct->setEnabled((activeChild()) != 0);
   splitToFeatureBFAct->setEnabled((activeChild()) != 0);
   importPLSymAct->setEnabled((activeChild()) != 0);
   importTextSymAct->setEnabled((activeChild()) != 0);
@@ -1013,6 +1018,11 @@ void MainWindow::createActions() {
   genBoxAct->setToolTip(tr("Re-generate boxfile for open image."));
   connect(genBoxAct, SIGNAL(triggered()), this, SLOT(genBoxFile()));
 
+  getBinAct = new QAction(tr("Convert to binary image"), this);
+  getBinAct->setToolTip(tr("Convert input image to binary image - used for " \
+                           "tesseract-ocr training."));
+  connect(getBinAct, SIGNAL(triggered()), this, SLOT(getBinImage()));
+
   checkForUpdateAct = new QAction(tr("&Check for update"), this);
   checkForUpdateAct->setToolTip(tr("Check whether a newer version exits."));
   connect(checkForUpdateAct, SIGNAL(triggered()), this, SLOT(checkForUpdate()));
@@ -1092,6 +1102,7 @@ void MainWindow::createMenus() {
 
   tessMenu = menuBar()->addMenu(tr("&Tesseract"));
   tessMenu->addAction(genBoxAct);
+  tessMenu->addAction(getBinAct);
 
   menuBar()->addSeparator();
 
