@@ -779,19 +779,24 @@ void MainWindow::createActions() {
                         tr("&Open..."), this);
   openAct->setShortcuts(QKeySequence::Open);
   openAct->setToolTip(tr("Open an existing file"));
+  openAct->setStatusTip(tr("Open an existing file"));
   connect(openAct, SIGNAL(triggered()), this, SLOT(open()));
 
   saveAct = new QAction(QIcon::fromTheme("filesave"),
                         tr("&Save"), this);
   saveAct->setShortcuts(QKeySequence::Save);
+  saveAct->setToolTip(tr("Save the document to disk"));
   saveAct->setStatusTip(tr("Save the document to disk"));
   saveAct->setEnabled(false);
   connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
 
   splitToFeatureBFAct = new QAction(tr("&Split to boxfiles"), this);
-  splitToFeatureBFAct->setStatusTip(
+  splitToFeatureBFAct->setToolTip(
     tr("Create individual boxfile for regular, bold, italic and " \
        "underline boxes."));
+  splitToFeatureBFAct->setStatusTip(
+              tr("Create individual boxfile for regular, bold, italic and " \
+                 "underline boxes."));
   splitToFeatureBFAct->setEnabled(false);
   connect(splitToFeatureBFAct, SIGNAL(triggered()), this,
           SLOT(splitToFeatureBF()));
@@ -799,26 +804,30 @@ void MainWindow::createActions() {
   saveAsAct = new QAction(QIcon::fromTheme("filesaveas"),
                           tr("Save &As"), this);
   saveAsAct->setShortcut(tr("Ctrl+Shift+S"));
-  saveAsAct->setStatusTip(
+  saveAsAct->setToolTip(
     tr("Save document after prompting the user for a file name."));
+  saveAsAct->setStatusTip(
+              tr("Save document after prompting the user for a file name."));
   saveAsAct->setEnabled(false);
   connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   reLoadAct = new QAction(tr("Reload boxfile"), this);
-  reLoadAct->setShortcut(tr("Ctrl+R"));
-  reLoadAct->setStatusTip(
-    tr("Reload file from disk."));
+  reLoadAct->setShortcut(tr("Ctrl+Atl+R"));
+  reLoadAct->setToolTip(tr("Reload file from disk."));
+  reLoadAct->setStatusTip(tr("Reload file from disk."));
   reLoadAct->setEnabled(false);
   connect(reLoadAct, SIGNAL(triggered()), this, SLOT(reLoad()));
 
   reLoadImgAct = new QAction(tr("Reload image"), this);
-  reLoadImgAct->setStatusTip(
-              tr("Reload image file from disk."));
+  reLoadImgAct->setShortcut(tr("Ctrl+Atl+R"));
+  reLoadImgAct->setToolTip(tr("Reload image file from disk."));
+  reLoadImgAct->setStatusTip(tr("Reload image file from disk."));
   reLoadImgAct->setEnabled(false);
   connect(reLoadImgAct, SIGNAL(triggered()), this, SLOT(reLoadImg()));
 
   importPLSymAct = new QAction(
     tr("I&mport file with one symbol per line"), this);
+  importPLSymAct->setToolTip(tr("Import symbols from text document"));
   importPLSymAct->setStatusTip(tr("Import symbols from text document"));
   importPLSymAct->setEnabled(false);
   connect(importPLSymAct, SIGNAL(triggered()), this, SLOT(importPLSym()));
@@ -826,21 +835,25 @@ void MainWindow::createActions() {
   importTextSymAct = new QAction(QIcon::fromTheme("fileimport"),
                                  tr("Import &text file"), this);
   importTextSymAct->setToolTip(tr("Import symbols from text document"));
+  importTextSymAct->setStatusTip(tr("Import symbols from text document"));
   importTextSymAct->setEnabled(false);
   connect(importTextSymAct, SIGNAL(triggered()), this, SLOT(importTextSym()));
 
   // TODO(zdenop): implementation based on parameter?
   symbolPerLineAct = new QAction(tr("Symbol per line…"), this);
+  symbolPerLineAct->setToolTip(tr("Export symbols to text file."));
   symbolPerLineAct->setStatusTip(tr("Export symbols to text file."));
   symbolPerLineAct->setEnabled(false);
   connect(symbolPerLineAct, SIGNAL(triggered()), this, SLOT(symbolPerLine()));
 
   rowPerLineAct = new QAction(tr("Line by line…"), this);
+  rowPerLineAct->setToolTip(tr("Export symbols to text file."));
   rowPerLineAct->setStatusTip(tr("Export symbols to text file."));
   rowPerLineAct->setEnabled(false);
   connect(rowPerLineAct, SIGNAL(triggered()), this, SLOT(rowPerLine()));
 
   paragraphPerLineAct = new QAction(tr("Paragraph per line…"), this);
+  paragraphPerLineAct->setToolTip(tr("Export symbols to text file."));
   paragraphPerLineAct->setStatusTip(tr("Export symbols to text file."));
   paragraphPerLineAct->setEnabled(false);
   connect(paragraphPerLineAct, SIGNAL(triggered()), this,
@@ -849,11 +862,13 @@ void MainWindow::createActions() {
   closeAct = new QAction(QIcon::fromTheme("window-close"),
                          tr("Cl&ose"), this);
   closeAct->setShortcut(QKeySequence::Close);
+  closeAct->setToolTip(tr("Close the active tab"));
   closeAct->setStatusTip(tr("Close the active tab"));
   connect(closeAct, SIGNAL(triggered()), this, SLOT(closeActiveTab()));
 
   closeAllAct = new QAction(tr("Close &All"), this);
   closeAllAct->setShortcut(tr("Ctrl+Shift+W"));
+  closeAllAct->setToolTip(tr("Close all the tabs"));
   closeAllAct->setStatusTip(tr("Close all the tabs"));
   connect(closeAllAct, SIGNAL(triggered()), this, SLOT(closeAllTabs()));
 
@@ -864,6 +879,7 @@ void MainWindow::createActions() {
                         tr("E&xit"), this);
   exitAct->setShortcut(tr("Ctrl+Q"));
   exitAct->setToolTip(tr("Exit the application"));
+  exitAct->setStatusTip(tr("Exit the application"));
   connect(exitAct, SIGNAL(triggered()), this, SLOT(close()));
 
   boldAct = new QAction(QIcon::fromTheme("text_bold"),
@@ -925,6 +941,7 @@ void MainWindow::createActions() {
   showSymbolAct->setCheckable(true);
   showSymbolAct->setShortcut(tr("Ctrl+L"));
   showSymbolAct->setToolTip(tr("Show/hide symbol over selection rectangle"));
+  showSymbolAct->setStatusTip(tr("Show/hide symbol over selection rectangle"));
   connect(showSymbolAct, SIGNAL(triggered()), this, SLOT(showSymbol()));
 
   DirectTypingAct = new QAction(QIcon::fromTheme("key_bindings"),
@@ -945,17 +962,20 @@ void MainWindow::createActions() {
   drawBoxesAct->setCheckable(true);
   drawBoxesAct->setShortcut(tr("Ctrl+H"));
   drawBoxesAct->setToolTip(tr("Show/hide rectangles for all boxes"));
+  drawBoxesAct->setStatusTip(tr("Show/hide rectangles for all boxes"));
   connect(drawBoxesAct, SIGNAL(triggered()), this, SLOT(drawBoxes()));
 
   nextAct = new QAction(QIcon::fromTheme("next"), tr("Ne&xt"), this);
   nextAct->setShortcuts(QKeySequence::NextChild);
   nextAct->setToolTip(tr("Move the focus to the next window"));
+  nextAct->setStatusTip(tr("Move the focus to the next window"));
   connect(nextAct, SIGNAL(triggered()), this, SLOT(nextTab()));
 
   previousAct = new QAction(QIcon::fromTheme("previous"),
                             tr("Pre&vious"), this);
   previousAct->setShortcuts(QKeySequence::PreviousChild);
   previousAct->setToolTip(tr("Move the focus to the previous window"));
+  previousAct->setStatusTip(tr("Move the focus to the previous window"));
   connect(previousAct, SIGNAL(triggered()), this, SLOT(previousTab()));
 
   insertAct = new QAction(QIcon::fromTheme("insertRow"),
@@ -1023,25 +1043,31 @@ void MainWindow::createActions() {
                             tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
   settingsAct->setToolTip(tr("Programm settings"));
+  settingsAct->setStatusTip(tr("Programm settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(slotSettings()));
 
   genBoxAct = new QAction(tr("Generate boxfile"), this);
-  genBoxAct->setShortcut(tr("Ctrl+G"));
+  genBoxAct->setShortcut(tr("Ctrl+Alt+G"));
   genBoxAct->setToolTip(tr("Re-generate boxfile for open image."));
+  genBoxAct->setStatusTip(tr("Re-generate boxfile for open image."));
   connect(genBoxAct, SIGNAL(triggered()), this, SLOT(genBoxFile()));
 
   getBinAct = new QAction(tr("Convert to binary image"), this);
   getBinAct->setToolTip(tr("Convert input image to binary image - used for " \
                            "tesseract-ocr training."));
+  getBinAct->setStatusTip(tr("Convert input image to binary image - used for " \
+                           "tesseract-ocr training."));
   connect(getBinAct, SIGNAL(triggered()), this, SLOT(getBinImage()));
 
   checkForUpdateAct = new QAction(tr("&Check for update"), this);
   checkForUpdateAct->setToolTip(tr("Check whether a newer version exits."));
+  checkForUpdateAct->setStatusTip(tr("Check whether a newer version exits."));
   connect(checkForUpdateAct, SIGNAL(triggered()), this, SLOT(checkForUpdate()));
 
   aboutAct = new QAction(QIcon::fromTheme("help-about"),
                          tr("&About"), this);
   aboutAct->setToolTip(tr("Show the application's About box"));
+  aboutAct->setStatusTip(tr("Show the application's About box"));
   connect(aboutAct, SIGNAL(triggered()), this, SLOT(about()));
 
   aboutQtAct = new QAction(tr("About &Qt"), this);
