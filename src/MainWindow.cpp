@@ -812,14 +812,14 @@ void MainWindow::createActions() {
   connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 
   reLoadAct = new QAction(tr("Reload boxfile"), this);
-  reLoadAct->setShortcut(tr("Ctrl+Atl+R"));
+  reLoadAct->setShortcut(tr("Ctrl+Alt+R"));
   reLoadAct->setToolTip(tr("Reload file from disk."));
   reLoadAct->setStatusTip(tr("Reload file from disk."));
   reLoadAct->setEnabled(false);
   connect(reLoadAct, SIGNAL(triggered()), this, SLOT(reLoad()));
 
   reLoadImgAct = new QAction(tr("Reload image"), this);
-  reLoadImgAct->setShortcut(tr("Ctrl+Atl+R"));
+  reLoadImgAct->setShortcut(QKeySequence::Refresh);
   reLoadImgAct->setToolTip(tr("Reload image file from disk."));
   reLoadImgAct->setStatusTip(tr("Reload image file from disk."));
   reLoadImgAct->setEnabled(false);
