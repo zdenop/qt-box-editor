@@ -85,6 +85,7 @@ class MainWindow : public QMainWindow {
     void genBoxFile();
     void getBinImage();
     void reLoad();
+    void reLoadImg();
     void importPLSym();
     void importTextSym();
     void symbolPerLine();
@@ -169,6 +170,7 @@ class MainWindow : public QMainWindow {
     QAction* splitToFeatureBFAct;
     QAction* saveAsAct;
     QAction* reLoadAct;
+    QAction* reLoadImgAct;
     QAction* importPLSymAct;
     QAction* importTextSymAct;
     QAction* symbolPerLineAct;

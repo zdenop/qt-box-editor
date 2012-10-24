@@ -220,7 +220,7 @@ void MainWindow::reLoad() {
                 QMessageBox::No)) {
     case QMessageBox::Yes: {
           if (activeChild() && activeChild()->reload(currentFileName))
-            statusBar()->showMessage(tr("File reloaded"), 2000);
+            statusBar()->showMessage(tr("Box file reloaded"), 2000);
           break;
       }
       case QMessageBox::No:
@@ -232,6 +232,11 @@ void MainWindow::reLoad() {
       QMessageBox::question(this, tr("File was not find."),
                             tr("File '%1' was not find.").arg(currentFileName));
   }
+}
+
+void MainWindow::reLoadImg() {
+  if (activeChild() && activeChild()->reloadImg())
+            statusBar()->showMessage(tr("Image reloaded"), 2000);
 }
 
 void MainWindow::importPLSym() {
@@ -647,6 +652,7 @@ void MainWindow::handleClose(int i) {
 void MainWindow::updateMenus() {
   saveAsAct->setEnabled((activeChild()) != 0);
   reLoadAct->setEnabled((activeChild()) != 0);
+  reLoadImgAct->setEnabled((activeChild()) != 0);
   genBoxAct->setEnabled((activeChild()) != 0);
   getBinAct->setEnabled((activeChild()) != 0);
   splitToFeatureBFAct->setEnabled((activeChild()) != 0);
@@ -804,6 +810,12 @@ void MainWindow::createActions() {
     tr("Reload file from disk."));
   reLoadAct->setEnabled(false);
   connect(reLoadAct, SIGNAL(triggered()), this, SLOT(reLoad()));
+
+  reLoadImgAct = new QAction(tr("Reload image"), this);
+  reLoadImgAct->setStatusTip(
+              tr("Reload image file from disk."));
+  reLoadImgAct->setEnabled(false);
+  connect(reLoadImgAct, SIGNAL(triggered()), this, SLOT(reLoadImg()));
 
   importPLSymAct = new QAction(
     tr("I&mport file with one symbol per line"), this);
@@ -1053,6 +1065,7 @@ void MainWindow::createMenus() {
   fileMenu->addAction(saveAct);
   fileMenu->addAction(saveAsAct);
   fileMenu->addAction(reLoadAct);
+  fileMenu->addAction(reLoadImgAct);
   fileMenu->addSeparator();
   fileMenu->addAction(splitToFeatureBFAct);
   importMenu = fileMenu->addMenu(tr("&Import..."));

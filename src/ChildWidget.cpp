@@ -315,6 +315,7 @@ ChildWidget::ChildWidget(QWidget* parent)
 
   setSelectionRect();
   widgetWidth = parent->size().width();
+  imageItem = NULL;
   modified = false;
   boxesVisible = false;
   drawnRectangle = false;
@@ -755,6 +756,15 @@ bool ChildWidget::reload(const QString& fileName) {
 
   modified = false;
   emit modifiedChanged();
+  return true;
+}
+
+bool ChildWidget::reloadImg() {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  imageScene->removeItem((QGraphicsItem*)imageItem);
+  // TODO(zdenop): Check if here is not  memory leak
+  QImage image(imageFile);
+  imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
   return true;
 }
 
@@ -1311,6 +1321,7 @@ void ChildWidget::setUnderline(bool v) {
 void ChildWidget::binarizeImage() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   imageScene->removeItem(imageItem);
+  // TODO(zdenop): Check if here is not  memory leak
   QImage image = gItem2qImage();
   QImage bImage = TessTools::GetThresholded(image);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(bImage));
