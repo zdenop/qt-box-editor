@@ -171,7 +171,7 @@ class ChildWidget : public QSplitter {
     bool exportTxt(const int& eType, const QString& fileName);
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);
-    bool qCreateBoxes(const QString &boxFileName, const QImage &img);
+    bool qCreateBoxes(const QString &boxFileName);
     bool makeBoxFile(const QString &boxFileName);
     bool fillTableData(QTextStream& boxdata);
     void binarizeImage();

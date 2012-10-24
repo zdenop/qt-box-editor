@@ -199,6 +199,7 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
 }
 
 QImage TessTools::GetThresholded(const QImage& qImage) {
+    // TODO(zdenop): Check if here is not  memory leak
     PIX * pixs = qImage2PIX(qImage);
 
     // Set tessdata as Enviromental Variable to avoid problems

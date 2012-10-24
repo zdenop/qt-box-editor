@@ -506,7 +506,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
-    if (!qCreateBoxes(boxFileName, image)) return false;
+    if (!qCreateBoxes(boxFileName)) return false;
   } else {
     if (!loadBoxes(boxFileName)) return false;
   }
@@ -523,7 +523,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
   return true;
 }
 
-bool ChildWidget::qCreateBoxes(const QString &boxFileName, const QImage& img) {
+bool ChildWidget::qCreateBoxes(const QString &boxFileName) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   switch (QMessageBox::question(
             this,
@@ -762,7 +762,7 @@ bool ChildWidget::reload(const QString& fileName) {
 bool ChildWidget::reloadImg() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   imageScene->removeItem((QGraphicsItem*)imageItem);
-  // TODO(zdenop): Check if here is not  memory leak
+  delete imageItem;
   QImage image(imageFile);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
   return true;
@@ -1321,8 +1321,8 @@ void ChildWidget::setUnderline(bool v) {
 void ChildWidget::binarizeImage() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   imageScene->removeItem(imageItem);
-  // TODO(zdenop): Check if here is not  memory leak
   QImage image = gItem2qImage();
+  delete imageItem;
   QImage bImage = TessTools::GetThresholded(image);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(bImage));
 }
