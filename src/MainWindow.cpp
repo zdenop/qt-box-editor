@@ -647,6 +647,7 @@ void MainWindow::handleClose(int i) {
     _boxsize->setText("");
     _zoom->setText("");
   }
+  updateMenus();
 }
 
 void MainWindow::updateMenus() {
@@ -663,8 +664,8 @@ void MainWindow::updateMenus() {
   paragraphPerLineAct->setEnabled((activeChild()) != 0);
   closeAct->setEnabled(activeChild() != 0);
   closeAllAct->setEnabled(activeChild() != 0);
-  nextAct->setEnabled(activeChild() != 0);
-  previousAct->setEnabled(activeChild() != 0);
+  nextAct->setEnabled(tabWidget->count() > 1);
+  previousAct->setEnabled(tabWidget->count() > 1);
   separatorAct->setVisible(activeChild() != 0);
   zoomOriginalAct->setEnabled(activeChild() != 0);
   zoomInAct->setEnabled(activeChild() != 0);
