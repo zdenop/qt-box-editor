@@ -1747,7 +1747,12 @@ void ChildWidget::moveSymbolRow(int direction) {
       table->setCurrentIndex(model->index(ui.m_extrarow, 0));
     } else {
       // TODO(zdenop): implement undo, or rewrite whole function
-      int newRow = currentRow + direction;
+      UndoItem ui;
+      ui.m_eop = euoMove;
+      ui.m_origrow = currentRow;
+      ui.m_extrarow = currentRow + direction;
+
+      int newRow = ui.m_extrarow;
       if (direction > 0)  // insertRow change row id!
         newRow++;
       else
@@ -1755,9 +1760,11 @@ void ChildWidget::moveSymbolRow(int direction) {
       model->insertRow(newRow);
 
       for (int i = 0; i < (model->columnCount() - 1); ++i) {
+        ui.m_vdata[i] = model->index(currentRow, i).data();
         model->setData(model->index(newRow, i),
                        model->index(currentRow, i).data());
       }
+      m_undostack.push(ui);
 
       QGraphicsRectItem* rectItem = createModelItemBox(newRow);
       // activate new row
@@ -2560,6 +2567,10 @@ void ChildWidget::undo() {
     // Two item changed places. Change places back.
     undoMoveBack(ui);
     break;
+  case euoMove:
+    // Two item changed places. Change places back.
+    undoMoveBack2(ui);
+    break;
   default:
     // Nothing to do for other cases. Report error.
 
@@ -2731,6 +2742,43 @@ void ChildWidget::undoMoveBack(UndoItem& ui, bool bIsRedo) {
     m_redostack.push(ui);
 }
 
+// Put moved row back to original location
+void ChildWidget::undoMoveBack2(UndoItem& ui, bool bIsRedo) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  int firstrow = ui.m_origrow;
+  int secondrow = ui.m_extrarow;
+
+  if (bIsRedo) {
+    firstrow = ui.m_extrarow;
+    secondrow = ui.m_origrow;
+  }
+
+  if (firstrow < secondrow)
+      secondrow++;
+  else
+      firstrow++;
+
+  model->insertRow(firstrow);
+
+  for (int i = 0; i < model->columnCount() - 1; i++) {
+    model->setData(model->index(firstrow, i), ui.m_vdata[i]);
+  }
+  createModelItemBox(firstrow);
+
+  model->removeRow(secondrow);
+
+  if (firstrow > secondrow) firstrow--;
+  table->setCurrentIndex(model->index(firstrow, 0));
+  table->setFocus();
+
+  updateSelectionRects();
+
+  if (bIsRedo)
+    m_undostack.push(ui, false);
+  else
+    m_redostack.push(ui);
+}
+
 void ChildWidget::redo() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   if (m_redostack.isEmpty()) {
@@ -2768,8 +2816,12 @@ void ChildWidget::redo() {
     // Two item changed places. Change places back.
     undoMoveBack(ui, true);
     break;
+  case euoMove:
+    // Two item changed places. Change places back.
+    undoMoveBack2(ui, true);
+    break;
   default:
-    // Nothing to dofor other cases. Report error.
+    // Nothing to do for other cases. Report error.
 
     QMessageBox::warning(
       this,
