@@ -69,7 +69,8 @@ enum undoOperation {
     euoChange = 4,
     euoJoin = 8,
     euoSplit = 16,
-    euoReplace = 32
+    euoReplace = 32,
+    euoMove = 64
 };
 
 struct UndoItem {
@@ -231,6 +232,7 @@ class ChildWidget : public QSplitter {
     void undoJoin(UndoItem& ui, bool bIsRedo = false);
     void undoSplit(UndoItem& ui, bool bIsRedo = false);
     void undoMoveBack(UndoItem& ui, bool bIsRedo = false);
+    void undoMoveBack2(UndoItem& ui, bool bIsRedo = false);
     bool symbolShown;
     bool boxesVisible;
     bool drawnRectangle;
