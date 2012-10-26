@@ -84,22 +84,25 @@ QString TessTools::makeBoxes(const QImage& qImage) {
   setenv("TESSDATA_PREFIX", datapath, 1);
   #endif
 
-  tesseract::TessBaseAPI api;
-  if (api.Init(NULL, apiLang)) {
+  tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
+  if (api->Init(NULL, apiLang)) {
     msg("Could not initialize tesseract.\n");
     return "";
   }
 
-  api.SetVariable("tessedit_create_boxfile", "1");
+  api->SetVariable("tessedit_create_boxfile", "1");
   STRING text_out;
   QApplication::setOverrideCursor(Qt::WaitCursor);
   //TODO(zdenop) take care about pages!
-  if (!api.ProcessPage(pixs, 0, NULL, NULL, 0, &text_out)) {
+  if (!api->ProcessPage(pixs, 0, NULL, NULL, 0, &text_out)) {
     msg("Error during processing.\n");
   }
 
   QApplication::restoreOverrideCursor();
+
   pixDestroy(&pixs);
+  api->End();
+  delete api;
   return QString::fromUtf8(text_out.string());
 }
 
@@ -195,6 +198,7 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
     return none;
   }
 
+  pixDestroy(&pixImage);
   return result.rgbSwapped();
 }
 
@@ -218,13 +222,18 @@ QImage TessTools::GetThresholded(const QImage& qImage) {
     const char * apiLang = byteArray.data();
     setlocale(LC_NUMERIC, "C");
 
-    tesseract::TessBaseAPI api;
-    if (api.Init(NULL, apiLang)) {
+    tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
+    if (api->Init(NULL, apiLang)) {
         msg("Could not initialize tesseract.\n");
         return QImage();
     }
-    api.SetImage(pixs);
-    PIX * pixq = api.GetThresholdedImage();
+    api->SetImage(pixs);
+    PIX * pixq = api->GetThresholdedImage();
+
+    api->End();
+    delete api;
+    pixDestroy(&pixs);
+
     return PIX2qImage(pixq);
 }
 
