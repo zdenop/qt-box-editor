@@ -63,7 +63,7 @@ Distribution
 ------------
 
 For Windows users there is binary a version in [Download](https://github.com/zdenop/qt-box-editor/downloads) section. From version 1.09 distribution is split to 2 part:
-* qt-box-editor executable (e.g. qt-box-editor-1.09.exe) - share build
+* qt-box-editor executable (e.g. qt-box-editor-1.09.exe or qt-box-editor-1.10.exe) - share build
 * qt-box-editor dependecies (e.g. qt-box-editor-1.09-dependecies.zip) - needed 3rd party libraries to run qt-box editor.
 There is a hope that qt-box-editor dependecies can be used for next few qt-box-editor releases.
 
