@@ -1,9 +1,10 @@
 1.10
 - implemented bbox drag resizing (thanks to D. Silaev)
-- implement zoom in/out with CTRL + mouse wheel
-- implement reload box file, regenerate box file
-- implement convert image to binary image, reload image
-- watch for modified file outside of program
+- reload image, reload box file from disk
+- implemented 'regenerate box file'
+- implemented 'convert image to binary image'
+- implemented 'zoom in/out' with CTRL + mouse wheel
+- watch for modified boxfile outside of program
 - set CrossCursor for rubberBand selection
 - improve shortcuts info/help
 - fix for moveTo function
