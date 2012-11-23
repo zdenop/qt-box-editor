@@ -25,7 +25,7 @@
 #include "TessTools.h"
 #include "Settings.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QWidget>
 #include <QTextStream>
 #include <QSettings>
@@ -34,6 +34,10 @@
 #include <QDir>
 #include <QDebug>
 #include <QFile>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QGuiApplication>
+#endif
 
 const char *TessTools::kTrainedDataSuffix = "traineddata";
 
@@ -69,8 +73,13 @@ QString TessTools::makeBoxes(const QImage& qImage) {
   // http://code.google.com/p/tesseract-ocr/issues/detail?id=228
   setlocale(LC_NUMERIC, "C");
   // QString to  const char *
+  // TODO(zdenop): Find solution for QT5
+  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   QByteArray byteArray = getLang().toAscii();
   const char * apiLang = byteArray.data();
+  #else
+  const char * apiLang = getLang().toLatin1();
+  #endif
 
   // workaroung if datapath/TESSDATA_PREFIX is set...
   #ifdef _WIN32
@@ -218,8 +227,14 @@ QImage TessTools::GetThresholded(const QImage& qImage) {
     #endif
 
     // TODO(zdenop): Why apiLang = qString2Char(getLang()) do not work???
+    // TODO(zdenop): Find solution for QT5
+    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     QByteArray byteArray = getLang().toAscii();
     const char * apiLang = byteArray.data();
+    #else
+    const char * apiLang = getLang().toLatin1();
+    #endif
+
     setlocale(LC_NUMERIC, "C");
 
     tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();

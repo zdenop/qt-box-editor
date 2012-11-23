@@ -26,8 +26,8 @@
 #include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
 #include "TessTools.h"
-#include <QtCore/QString>
-#include <QtGui/QImage>
+#include <QString>
+#include <QImage>
 
 class TessTools {
 

@@ -24,10 +24,10 @@
 #ifndef SRC_INCLUDE_SETTINGSDIALOG_H_
 #define SRC_INCLUDE_SETTINGSDIALOG_H_
 
-#include <QtCore/QSettings>
-#include <QtGui/QColorDialog>
-#include <QtGui/QFontDialog>
-#include <QtGui/QFileDialog>
+#include <QSettings>
+#include <QColorDialog>
+#include <QFontDialog>
+#include <QFileDialog>
 #include <QSortFilterProxyModel>
 #include <QDebug>
 

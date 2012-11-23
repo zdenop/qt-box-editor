@@ -26,32 +26,36 @@
 #ifndef SRC_CHILDWIDGET_H_
 #define SRC_CHILDWIDGET_H_
 
-#include <QtCore/QDebug>
-#include <QtCore/QDir>
-#include <QtCore/QFileInfo>
-#include <QtCore/QFileSystemWatcher>
-#include <QtCore/QSettings>
-#include <QtCore/QTextStream>
-#include <QtCore/qmath.h>
-#include <QtCore/QStack>
-#include <QtGui/QAbstractItemView>
-#include <QtGui/QApplication>
-#include <QtGui/QClipboard>
-#include <QtGui/QCloseEvent>
-#include <QtGui/QGraphicsRectItem>
-#include <QtGui/QGraphicsScene>
-#include <QtGui/QGraphicsSceneWheelEvent>
-#include <QtGui/QGraphicsView>
-#include <QtGui/QHeaderView>
-#include <QtGui/QMessageBox>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QPixmap>
-#include <QtGui/QRubberBand>
-#include <QtGui/QSplitter>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QTableView>
-#include <QtGui/QTableWidgetItem>
-#include <QtGui/QTransform>
+#include <QDebug>
+#include <QDir>
+#include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QSettings>
+#include <QTextStream>
+#include <qmath.h>
+#include <QStack>
+#include <QAbstractItemView>
+#include <QApplication>
+#include <QClipboard>
+#include <QCloseEvent>
+#include <QGraphicsRectItem>
+#include <QGraphicsScene>
+#include <QGraphicsSceneWheelEvent>
+#include <QGraphicsView>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QMouseEvent>
+#include <QPixmap>
+#include <QRubberBand>
+#include <QSplitter>
+#include <QStandardItemModel>
+#include <QTableView>
+#include <QTableWidgetItem>
+#include <QTransform>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QGuiApplication>
+#endif
 
 class QGraphicsScene;
 class QGraphicsView;

@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.10
+VERSION = 1.11dev
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -11,12 +11,13 @@ INCLUDEPATH += ./ \
     src/include \
     src
 
-QT += network \
-    svg # \
-    # testlib
+QT += network svg
+QT += testlib
 
-CONFIG += release
+#CONFIG += debug warn_on
+CONFIG += release warn_off
 
+#-Wignored-qualifiers
 OBJECTS_DIR += temp
 MOC_DIR += temp
 UI_DIR += temp
@@ -77,6 +78,10 @@ win32: {
 }
 
 unix: {
-
+   !lessThan(QT_MAJOR_VERSION, 5) {
+      message(Qt $$[QT_VERSION] was detected.)
+      QT += widgets
+      INCLUDEPATH += /opt/include/
+      LIBS += -L/opt/lib
+    }
 }
-

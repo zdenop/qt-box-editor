@@ -1241,15 +1241,21 @@ void MainWindow::zoomRatioChanged(qreal ratio) {
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
+  // TODO(zdenop): Find solution for QT5
+  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   if (event->mimeData()->hasFormat("text/uri-list"))
     event->acceptProposedAction();
+  #endif
 }
 
 void MainWindow::dropEvent(QDropEvent* event) {
+  // TODO(zdenop): Find solution for QT5
+  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   QList<QUrl> urls = event->mimeData()->urls();
   if (urls.count()) {
     QString fname = urls[0].toLocalFile();
     addChild(fname);
     event->acceptProposedAction();
   }
+  #endif
 }

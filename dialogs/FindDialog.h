@@ -23,10 +23,10 @@
 #ifndef DIALOGS_FINDDIALOG_H_
 #define DIALOGS_FINDDIALOG_H_
 
-#include <QtCore/QSettings>
-#include <QtGui/QCloseEvent>
-#include <QtGui/QPushButton>
-#include <QtGui/QDialog>
+#include <QSettings>
+#include <QCloseEvent>
+#include <QPushButton>
+#include <QDialog>
 
 #include "ui_FindDialog.h"
 

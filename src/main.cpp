@@ -21,8 +21,8 @@
 *
 **********************************************************************/
 
-#include <QtCore/QTextCodec>
-#include <QtGui/QApplication>
+#include <QTextCodec>
+#include <QApplication>
 
 #if defined _COMPOSE_STATIC_
 #include <QtPlugin>
@@ -64,7 +64,9 @@ int main(int argc, char* argv[]) {
       QIcon::setThemeName(FALLBACK_ICON_THEME);
   }
 
-  QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
+  #endif
 
   MainWindow mainWin;
   mainWin.show();
