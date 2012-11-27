@@ -14,10 +14,9 @@ INCLUDEPATH += ./ \
 QT += network svg
 QT += testlib
 
-#CONFIG += debug warn_on
-CONFIG += release warn_off
+CONFIG += debug warn_on
+#CONFIG += release warn_off
 
-#-Wignored-qualifiers
 OBJECTS_DIR += temp
 MOC_DIR += temp
 UI_DIR += temp
@@ -78,7 +77,7 @@ win32: {
 }
 
 unix: {
-   !lessThan(QT_MAJOR_VERSION, 5) {
+    greaterThan(QT_MAJOR_VERSION, 5) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
       INCLUDEPATH += /opt/include/
