@@ -25,6 +25,7 @@
 
 #include <QtGui>
 #include <QDialog>
+#include <QPushButton>
 
 #include "ui_GetRowIDDialog.h"
 

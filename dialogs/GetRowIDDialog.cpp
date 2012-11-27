@@ -25,11 +25,8 @@
 GetRowIDDialog::GetRowIDDialog(QWidget* parent)
   : QDialog(parent) {
   setupUi(this);
-  // TODO(zdenop): find solution for QT5
-  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   buttonBox->button(QDialogButtonBox::Ok)->setEnabled(false);
-  #endif
-  
+
   QRegExp regExp("^\\d\\d*$");
   lineEdit->setValidator(new QRegExpValidator(regExp, this));
 
@@ -38,10 +35,7 @@ GetRowIDDialog::GetRowIDDialog(QWidget* parent)
 }
 
 void GetRowIDDialog::on_lineEdit_textChanged() {
-  // TODO(zdenop): find solution for QT5
-  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   buttonBox->button(QDialogButtonBox::Ok)->setEnabled(
     lineEdit->hasAcceptableInput());
-  #endif
 }
 
