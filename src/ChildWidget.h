@@ -33,6 +33,7 @@
 #include <QSettings>
 #include <QTextStream>
 #include <qmath.h>
+#include <QScrollBar>
 #include <QStack>
 #include <QAbstractItemView>
 #include <QApplication>
