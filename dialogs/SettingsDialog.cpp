@@ -52,14 +52,8 @@ void SettingsDialog::on_fontButton_clicked() {
     if (tableFont.pointSize() > 12)
         tempFont.setPointSize(12);
     fontLabel->setFont(tempFont);
-    // TODO(zdenop): check solution for QT5
-    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    fontLabel->setText(tableFont.family().toAscii() +
+    fontLabel->setText(tableFont.family().toLocal8Bit() +
                        tr(", %1 pt").arg(tableFont.pointSize()));
-    #else
-    fontLabel->setText(tableFont.family() +
-                       tr(", %1 pt").arg(tableFont.pointSize()));
-    #endif
   }
 }
 
@@ -74,14 +68,8 @@ void SettingsDialog::on_fontImageButton_clicked() {
     if (imageFont.pointSize() > 12)
           tempFont.setPointSize(12);
     fontImageLabel->setFont(imageFont);
-    // TODO(zdenop): check solution for QT5
-    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-    fontImageLabel->setText(imageFont.family().toAscii() +
+    fontImageLabel->setText(imageFont.family().toLocal8Bit() +
                        tr(", %1 pt").arg(imageFont.pointSize()));
-    #else
-    fontImageLabel->setText(imageFont.family() +
-                       tr(", %1 pt").arg(imageFont.pointSize()));
-    #endif
   }
 }
 
@@ -201,28 +189,15 @@ void SettingsDialog::initSettings() {
   if (tableFont.pointSize() > 12)
         tempFont.setPointSize(12);
   fontLabel->setFont(tempFont);
-  // TODO(zdenop): check solution for QT5
-  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-  fontLabel->setText(tableFont.family().toAscii() +
+  fontLabel->setText(tableFont.family().toLocal8Bit() +
                      tr(", %1 pt").arg(tableFont.pointSize()));
-  #else
-  fontLabel->setText(tableFont.family() +
-                     tr(", %1 pt").arg(tableFont.pointSize()));
-  #endif
 
   tempFont = imageFont;
   if (imageFont.pointSize() > 12)
         tempFont.setPointSize(12);
   fontImageLabel->setFont(tempFont);
-  // TODO(zdenop): check solution for QT5
-  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-  fontImageLabel->setText(imageFont.family().toAscii() +
+  fontImageLabel->setText(imageFont.family().toLocal8Bit() +
                      tr(", %1 pt").arg(imageFont.pointSize()));
-  #else
-  fontImageLabel->setText(imageFont.family() +
-                     tr(", %1 pt").arg(imageFont.pointSize()));
-  #endif
-  
 
   updateColorButton(imageFontColorButton, imageFontColor);
   updateColorButton(colorRectButton, rectColor);
