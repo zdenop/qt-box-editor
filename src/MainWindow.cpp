@@ -50,6 +50,7 @@ MainWindow::MainWindow() {
 
   shortCutsDialog = 0;
   setAcceptDrops(true);
+  tabWidget->setAcceptDrops(true);
   createActions();
   createMenus();
   createToolBars();
@@ -1241,22 +1242,17 @@ void MainWindow::zoomRatioChanged(qreal ratio) {
   _zoom->setText(QString("%1%").arg(qRound(ratio * 100)));
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
-  // TODO(zdenop): Find solution for QT5
-  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
-  if (event->mimeData()->hasFormat("text/uri-list"))
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+  if (event->mimeData()->hasFormat("text/uri-list")) {
     event->acceptProposedAction();
-  #endif
+  }
 }
 
-void MainWindow::dropEvent(QDropEvent* event) {
-  // TODO(zdenop): Find solution for QT5
-  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+void MainWindow::dropEvent(QDropEvent *event) {
   QList<QUrl> urls = event->mimeData()->urls();
   if (urls.count()) {
     QString fname = urls[0].toLocalFile();
     addChild(fname);
     event->acceptProposedAction();
   }
-  #endif
 }

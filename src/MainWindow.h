@@ -26,6 +26,7 @@
 #define SRC_INCLUDE_MAINWINDOW_H_
 
 #include <QEventLoop>
+#include <QDragEnterEvent>
 #include <QList>
 #include <QSettings>
 #include <QSignalMapper>
@@ -38,6 +39,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include <QMessageBox>
+#include <QMimeData>
 #include <QStatusBar>
 #include <QStyle>
 #include <QStyleFactory>
@@ -45,6 +47,7 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+
 
 #include "ChildWidget.h"
 #include "Settings.h"
@@ -66,14 +69,14 @@ class MainWindow : public QMainWindow {
 
     void addChild(const QString& imageFileName);
     SettingsDialog* runSettingsDialog;
-    void dragEnterEvent(QDragEnterEvent*);
-    void dropEvent(QDropEvent* event);
 
   public slots:
     void checkForUpdate();
     void requestFinished(QNetworkReply* reply);
 
   protected:
+    void dragEnterEvent(QDragEnterEvent* event);
+    void dropEvent(QDropEvent* event);
     void closeEvent(QCloseEvent* event);
 
   private slots:
