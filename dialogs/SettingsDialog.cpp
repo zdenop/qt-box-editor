@@ -52,7 +52,7 @@ void SettingsDialog::on_fontButton_clicked() {
     if (tableFont.pointSize() > 12)
         tempFont.setPointSize(12);
     fontLabel->setFont(tempFont);
-    fontLabel->setText(tableFont.family().toAscii() +
+    fontLabel->setText(tableFont.family().toLocal8Bit() +
                        tr(", %1 pt").arg(tableFont.pointSize()));
   }
 }
@@ -68,7 +68,7 @@ void SettingsDialog::on_fontImageButton_clicked() {
     if (imageFont.pointSize() > 12)
           tempFont.setPointSize(12);
     fontImageLabel->setFont(imageFont);
-    fontImageLabel->setText(imageFont.family().toAscii() +
+    fontImageLabel->setText(imageFont.family().toLocal8Bit() +
                        tr(", %1 pt").arg(imageFont.pointSize()));
   }
 }
@@ -189,13 +189,14 @@ void SettingsDialog::initSettings() {
   if (tableFont.pointSize() > 12)
         tempFont.setPointSize(12);
   fontLabel->setFont(tempFont);
-  fontLabel->setText(tableFont.family().toAscii() +
+  fontLabel->setText(tableFont.family().toLocal8Bit() +
                      tr(", %1 pt").arg(tableFont.pointSize()));
+
   tempFont = imageFont;
   if (imageFont.pointSize() > 12)
         tempFont.setPointSize(12);
   fontImageLabel->setFont(tempFont);
-  fontImageLabel->setText(imageFont.family().toAscii() +
+  fontImageLabel->setText(imageFont.family().toLocal8Bit() +
                      tr(", %1 pt").arg(imageFont.pointSize()));
 
   updateColorButton(imageFontColorButton, imageFontColor);

@@ -202,7 +202,11 @@ ChildWidget::ChildWidget(QWidget* parent)
   table = new QTableView;
   table->resize(1, 1);
   table->setAlternatingRowColors(true);
-  table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  #else
+    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+  #endif
   table->installEventFilter(this);  // installs event filter
   initTable();
 
@@ -1824,7 +1828,12 @@ bool ChildWidget::directType(QKeyEvent* event) {
     table->setCurrentIndex(model->index(index.row(), 0));
     return true;
   } else {
+    // TODO(zdenop): Find solution for QT5
+    #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
     if (!event->text().toAscii().trimmed().isEmpty() &&
+    #else
+    if (!event->text().trimmed().isEmpty() &&
+    #endif
         (event->key() !=  Qt::Key_Delete))  {
       // enter only text
       model->setData(model->index(index.row(), 0, QModelIndex()),

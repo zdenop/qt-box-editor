@@ -26,11 +26,11 @@
 #ifndef SRC_INCLUDE_DELEGATEEDITORS_H_
 #define SRC_INCLUDE_DELEGATEEDITORS_H_
 
-#include <QtCore/QModelIndex>
-#include <QtCore/QObject>
-#include <QtCore/QSize>
-#include <QtGui/QItemDelegate>
-#include <QtGui/QSpinBox>
+#include <QModelIndex>
+#include <QObject>
+#include <QSize>
+#include <QItemDelegate>
+#include <QSpinBox>
 
 class SpinBoxDelegate : public QItemDelegate {
   Q_OBJECT

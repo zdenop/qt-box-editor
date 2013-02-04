@@ -24,7 +24,8 @@
 #define DIALOGS_GETROWIDDIALOG_H_
 
 #include <QtGui>
-#include <QtGui/QDialog>
+#include <QDialog>
+#include <QPushButton>
 
 #include "ui_GetRowIDDialog.h"
 

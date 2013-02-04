@@ -50,6 +50,7 @@ MainWindow::MainWindow() {
 
   shortCutsDialog = 0;
   setAcceptDrops(true);
+  tabWidget->setAcceptDrops(true);
   createActions();
   createMenus();
   createToolBars();
@@ -621,7 +622,8 @@ void MainWindow::about() {
   QString abouttext =
     tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(VERSION);
 
-  abouttext.append(tr("<p>QT4 editor of tesseract-ocr box files</p>"));
+  abouttext.append(tr("<p><a href=\"http://qt-project.org/\">QT</a> "));
+  abouttext.append(tr("editor of tesseract-ocr box files</p>"));
   abouttext.append(tr("<p>Project page: <a href=%1>%2</a></p>").
                    arg(PROJECT_URL).arg(PROJECT_URL_NAME));
   abouttext.append(tr("<p>Copyright 2010 Marcel Kolodziejczyk<br/>"));
@@ -1240,12 +1242,13 @@ void MainWindow::zoomRatioChanged(qreal ratio) {
   _zoom->setText(QString("%1%").arg(qRound(ratio * 100)));
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent* event) {
-  if (event->mimeData()->hasFormat("text/uri-list"))
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+  if (event->mimeData()->hasFormat("text/uri-list")) {
     event->acceptProposedAction();
+  }
 }
 
-void MainWindow::dropEvent(QDropEvent* event) {
+void MainWindow::dropEvent(QDropEvent *event) {
   QList<QUrl> urls = event->mimeData()->urls();
   if (urls.count()) {
     QString fname = urls[0].toLocalFile();

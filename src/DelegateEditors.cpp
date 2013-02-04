@@ -24,9 +24,10 @@
 **********************************************************************/
 
 #include "DelegateEditors.h"
-#include <QtGui/QApplication>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QLineEdit>
+#include <QApplication>
+#include <QMouseEvent>
+#include <QLineEdit>
+
 
 /********************************
  * SpinBoxDelegate
@@ -80,7 +81,12 @@ QWidget* CheckboxDelegate::createEditor(QWidget* /*parent*/, const QStyleOptionV
 
 void CheckboxDelegate::paint(QPainter* painter, const QStyleOptionViewItem& option, const QModelIndex& index) const {
   bool value = index.data(Qt::EditRole).toBool();
+  #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   QSize size = check(option, option.rect, Qt::Checked).size();
+  #else
+  QSize size = doCheck(option, option.rect, Qt::Checked).size();
+  #endif
+
   QRect checkboxRect = QStyle::alignedRect(option.direction, Qt::AlignCenter, size, option.rect);
   drawCheck(painter, option, checkboxRect, (value ? Qt::Checked : Qt::Unchecked));
 }
