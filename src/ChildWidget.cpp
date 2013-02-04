@@ -771,7 +771,7 @@ bool ChildWidget::reloadImg() {
 bool ChildWidget::save(const QString& fileName) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QFile file(fileName);
-  if (!file.open(QFile::WriteOnly | QFile::Text)) {
+  if (!file.open(QFile::WriteOnly)) {
     QMessageBox::warning(
       this,
       SETTING_APPLICATION,
