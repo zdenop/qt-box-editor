@@ -313,6 +313,8 @@ class ChildWidget : public QSplitter {
     int imageHeight;
     int imageWidth;
     int widgetWidth;
+    int currPage;  // current page
+    int npages;    // number of pages in image file(tiff)
 
     QFont m_imageFont;
 

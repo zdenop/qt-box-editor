@@ -25,6 +25,7 @@
 
 #include <string>
 #include <algorithm>
+#include <leptonica/allheaders.h>
 
 #include "ChildWidget.h"
 #include "Settings.h"
@@ -328,6 +329,8 @@ ChildWidget::ChildWidget(QWidget* parent)
   f_dialog = 0;
   m_DrawRectangle = 0;
   rectangle = 0;
+  currPage = 0;
+  npages = 0;
 
   rubberBand = new QRubberBand(QRubberBand::Rectangle, imageView);
 
@@ -496,7 +499,25 @@ void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
 
 bool ChildWidget::loadImage(const QString& fileName) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  QImage image(fileName);
+  QImage image;
+  FILE   *fp;
+  PIX    *pix;
+  char   *filein;
+
+  filein = fileName.toLocal8Bit().data();
+  fp = lept_fopen(filein, "rb");
+  if (fileFormatIsTiff(fp)) {
+    tiffGetCount(fp, &npages);
+    qDebug() << " Tiff: " << npages << " pages";
+    pix = pixReadStreamTiff(fp, currPage);  // open first page
+    image = TessTools::PIX2qImage(pix);
+    lept_fclose(fp);
+  } else {
+    qDebug() << " This is not tiff file...";
+    //  pixReadStream/PIX2qImage was not able to display png image
+    //  So lets use QImage for other format than tiff...
+    image.load(fileName);
+  }
 
   if (image.isNull()) {
     QMessageBox::information(this, tr("Wrong file"),
