@@ -310,9 +310,27 @@ ChildWidget::ChildWidget(QWidget* parent)
   verticalLayout->addWidget(table);
   verticalLayout->addLayout(gridLayout);
 
+  // Image part of display
+  QWidget* imageWidget = new QWidget(this);
+  QVBoxLayout* imageLayout = new QVBoxLayout(imageWidget);
+  imageLayout->setContentsMargins(0, 0, 0, 0);
+  imageLayout->addWidget(imageView);
+
+  pageControlLayout = new QHBoxLayout();
+  QSpacerItem* leftHorSpacer = new QSpacerItem(248, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  pageControlLayout->addItem(leftHorSpacer);
+
+  currentPage = new QSpinBox(imageWidget);
+  pageControlLayout->addWidget(currentPage);
+  numberOfPages = new QLabel(imageWidget);
+  pageControlLayout->addWidget(numberOfPages);
+  QSpacerItem* rightHorSpacer = new QSpacerItem(308, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  pageControlLayout->addItem(rightHorSpacer);
+  imageLayout->addLayout(pageControlLayout);
+
   // splitter
   addWidget(tableWidget);
-  addWidget(imageView);
+  addWidget(imageWidget);
   setStretchFactor(indexOf(table), 0);
   setStretchFactor(indexOf(imageView), 1);
   connect(this, SIGNAL(splitterMoved(int, int)), this,
@@ -508,12 +526,10 @@ bool ChildWidget::loadImage(const QString& fileName) {
   fp = lept_fopen(filein, "rb");
   if (fileFormatIsTiff(fp)) {
     tiffGetCount(fp, &npages);
-    qDebug() << " Tiff: " << npages << " pages";
     pix = pixReadStreamTiff(fp, currPage);  // open first page
     image = TessTools::PIX2qImage(pix);
     lept_fclose(fp);
   } else {
-    qDebug() << " This is not tiff file...";
     //  pixReadStream/PIX2qImage was not able to display png image
     //  So lets use QImage for other format than tiff...
     image.load(fileName);
@@ -523,6 +539,16 @@ bool ChildWidget::loadImage(const QString& fileName) {
     QMessageBox::information(this, tr("Wrong file"),
                              tr("Cannot load %1.").arg(fileName));
     return false;
+  }
+  if (npages > 1) {
+    currentPage->setMaximum(npages);
+    currentPage->setMinimum(1);
+    numberOfPages->setText(tr("of %1").arg(npages));
+    connect(currentPage, SIGNAL(valueChanged(int)), this,
+            SLOT(slotChangePage(int)));
+  } else {
+    currentPage->hide();
+    numberOfPages->hide();
   }
   imageHeight = image.height();
   imageWidth = image.width();
@@ -2861,4 +2887,23 @@ void ChildWidget::redo() {
   }
 
   emit boxChanged();
+}
+
+bool ChildWidget::slotChangePage(int sbdPage) {
+  PIX * pix;
+  QImage image;
+  currPage = sbdPage - 1;
+  pix = pixReadTiff(imageFile.toLocal8Bit().data(), currPage);
+  image = TessTools::PIX2qImage(pix);
+  if (image.isNull()) {
+    QMessageBox::information(this, tr("Problem"),
+                             tr("Cannot load page %1 from file %1.")
+                             .arg(currPage).arg(imageFile));
+    return false;
+  }
+  imageHeight = image.height();
+  imageWidth = image.width();
+  imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
+
+  return true;
 }

@@ -44,10 +44,12 @@
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsView>
 #include <QHeaderView>
+#include <QHBoxLayout>
 #include <QMessageBox>
 #include <QMouseEvent>
 #include <QPixmap>
 #include <QRubberBand>
+#include <QSpinBox>
 #include <QSplitter>
 #include <QStandardItemModel>
 #include <QTableView>
@@ -265,6 +267,7 @@ class ChildWidget : public QSplitter {
   private slots:
     void documentWasModified();
     void emitBoxChanged();
+    bool slotChangePage(int sbdPage);
     void selectionChanged(const QItemSelection& selected,
                           const QItemSelection& deselected);
     void updateSelectionRects();
@@ -293,6 +296,9 @@ class ChildWidget : public QSplitter {
     QGraphicsView* imageView;
     QGraphicsItem* imageItem;
     QGraphicsRectItem* rectangle;
+    QLabel* numberOfPages;
+    QSpinBox* currentPage;
+    QHBoxLayout* pageControlLayout;
 
     // Returns model item's associated bbox. "row" determines item's row number.
     // If row = -1 then returns bbox of the last item in current selection
