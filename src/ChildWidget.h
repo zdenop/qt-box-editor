@@ -181,7 +181,6 @@ class ChildWidget : public QSplitter {
     bool loadBoxes(const QString& fileName);
     bool qCreateBoxes(const QString &boxFileName);
     bool makeBoxFile(const QString &boxFileName);
-    bool fillTableData(QTextStream& boxdata);
     void binarizeImage();
     void setSelectionRect();
     void setBolded(bool v);
@@ -264,6 +263,23 @@ class ChildWidget : public QSplitter {
     QList<QTableWidgetItem*> takeRow(int row);
     void calculateTableWidth();
 
+    int currPage;                         /**< current page */
+    QVector<QVector<QStringList> > pages; /**< vector with all data/boxes */
+    /** Read data from vector and show them in table.
+     *  It takes data for current page from vector and puts it to table view.
+     */
+    bool fillTableData(int pageNum);
+    /** Read data from textstream and put them to 'pages'.
+     *  It takes data from file stream and converts them to vector per page
+     *  and box.
+     */
+    bool readToVector(QTextStream &boxdata);
+    /** Store current page to pages.
+     *  It takes data from table view and put it to vector that keeps data
+     *  of all pages.
+     */
+    void storePage();
+
   private slots:
     void documentWasModified();
     void emitBoxChanged();
@@ -319,8 +335,6 @@ class ChildWidget : public QSplitter {
     int imageHeight;
     int imageWidth;
     int widgetWidth;
-    int currPage;  // current page
-    int npages;    // number of pages in image file(tiff)
 
     QFont m_imageFont;
 

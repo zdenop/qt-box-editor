@@ -348,7 +348,6 @@ ChildWidget::ChildWidget(QWidget* parent)
   m_DrawRectangle = 0;
   rectangle = 0;
   currPage = 0;
-  npages = 0;
 
   rubberBand = new QRubberBand(QRubberBand::Rectangle, imageView);
 
@@ -379,7 +378,6 @@ void ChildWidget::initTable() {
     this, SLOT(selectionChanged(const QItemSelection&, const QItemSelection&)));
   table->setSelectionModel(selectionModel);
   table->setSelectionBehavior(QAbstractItemView::SelectRows);
-  table->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   table->hideColumn(5);
   table->hideColumn(6);
@@ -517,15 +515,17 @@ void ChildWidget::updateColWidthsOnSplitter(int /*pos*/, int /*index*/) {
 
 bool ChildWidget::loadImage(const QString& fileName) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+
   QImage image;
   FILE   *fp;
   PIX    *pix;
   char   *filein;
+  int    nPages = 0;
 
   filein = fileName.toLocal8Bit().data();
   fp = lept_fopen(filein, "rb");
   if (fileFormatIsTiff(fp)) {
-    tiffGetCount(fp, &npages);
+    tiffGetCount(fp, &nPages);
     pix = pixReadStreamTiff(fp, currPage);  // open first page
     image = TessTools::PIX2qImage(pix);
     lept_fclose(fp);
@@ -540,10 +540,10 @@ bool ChildWidget::loadImage(const QString& fileName) {
                              tr("Cannot load %1.").arg(fileName));
     return false;
   }
-  if (npages > 1) {
-    currentPage->setMaximum(npages);
+  if (nPages > 1) {
+    currentPage->setMaximum(nPages);
     currentPage->setMinimum(1);
-    numberOfPages->setText(tr("of %1").arg(npages));
+    numberOfPages->setText(tr("of %1").arg(nPages));
     connect(currentPage, SIGNAL(valueChanged(int)), this,
             SLOT(slotChangePage(int)));
   } else {
@@ -624,7 +624,8 @@ bool ChildWidget::makeBoxFile(const QString &boxFileName) {
     return false;
 
   QTextStream boxdata(&str);
-  if (!fillTableData(boxdata))
+  readToVector(boxdata);
+  if (!fillTableData(0))
     return false;
   save(boxFileName);
 
@@ -635,79 +636,104 @@ bool ChildWidget::makeBoxFile(const QString &boxFileName) {
   return true;
 }
 
-bool ChildWidget::fillTableData(QTextStream &boxdata) {
-  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  boxdata.setCodec("UTF-8");
-  QString line;
-  int row = 0;
-  int firstPage = -1;
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  do {
-    line = boxdata.readLine();
-    if (!line.isEmpty()) {
-      QFont letterFont;
-      QStringList pieces = line.split(" ", QString::SkipEmptyParts);
-      // we support only 3.0x format structure
-      if (pieces.size() != 6) {
-        QMessageBox::warning(this, SETTING_APPLICATION,
-                             tr("File can not be loaded because of wrong " \
-                                "(non tesseract-ocr 3.02) box " \
-                                "file format at line '%1'!").arg(row + 1));
-        QApplication::restoreOverrideCursor();
-        return false;
-      }
-      QString letter = pieces.value(0);
-      bool bold = false, italic = false, underline = false;
-      // formating is present only in case there are more than 2 letters
-      if (letter.at(0) == '@' && letter.size() > 1) {
-        bold = true;
-        letterFont.setBold(true);
-        letter.remove(0, 1);
-      }
-      if (letter.at(0) == '$' && letter.size() > 1) {
-        italic = true;
-        letterFont.setItalic(true);
-        letter.remove(0, 1);
-      }
-      if (letter.at(0) == '\'' && letter.size() > 1) {
-        underline = true;
-        letterFont.setUnderline(true);
-        letter.remove(0, 1);
-      }
-      int left = pieces.value(1).toInt();
-      int bottom = imageHeight - pieces.value(2).toInt();
-      int right = pieces.value(3).toInt();
-      int top = imageHeight - pieces.value(4).toInt();
-      int page = pieces.value(5).toInt();
+bool ChildWidget::readToVector(QTextStream &boxdata) {
+   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+   boxdata.setCodec("UTF-8");
+  QString data = boxdata.readAll();
+  QStringList lineBoxes = data.split(QRegExp("\n"),
+                                     QString::SkipEmptyParts);
+  QString pagePrev = "0";
+  QVector<QStringList> page;
 
-      // TODO(zdenop): implement support for multipage tif
-      if (firstPage < 0)
-        firstPage = page;  // first page can have number 5 ;-)
-      if (firstPage == page) {  // ignore other pages than first page
-        model->insertRow(row);
-        model->setData(model->index(row, 0, QModelIndex()), letterFont,
-                       Qt::FontRole);
-        model->setData(model->index(row, 0, QModelIndex()), letter);
-        model->setData(model->index(row, 1, QModelIndex()), left);
-        model->setData(model->index(row, 2, QModelIndex()), bottom);
-        model->setData(model->index(row, 3, QModelIndex()), right);
-        model->setData(model->index(row, 4, QModelIndex()), top);
-        model->setData(model->index(row, 5, QModelIndex()), page);
-        model->setData(model->index(row, 6, QModelIndex()), italic);
-        model->setData(model->index(row, 7, QModelIndex()), bold);
-        model->setData(model->index(row, 8, QModelIndex()), underline);
-
-        createModelItemBox(row);
-
-        row++;
-      }
+  for (int i = 0; i < lineBoxes.size(); ++i) {
+    QString line = lineBoxes.at(i);
+    QStringList box = line.split(" ");
+    if (box.size() != 6) {
+      QMessageBox::warning(this, SETTING_APPLICATION,
+                           tr("File can not be loaded because of wrong " \
+                              "(non tesseract-ocr 3.02) box " \
+                              "file format at line '%1'!").arg(i + 1));
+      QApplication::restoreOverrideCursor();
+      return false;
     }
-  } while (!line.isEmpty());
+    if (box[5] == pagePrev) {
+      page.append(box);
+    } else {
+      pagePrev = box[5];
+      pages.append(page);
+      page.clear();
+      page.append(box);
+    }
+  }
+  pages.append(page);
+  return true;
+}
 
+bool ChildWidget::fillTableData(int pageNum) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+
+  int row = 0;
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
+  // Stop some table features to improve update performance
+  QFlags<QAbstractItemView::EditTrigger> oldEditTriggers = table->editTriggers();
+  table->setUpdatesEnabled(false);
+  table->setSelectionMode(QAbstractItemView::NoSelection);
+  table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+  QVector<QStringList> pageData = pages[pageNum];
+  for (int i = 0; i < pageData.size(); ++i) {
+    QFont letterFont;
+    QStringList pieces = pageData[i];
+    QString letter = pieces.value(0);
+    bool bold = false, italic = false, underline = false;
+    // formating is present only in case there are more than 2 letters
+    if (letter.at(0) == '@' && letter.size() > 1) {
+      bold = true;
+      letterFont.setBold(true);
+      letter.remove(0, 1);
+    }
+    if (letter.at(0) == '$' && letter.size() > 1) {
+      italic = true;
+      letterFont.setItalic(true);
+      letter.remove(0, 1);
+    }
+    if (letter.at(0) == '\'' && letter.size() > 1) {
+      underline = true;
+      letterFont.setUnderline(true);
+      letter.remove(0, 1);
+    }
+    int left = pieces.value(1).toInt();
+    int bottom = imageHeight - pieces.value(2).toInt();
+    int right = pieces.value(3).toInt();
+    int top = imageHeight - pieces.value(4).toInt();
+    int page = pieces.value(5).toInt();
+
+    model->insertRow(row);
+    model->setData(model->index(row, 0, QModelIndex()), letterFont,
+                   Qt::FontRole);
+    model->setData(model->index(row, 0, QModelIndex()), letter);
+    model->setData(model->index(row, 1, QModelIndex()), left);
+    model->setData(model->index(row, 2, QModelIndex()), bottom);
+    model->setData(model->index(row, 3, QModelIndex()), right);
+    model->setData(model->index(row, 4, QModelIndex()), top);
+    model->setData(model->index(row, 5, QModelIndex()), page);
+    model->setData(model->index(row, 6, QModelIndex()), italic);
+    model->setData(model->index(row, 7, QModelIndex()), bold);
+    model->setData(model->index(row, 8, QModelIndex()), underline);
+    createModelItemBox(row);
+    row++;
+  }
+
+  // Set table features
   table->resizeRowsToContents();
   table->setCornerButtonEnabled(true);
   table->setWordWrap(true);
   calculateTableWidth();
+
+  table->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  table->setEditTriggers(oldEditTriggers);
+  table->setUpdatesEnabled(true);
 
   QApplication::restoreOverrideCursor();
   return true;
@@ -723,8 +749,11 @@ bool ChildWidget::loadBoxes(const QString& fileName) {
                            file.errorString()));
     return false;
   }
-  QTextStream in(&file);
-  if (!fillTableData(in)) {
+  QTextStream boxdata(&file);
+  if (!readToVector(boxdata)) {
+    return false;
+  }
+  if (!fillTableData(0)) {
     return false;
   }
   file.close();
@@ -820,7 +849,10 @@ bool ChildWidget::reloadImg() {
 }
 
 bool ChildWidget::save(const QString& fileName) {
+  // TODO(zdenop): support multipage!
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+
+  storePage();
   QFile file(fileName);
   if (!file.open(QFile::WriteOnly)) {
     QMessageBox::warning(
@@ -839,25 +871,19 @@ bool ChildWidget::save(const QString& fileName) {
   out.setCodec("UTF-8");
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  for (int row = 0; row < model->rowCount(); ++row) {
-    QString letter = model->index(row, 0).data().toString();
-    int left = model->index(row, 1).data().toInt();
-    int bottom = model->index(row, 2).data().toInt();
-    int right = model->index(row, 3).data().toInt();
-    int top = model->index(row, 4).data().toInt();
-    int page = model->index(row, 5).data().toInt();
-    bool italic = model->index(row, 6).data().toBool();
-    bool bold = model->index(row, 7).data().toBool();
-    bool underline = model->index(row, 8).data().toBool();
-    if (bold)
-      out << "@";
-    if (italic)
-      out << "$";
-    if (underline)
-      out << "\'";
-    out << letter << " " << left << " " << imageHeight - bottom << " "
-        << right << " " << imageHeight - top << " " << page << "\n";
+  for (int i = 0; i < pages.size(); ++i) {
+    QVector<QStringList> page = pages[i];
+    for (int j = 0; j < page.size(); ++j) {
+      QStringList box = page[j];
+      for ( QStringList::Iterator it = box.begin(); it != box.end(); ++it ) {
+        out << *it;
+        if (it != (box.end() - 1))
+          out << " ";
+      }
+      out << "\n";
+    }
   }
+
   file.close();
   QApplication::restoreOverrideCursor();
 
@@ -2380,7 +2406,6 @@ void ChildWidget::updateSelectionRects() {
     }
     if (modelItemBox())
       imageView->ensureVisible(modelItemBox());
-
     if (symbolShown == true && indexes.size() == 1) {
       updateBalloons();
       resizer->setFromRect(modelItemBox()->rect().toRect());
@@ -2890,9 +2915,12 @@ void ChildWidget::redo() {
 }
 
 bool ChildWidget::slotChangePage(int sbdPage) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   PIX * pix;
   QImage image;
+  storePage();
   currPage = sbdPage - 1;
+
   pix = pixReadTiff(imageFile.toLocal8Bit().data(), currPage);
   image = TessTools::PIX2qImage(pix);
   if (image.isNull()) {
@@ -2905,5 +2933,52 @@ bool ChildWidget::slotChangePage(int sbdPage) {
   imageWidth = image.width();
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
 
+  if (boxesVisible) {
+    drawBoxes();
+  }
+  deleteModelItemBox(table->currentIndex().row());
+  bool showFontColumns = isFontColumnsShown();
+  model->clear();
+  delete selectionModel;
+  delete model;
+
+  initTable();
+  setShowFontColumns(showFontColumns);
+
+  fillTableData(currPage);
+  updateSelectionRects();
+
   return true;
+}
+
+/*
+ * Store current page (in table view) to pages vector
+ *
+ */
+void ChildWidget::storePage() {
+
+  QVector<QStringList> page;
+
+  for (int row = 0; row < model->rowCount(); ++row) {
+    QString letter = model->index(row, 0).data().toString();
+    QString left = model->index(row, 1).data().toString();
+    int bottom = model->index(row, 2).data().toInt();
+    QString right = model->index(row, 3).data().toString();
+    int top = model->index(row, 4).data().toInt();
+    QString pageNum = model->index(row, 5).data().toString();
+    bool italic = model->index(row, 6).data().toBool();
+    bool bold = model->index(row, 7).data().toBool();
+    bool underline = model->index(row, 8).data().toBool();
+    if (underline)
+      letter.prepend("\'");
+    if (italic)
+      letter.prepend("$");
+    if (bold)
+      letter.prepend("@");
+    QStringList box;
+    box << letter << left << QString::number(imageHeight - bottom)
+        << right  << QString::number(imageHeight - top) << pageNum;
+    page.append(box);
+  }
+  pages[currPage] = page;
 }
