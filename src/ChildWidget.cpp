@@ -134,7 +134,7 @@ bool DragResizer::enabled() {
 }
 
 bool DragResizer::sceneEventFilter(QGraphicsItem* watched, QEvent* event) {
-  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  if (DMESS > 11) qDebug() << Q_FUNC_INFO;
   QGraphicsRectItem* rectItem = static_cast<QGraphicsRectItem*>(watched);
   QGraphicsSceneMouseEvent* mouseEvent =
           static_cast<QGraphicsSceneMouseEvent*>(event);
@@ -672,6 +672,11 @@ bool ChildWidget::readToVector(QTextStream &boxdata) {
 bool ChildWidget::fillTableData(int pageNum) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
 
+  if (pageNum > (pages.size() - 1)) {
+    QMessageBox::information(this, tr("Problem"),
+                             tr("There are no data for page %1.").arg(pageNum));
+    return false;
+  }
   int row = 0;
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -1736,7 +1741,7 @@ void ChildWidget::mouseReleaseEvent(QMouseEvent* /*event*/) {
 }
 
 bool ChildWidget::eventFilter(QObject* object, QEvent* event) {
-  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  if (DMESS > 11) qDebug() << Q_FUNC_INFO;
   switch (event->type())  {
   case QEvent::KeyPress: {
     // transforms QEvent into QKeyEvent
@@ -2394,7 +2399,6 @@ void ChildWidget::updateBalloons() {
 void ChildWidget::updateSelectionRects() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QModelIndexList indexes = table->selectionModel()->selectedRows();
-
   if (!indexes.empty()) {
     clearBalloons();
     for (int i = 0; i < indexes.size(); ++i) {
@@ -2931,23 +2935,35 @@ bool ChildWidget::slotChangePage(int sbdPage) {
   }
   imageHeight = image.height();
   imageWidth = image.width();
+  imageScene->removeItem(imageItem);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
 
-  if (boxesVisible) {
-    drawBoxes();
+  // Hide current selection - it is not valid on other page
+  QModelIndexList indexes = table->selectionModel()->selectedRows();
+  if (!indexes.empty()) {
+    clearBalloons();
+    for (int i = 0; i < indexes.size(); ++i) {
+      QGraphicsRectItem* rectItem = modelItemBox(indexes[i].row());
+      if (rectItem) {
+        rectItem->hide();
+      }
+    }
   }
-  deleteModelItemBox(table->currentIndex().row());
+
   bool showFontColumns = isFontColumnsShown();
+  selectionModel->clearSelection();
   model->clear();
   delete selectionModel;
   delete model;
 
   initTable();
   setShowFontColumns(showFontColumns);
-
-  fillTableData(currPage);
-  updateSelectionRects();
-
+  if (fillTableData(currPage)) {
+    table->setCurrentIndex(model->index(0, 0));
+    updateSelectionRects();
+  } else {
+    return false;
+  }
   return true;
 }
 
@@ -2956,9 +2972,11 @@ bool ChildWidget::slotChangePage(int sbdPage) {
  *
  */
 void ChildWidget::storePage() {
+  QModelIndex index = selectionModel->currentIndex();
+  if (!index.isValid())
+    return;
 
   QVector<QStringList> page;
-
   for (int row = 0; row < model->rowCount(); ++row) {
     QString letter = model->index(row, 0).data().toString();
     QString left = model->index(row, 1).data().toString();
