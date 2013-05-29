@@ -310,11 +310,11 @@ class ChildWidget : public QSplitter {
 
     QGraphicsScene* imageScene;
     QGraphicsView* imageView;
+    QWidget* pageWidget;
     QGraphicsItem* imageItem;
     QGraphicsRectItem* rectangle;
     QLabel* numberOfPages;
     QSpinBox* currentPage;
-    QHBoxLayout* pageControlLayout;
 
     // Returns model item's associated bbox. "row" determines item's row number.
     // If row = -1 then returns bbox of the last item in current selection

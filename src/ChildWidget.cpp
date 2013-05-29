@@ -313,20 +313,24 @@ ChildWidget::ChildWidget(QWidget* parent)
   // Image part of display
   QWidget* imageWidget = new QWidget(this);
   QVBoxLayout* imageLayout = new QVBoxLayout(imageWidget);
-  imageLayout->setContentsMargins(0, 0, 0, 0);
+  imageLayout->setContentsMargins(0, 0, 0, 2);
   imageLayout->addWidget(imageView);
 
-  pageControlLayout = new QHBoxLayout();
-  QSpacerItem* leftHorSpacer = new QSpacerItem(248, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  pageWidget = new QWidget(this);
+  QHBoxLayout* pageControlLayout = new QHBoxLayout();
+  pageControlLayout->setContentsMargins(0, 0, 0, 4);
+  QSpacerItem* leftHorSpacer = new QSpacerItem(248, 20, QSizePolicy::Expanding,
+                                               QSizePolicy::Minimum);
   pageControlLayout->addItem(leftHorSpacer);
-
   currentPage = new QSpinBox(imageWidget);
   pageControlLayout->addWidget(currentPage);
   numberOfPages = new QLabel(imageWidget);
   pageControlLayout->addWidget(numberOfPages);
-  QSpacerItem* rightHorSpacer = new QSpacerItem(308, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+  QSpacerItem* rightHorSpacer = new QSpacerItem(308, 20, QSizePolicy::Expanding,
+                                                QSizePolicy::Minimum);
   pageControlLayout->addItem(rightHorSpacer);
-  imageLayout->addLayout(pageControlLayout);
+  pageWidget->setLayout(pageControlLayout);
+  imageLayout->addWidget(pageWidget);
 
   // splitter
   addWidget(tableWidget);
@@ -547,8 +551,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
     connect(currentPage, SIGNAL(valueChanged(int)), this,
             SLOT(slotChangePage(int)));
   } else {
-    currentPage->hide();
-    numberOfPages->hide();
+    pageWidget->hide();
   }
   imageHeight = image.height();
   imageWidth = image.width();
