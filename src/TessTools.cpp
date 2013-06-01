@@ -205,7 +205,6 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
     return none;
   }
 
-  pixDestroy(&pixImage);
   return result.rgbSwapped();
 }
 
@@ -241,12 +240,13 @@ QImage TessTools::GetThresholded(const QImage& qImage) {
     }
     api->SetImage(pixs);
     PIX * pixq = api->GetThresholdedImage();
-
+    QImage tresholdedImage = PIX2qImage(pixq);
     api->End();
     delete api;
     pixDestroy(&pixs);
+    pixDestroy(&pixq);
 
-    return PIX2qImage(pixq);
+    return tresholdedImage;
 }
 
 QString TessTools::getDataPath() {

@@ -532,6 +532,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
     tiffGetCount(fp, &nPages);
     pix = pixReadStreamTiff(fp, currPage);  // open first page
     image = TessTools::PIX2qImage(pix);
+    pixDestroy(&pix);
     lept_fclose(fp);
   } else {
     //  pixReadStream/PIX2qImage was not able to display png image
@@ -2930,6 +2931,7 @@ bool ChildWidget::slotChangePage(int sbdPage) {
 
   pix = pixReadTiff(imageFile.toLocal8Bit().data(), currPage);
   image = TessTools::PIX2qImage(pix);
+  pixDestroy(&pix);
   if (image.isNull()) {
     QMessageBox::information(this, tr("Problem"),
                              tr("Cannot load page %1 from file %1.")
