@@ -61,7 +61,7 @@ const char *TessTools::qString2Char(QString string) {
 /*!
  * Create tesseract box data from QImage
  */
-QString TessTools::makeBoxes(const QImage& qImage) {
+QString TessTools::makeBoxes(const QImage& qImage, const int page) {
   PIX   *pixs;
 
   if ((pixs = qImage2PIX(qImage)) == NULL) {
@@ -100,8 +100,8 @@ QString TessTools::makeBoxes(const QImage& qImage) {
   api->SetVariable("tessedit_create_boxfile", "1");
   STRING text_out;
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  //TODO(zdenop) take care about pages!
-  if (!api->ProcessPage(pixs, 0, NULL, NULL, 0, &text_out)) {
+
+  if (!api->ProcessPage(pixs, page, NULL, NULL, 0, &text_out)) {
     msg("Error during processing.\n");
   }
 

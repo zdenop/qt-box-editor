@@ -180,7 +180,7 @@ class ChildWidget : public QSplitter {
     bool loadImage(const QString& fileName);
     bool loadBoxes(const QString& fileName);
     bool qCreateBoxes(const QString &boxFileName);
-    bool makeBoxFile(const QString &boxFileName);
+    bool makeBoxPage();
     void binarizeImage();
     void setSelectionRect();
     void setBolded(bool v);
@@ -274,11 +274,21 @@ class ChildWidget : public QSplitter {
      *  and box.
      */
     bool readToVector(QTextStream &boxdata);
+    /**
+     * @brief Read data from textstream and replace with them current page
+     * @param boxdata
+     */
+    bool readPageToVector(QTextStream &boxdata);
     /** Store current page to pages.
      *  It takes data from table view and put it to vector that keeps data
      *  of all pages.
      */
     void storePage();
+    /**
+     * Cleans all data in table view
+     */
+    void cleanTable();
+    void loadTable();
 
   private slots:
     void documentWasModified();

@@ -34,7 +34,7 @@ class TessTools {
 public:
   TessTools();
   ~TessTools();
-  QString makeBoxes(const QImage &qImage);
+  QString makeBoxes(const QImage &qImage, const int page);
   static PIX* qImage2PIX(const QImage &qImage);
   static QImage PIX2qImage(PIX *pixImage);
   static QImage GetThresholded(const QImage& qImage);

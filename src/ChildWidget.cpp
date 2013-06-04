@@ -389,6 +389,7 @@ void ChildWidget::initTable() {
   table->hideColumn(8);
   table->hideColumn(9);
 
+  //TODO(zdenop): does it make sense to initialize this when changing/reloading page?
   LineEditDelegate* leDelegate = new LineEditDelegate;
   table->setItemDelegateForColumn(0, leDelegate);
 
@@ -561,7 +562,24 @@ bool ChildWidget::loadImage(const QString& fileName) {
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
-    if (!qCreateBoxes(boxFileName)) return false;
+    switch (QMessageBox::question(
+              this,
+              tr("Missing file"),
+              tr("Cannot load image, because there is no corresponding box "\
+                 "file.\nCreate new?"),
+              QMessageBox::Yes |
+              QMessageBox::No |
+              QMessageBox::Cancel,
+              QMessageBox::Cancel)) {
+    case QMessageBox::Yes: {
+      qCreateBoxes(boxFileName);
+      break;
+    }
+    case QMessageBox::No:
+    case QMessageBox::Cancel:
+    default:
+      return false;
+    }
   } else {
     if (!loadBoxes(boxFileName)) return false;
   }
@@ -580,69 +598,79 @@ bool ChildWidget::loadImage(const QString& fileName) {
 
 bool ChildWidget::qCreateBoxes(const QString &boxFileName) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  switch (QMessageBox::question(
-            this,
-            tr("Missing file"),
-            tr("Cannot load image, because there is no corresponding box "\
-               "file.\nCreate new?"),
-            QMessageBox::Yes |
-            QMessageBox::No |
-            QMessageBox::Cancel,
-            QMessageBox::Cancel)) {
-  case QMessageBox::Yes: {
-    makeBoxFile(boxFileName);
-    break;
-  }
-  case QMessageBox::No:
-  case QMessageBox::Cancel:
-  default:
-    return false;
-  }
+  loadTable();
+  save(boxFileName);
+  modified = false;
+  emit modifiedChanged();
   return true;
 }
 
-bool ChildWidget::makeBoxFile(const QString &boxFileName) {
-  // in case of regenerate makebox clear table first
-  if (model->rowCount() > 0) {
-      if (boxesVisible) {
-          drawBoxes();
-      }
-      deleteModelItemBox(table->currentIndex().row());
-      bool showFontColumns = isFontColumnsShown();
-      model->clear();
-      delete selectionModel;
-      delete model;
-      initTable();
-      setShowFontColumns(showFontColumns);
+bool ChildWidget::makeBoxPage() {
+  if (imageFile.isEmpty())
+        return false;
+  QImage image;
+  if (pageWidget->isHidden()) {  // one page - QImage is ok
+    image.load(imageFile);
+  } else {  // multipage - use leptonica
+    PIX    *pix;
+    pix = pixReadTiff(imageFile.toLocal8Bit().data(), currPage);
+    image = TessTools::PIX2qImage(pix);
+    pixDestroy(&pix);
   }
 
-  if (imageFile.isEmpty())
-      return false;
-
-  QImage image(imageFile);
   TessTools tt;
-
-  QString str = tt.makeBoxes(image);
-
+  QString str = tt.makeBoxes(image, currPage);
   if (str == "")
     return false;
 
   QTextStream boxdata(&str);
-  readToVector(boxdata);
-  if (!fillTableData(0))
-    return false;
-  save(boxFileName);
+  readPageToVector(boxdata);
+  return true;
+}
 
-  updateSelectionRects();
-  modified = false;
-  emit modifiedChanged();
+void ChildWidget::loadTable() {
+  bool showFontColumns = isFontColumnsShown();
+  cleanTable();
+  initTable();
+  setShowFontColumns(showFontColumns);
 
+  if (fillTableData(currPage)) {
+    table->setCurrentIndex(model->index(0, 0));
+    updateSelectionRects();
+  }
+}
+
+bool ChildWidget::readPageToVector(QTextStream &boxdata) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  boxdata.setCodec("UTF-8");
+  QString data = boxdata.readAll();
+  QStringList lineBoxes = data.split(QRegExp("\n"),
+                                     QString::SkipEmptyParts);
+  QVector<QStringList> page;
+  for (int i = 0; i < lineBoxes.size(); ++i) {
+    QString line = lineBoxes.at(i);
+    QStringList box = line.split(" ");
+    if (box.size() != 6) {
+      QMessageBox::warning(this, SETTING_APPLICATION,
+                           tr("File can not be loaded because of wrong " \
+                              "(non tesseract-ocr 3.02) box " \
+                              "file format at line '%1'!").arg(i + 1));
+      QApplication::restoreOverrideCursor();
+      return false;
+    }
+    page.append(box);
+  }
+
+  if (currPage == pages.size())
+    pages.append(page);
+  else
+    pages[currPage] = page;
   return true;
 }
 
 bool ChildWidget::readToVector(QTextStream &boxdata) {
-   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-   boxdata.setCodec("UTF-8");
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  boxdata.setCodec("UTF-8");
   QString data = boxdata.readAll();
   QStringList lineBoxes = data.split(QRegExp("\n"),
                                      QString::SkipEmptyParts);
@@ -677,9 +705,25 @@ bool ChildWidget::fillTableData(int pageNum) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
 
   if (pageNum > (pages.size() - 1)) {
-    QMessageBox::information(this, tr("Problem"),
-                             tr("There are no data for page %1.").arg(pageNum));
-    return false;
+    switch (QMessageBox::question(
+              this,
+              tr("Warning: Missing data!"),
+              tr("There are no data for page %1.\n" \
+                 "Should I create them?")
+              .arg(pageNum),
+              QMessageBox::Yes |
+              QMessageBox::No)) {
+      case QMessageBox::Yes: {
+        makeBoxPage();
+        documentWasModified();
+        break;
+      }
+      case QMessageBox::No:
+      case QMessageBox::Cancel:
+      default:
+        return false;
+        break;
+    }
   }
   int row = 0;
   QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -848,11 +892,22 @@ bool ChildWidget::reload(const QString& fileName) {
   return true;
 }
 
+/**
+ * @brief reload current image/page from image file
+  */
 bool ChildWidget::reloadImg() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  imageScene->removeItem((QGraphicsItem*)imageItem);
+  imageScene->removeItem(static_cast<QGraphicsItem*>(imageItem));
   delete imageItem;
-  QImage image(imageFile);
+  QImage image;
+  if (pageWidget->isHidden()) {  // one page - QImage is ok
+    image.load(imageFile);
+  } else {  // multipage - use leptonica
+    PIX    *pix;
+    pix = pixReadTiff(imageFile.toLocal8Bit().data(), currPage);
+    image = TessTools::PIX2qImage(pix);
+    pixDestroy(&pix);
+  }
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
   return true;
 }
@@ -2943,24 +2998,8 @@ bool ChildWidget::slotChangePage(int sbdPage) {
   imageScene->removeItem(imageItem);
   imageItem = imageScene->addPixmap(QPixmap::fromImage(image));
 
-  // Hide current selection - it is not valid on other page
-  QModelIndexList indexes = table->selectionModel()->selectedRows();
-  if (!indexes.empty()) {
-    clearBalloons();
-    for (int i = 0; i < indexes.size(); ++i) {
-      QGraphicsRectItem* rectItem = modelItemBox(indexes[i].row());
-      if (rectItem) {
-        rectItem->hide();
-      }
-    }
-  }
-
   bool showFontColumns = isFontColumnsShown();
-  selectionModel->clearSelection();
-  model->clear();
-  delete selectionModel;
-  delete model;
-
+  cleanTable();
   initTable();
   setShowFontColumns(showFontColumns);
   if (fillTableData(currPage)) {
@@ -3004,4 +3043,23 @@ void ChildWidget::storePage() {
     page.append(box);
   }
   pages[currPage] = page;
+}
+
+void ChildWidget::cleanTable() {
+  // Hide current selection - it is not valid on other page
+  QModelIndexList indexes = table->selectionModel()->selectedRows();
+  if (!indexes.empty()) {
+    clearBalloons();
+    for (int i = 0; i < indexes.size(); ++i) {
+      QGraphicsRectItem* rectItem = modelItemBox(indexes[i].row());
+      if (rectItem) {
+        rectItem->hide();
+      }
+    }
+  }
+
+  selectionModel->clearSelection();
+  model->clear();
+  delete selectionModel;
+  delete model;
 }

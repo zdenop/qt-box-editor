@@ -532,7 +532,7 @@ void MainWindow::genBoxFile() {
     switch (QMessageBox::question(
                     this,
                     tr("Warning: Request to renerage box file!"),
-                      tr("Do you want to regenerate boxfile '%1'?\n"
+                      tr("Do you want to regenerate current page in '%1'?\n"
                          "This will replace boxfile stored on disk.\n\n" \
                          "Warning: This operation can not be undone!")
                     .arg(currentFileName),
@@ -540,7 +540,7 @@ void MainWindow::genBoxFile() {
                     QMessageBox::No |
                     QMessageBox::No)) {
         case QMessageBox::Yes: {
-              if (activeChild() && activeChild()->makeBoxFile(currentFileName))
+              if (activeChild() && activeChild()->qCreateBoxes(currentFileName))
                 statusBar()->showMessage(tr("Boxfile regenerated"), 2000);
               break;
           }
@@ -1049,16 +1049,16 @@ void MainWindow::createActions() {
   settingsAct->setStatusTip(tr("Programm settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(slotSettings()));
 
-  genBoxAct = new QAction(tr("Generate boxfile"), this);
+  genBoxAct = new QAction(tr("Generate boxes for page"), this);
   genBoxAct->setShortcut(tr("Ctrl+Alt+G"));
-  genBoxAct->setToolTip(tr("Re-generate boxfile for open image."));
-  genBoxAct->setStatusTip(tr("Re-generate boxfile for open image."));
+  genBoxAct->setToolTip(tr("Re-generate boxes for current page."));
+  genBoxAct->setStatusTip(tr("Re-generate boxes for current page."));
   connect(genBoxAct, SIGNAL(triggered()), this, SLOT(genBoxFile()));
 
-  getBinAct = new QAction(tr("Convert to binary image"), this);
-  getBinAct->setToolTip(tr("Convert input image to binary image - used for " \
+  getBinAct = new QAction(tr("Convert to binary"), this);
+  getBinAct->setToolTip(tr("Convert current image page to binary - used for " \
                            "tesseract-ocr training."));
-  getBinAct->setStatusTip(tr("Convert input image to binary image - used for " \
+  getBinAct->setStatusTip(tr("Convert current image page to binary - used for " \
                            "tesseract-ocr training."));
   connect(getBinAct, SIGNAL(triggered()), this, SLOT(getBinImage()));
 
