@@ -5,7 +5,7 @@
 * Created:     2010-01-04
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011-2012, Zdenko Podobny
+* (C) Copyright 2011-2013, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
@@ -216,8 +216,7 @@ void MainWindow::reLoad() {
                   tr("Do you want to reload file '%1' from disk?\n\n" \
                      "Warning: This operation can not be undone!")
                 .arg(currentFileName),
-                QMessageBox::Yes |
-                QMessageBox::No |
+                QMessageBox::Yes | QMessageBox::No,
                 QMessageBox::No)) {
     case QMessageBox::Yes: {
           if (activeChild() && activeChild()->reload(currentFileName))
@@ -536,8 +535,7 @@ void MainWindow::genBoxFile() {
                          "This will replace boxfile stored on disk.\n\n" \
                          "Warning: This operation can not be undone!")
                     .arg(currentFileName),
-                    QMessageBox::Yes |
-                    QMessageBox::No |
+                    QMessageBox::Yes | QMessageBox::No,
                     QMessageBox::No)) {
         case QMessageBox::Yes: {
               if (activeChild() && activeChild()->qCreateBoxes(currentFileName))

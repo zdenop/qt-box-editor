@@ -5,7 +5,7 @@
 * Created:     2010-01-06
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011-2012, Zdenko Podobny
+* (C) Copyright 2011-2013, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer
 * (C) Copyright 2012, Dmitri Silaev
 **
@@ -835,7 +835,7 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
                      " Do you want to store your current work to disk?")
                 .arg(fileName),
                 QMessageBox::Yes |
-                QMessageBox::No |
+                QMessageBox::No,
                 QMessageBox::No)) {
     case QMessageBox::Yes: {
           save(fileName);
@@ -856,7 +856,7 @@ void ChildWidget::slotfileChanged(const QString &fileName) {
                "Warning: This operation can not be undone!")
             .arg(fileName).arg(SETTING_APPLICATION),
             QMessageBox::Yes |
-            QMessageBox::No |
+            QMessageBox::No,
             QMessageBox::No)) {
   case QMessageBox::Yes: {
     reload(fileName);
@@ -1157,13 +1157,12 @@ bool ChildWidget::importTextToChild(const QString& fileName) {
 
   QStringList lines;
   QString oneLetter, letters;
-  bool ligature;
   QList<QString> symbols;
 
   lines = symbolText.split("\n");  // split string to lines
   for (int i = 0; i < lines.size(); ++i) {
     letters = lines.at(i);
-    ligature = false;
+    bool ligature = false;
     for (int m = 0; m < ligatures.size(); ++m) {
       if (ligatures.at(m) == letters) {  // this is ligature
         symbols.append(letters);
@@ -1224,10 +1223,8 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
   QTextStream out(&file);
   out.setCodec("UTF-8");
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  QString letter;
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
-  int left, bottom, right, top;
   int line_start_prev = 0;
   int line_end_prev = 0;
   int right_prev = -1;
@@ -1236,11 +1233,11 @@ bool ChildWidget::exportTxt(const int& eType, const QString& fileName) {
   int paraIndent = settings.value("Text/ParagraphIndent").toInt();
 
   for (int row = 0; row < model->rowCount(); ++row) {
-    letter = model->index(row, 0).data().toString();
-    left = model->index(row, 1).data().toInt();
-    bottom = model->index(row, 2).data().toInt();
-    right = model->index(row, 3).data().toInt();
-    top = model->index(row, 4).data().toInt();
+    QString letter = model->index(row, 0).data().toString();
+    int left = model->index(row, 1).data().toInt();
+    int bottom = model->index(row, 2).data().toInt();
+    int right = model->index(row, 3).data().toInt();
+    int top = model->index(row, 4).data().toInt();
 
     if (last_bottom == -1)
       last_bottom = top;
@@ -2258,10 +2255,9 @@ void ChildWidget::moveTo() {
 void ChildWidget::goToRow() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   GetRowIDDialog dialog(this);
-  int row;
   if (dialog.exec()) {
     QString string = dialog.lineEdit->text();
-
+    int row;
     if (string.toInt() == 0)
       row = string.toInt();
     else

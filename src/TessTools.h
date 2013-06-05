@@ -4,7 +4,7 @@
 * Author:      Zdenko Podobny
 * Created:     2012-03-27
 *
-* (C) Copyright 2012, Zdenko Podobny
+* (C) Copyright 2012-2013, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.

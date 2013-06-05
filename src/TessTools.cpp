@@ -4,7 +4,7 @@
 * Author:      Zdenko Podobny
 * Created:     2012-03-27
 *
-* (C) Copyright 2012, Zdenko Podobny
+* (C) Copyright 2012-2013, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -120,7 +120,6 @@ QString TessTools::makeBoxes(const QImage& qImage, const int page) {
  */
 PIX* TessTools::qImage2PIX(const QImage& qImage) {
   PIX * pixs;
-  l_uint32 *lines;
 
   QImage myImage = qImage.rgbSwapped();
   int width = myImage.width();
@@ -134,7 +133,7 @@ PIX* TessTools::qImage2PIX(const QImage& qImage) {
   l_uint32 *datas = pixs->data;
 
   for (int y = 0; y < height; y++) {
-    lines = datas + y * wpl;
+    l_uint32 *lines = datas + y * wpl;
     QByteArray a((const char*)myImage.scanLine(y), myImage.bytesPerLine());
     for (int j = 0; j < a.size(); j++) {
       *((l_uint8 *)lines + j) = a[j];
@@ -190,13 +189,15 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
   for (int i = 0; i < 256; i++)  {
     _grayscaleCT.append(qRgb(i, i, i));
   }
-  if (depth == 1) {
-    result.setColorTable(_bwCT);
-  }  else if (depth == 8)  {
-    result.setColorTable(_grayscaleCT);
-
-  } else {
-    result.setColorTable(_grayscaleCT);
+  switch (depth) {
+    case 1:
+      result.setColorTable(_bwCT);
+      break;
+    case 8:
+      result.setColorTable(_grayscaleCT);
+      break;
+    default:
+      result.setColorTable(_grayscaleCT);
   }
 
   if (result.isNull()) {

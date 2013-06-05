@@ -5,7 +5,7 @@
 * Created:     2010-01-06
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011-2012, Zdenko Podobny
+* (C) Copyright 2011-2013, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer
 * (C) Copyright 2012, Dmitri Silaev
 **
