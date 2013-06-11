@@ -864,6 +864,8 @@ bool ChildWidget::reload(const QString& fileName) {
   model->clear();
   delete selectionModel;
   delete model;
+  pages.clear();
+
 
   initTable();
   setShowFontColumns(showFontColumns);
@@ -1896,6 +1898,7 @@ void ChildWidget::moveSymbolRow(int direction) {
       model->removeRow(currentRow);
     }
     updateSelectionRects();
+    emit modifiedChanged();
   }
 }
 
@@ -2028,6 +2031,7 @@ void ChildWidget::insertSymbol() {
   table->setFocus();
 
   updateSelectionRects();
+  emit modifiedChanged();
 }
 
 void ChildWidget::splitSymbol() {
@@ -2073,6 +2077,7 @@ void ChildWidget::splitSymbol() {
   if (boxesVisible)
     rectItem->show();
   updateSelectionRects();
+  emit modifiedChanged();
 }
 
 void ChildWidget::joinSymbol() {
@@ -2160,6 +2165,7 @@ void ChildWidget::joinSymbol() {
   table->setCurrentIndex(model->index(targetRow, 0));
   table->setFocus();
   updateSelectionRects();
+  emit modifiedChanged();
 }
 
 void ChildWidget::deleteSymbolByRow(int row) {
