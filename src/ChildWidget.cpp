@@ -562,24 +562,7 @@ bool ChildWidget::loadImage(const QString& fileName) {
                         + QFileInfo(fileName).completeBaseName() + ".box";
 
   if (!QFile::exists(boxFileName)) {
-    switch (QMessageBox::question(
-              this,
-              tr("Missing file"),
-              tr("Cannot load image, because there is no corresponding box "\
-                 "file.\nCreate new?"),
-              QMessageBox::Yes |
-              QMessageBox::No |
-              QMessageBox::Cancel,
-              QMessageBox::Cancel)) {
-    case QMessageBox::Yes: {
       qCreateBoxes(boxFileName);
-      break;
-    }
-    case QMessageBox::No:
-    case QMessageBox::Cancel:
-    default:
-      return false;
-    }
   } else {
     if (!loadBoxes(boxFileName)) return false;
   }
@@ -710,7 +693,7 @@ bool ChildWidget::fillTableData(int pageNum) {
               tr("Warning: Missing data!"),
               tr("There are no data for page %1.\n" \
                  "Should I create them?")
-              .arg(pageNum),
+              .arg(pageNum + 1),
               QMessageBox::Yes |
               QMessageBox::No)) {
       case QMessageBox::Yes: {
