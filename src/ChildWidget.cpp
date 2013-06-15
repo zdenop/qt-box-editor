@@ -717,6 +717,12 @@ bool ChildWidget::fillTableData(int pageNum) {
   table->setSelectionMode(QAbstractItemView::NoSelection);
   table->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
+  // There could be no data for requested page e.g. makeboxpage failed.
+  if (pageNum >= pages.size()) {
+    QApplication::restoreOverrideCursor();
+    return false;
+  }
+
   QVector<QStringList> pageData = pages[pageNum];
   for (int i = 0; i < pageData.size(); ++i) {
     QFont letterFont;
