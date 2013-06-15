@@ -1675,20 +1675,20 @@ void ChildWidget::drawBoxes() {
 
 void ChildWidget::mousePressEvent(QMouseEvent* event) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  // zoom should be proportional => m11=m22
-  qreal zoomFactor = imageView->transform().m22();
-  QPointF mouseCoordinates = imageView->mapToScene(event->pos());
-  int offset = this->sizes().first() + 6;  // 6 is estimated width  of splitter
-  int zoomedOffset = offset / zoomFactor;
-
   // This handler is for left click events only
   if (event->button() != Qt::LeftButton)
     return;
+
+  // zoom should be proportional => m11=m22
+  qreal zoomFactor = imageView->transform().m22();
+  int offset = this->sizes().first() + 6;  // 6 is estimated width  of splitter
+  int zoomedOffset = offset / zoomFactor;
 
   // Rubber band
   if (event->modifiers() == Qt::ControlModifier) {
     setCursor(Qt::CrossCursor);
     rbOrigin = imageView->mapFromParent(event->pos());
+    rbOrigin.setX(rbOrigin.x() - offset);
     rubberBand->setGeometry(QRect(rbOrigin, QSize()));
     rubberBand->show();
     grabMouse();
@@ -1698,7 +1698,7 @@ void ChildWidget::mousePressEvent(QMouseEvent* event) {
       int bottom = model->index(row, 2).data().toInt();
       int right = model->index(row, 3).data().toInt();
       int top = model->index(row, 4).data().toInt();
-
+      QPointF mouseCoordinates = imageView->mapToScene(event->pos());
       if ((left <= (mouseCoordinates.x() - zoomedOffset) &&
            (mouseCoordinates.x() - zoomedOffset) <= right) &&
           (top <= mouseCoordinates.y()) &&
@@ -1714,7 +1714,9 @@ void ChildWidget::mouseMoveEvent(QMouseEvent* event) {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   QPoint topleft;
   QPoint botright;
+  int offset = this->sizes().first() + 6;  // 6 is estimated width  of splitter
   QPoint rbCurPoint = imageView->mapFromParent(event->pos());
+  rbCurPoint.setX(rbCurPoint.x() - offset);
   if (rbOrigin.x() > rbCurPoint.x()) {
     topleft.setX(rbCurPoint.x());
     botright.setX(rbOrigin.x());
