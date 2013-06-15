@@ -1852,9 +1852,10 @@ void ChildWidget::moveSymbolRow(int direction) {
     return;
 
   // check top/bottom movements
-  if (direction < 0 && currentRow == 0) {
-    return;
-  } else if (direction > 0 && currentRow == model->rowCount()) {
+  if ((direction + currentRow < 0) ||
+     (direction + currentRow + 1 > model->rowCount())) {
+    QString message = tr("Non existing destination row!");
+    emit statusBarMessage(message);
     return;
   } else {
     if (abs(direction) == 1) {  // This works only for moveUp/moveDown!!!

@@ -303,6 +303,7 @@ class ChildWidget : public QSplitter {
     void boxChanged();
     void modifiedChanged();
     void zoomRatioChanged(qreal);
+    void statusBarMessage(QString);
 
   protected:
     bool directType(QKeyEvent* event);

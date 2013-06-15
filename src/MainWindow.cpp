@@ -118,6 +118,8 @@ void MainWindow::addChild(const QString& imageFileName) {
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
       connect(child, SIGNAL(zoomRatioChanged(qreal)), this,
               SLOT(zoomRatioChanged(qreal)));
+      connect(child, SIGNAL(statusBarMessage(QString)), this,
+              SLOT(statusBarMessage(QString)));
       child->setZoomStatus();
       // save path of open image file
       QSettings settings(QSettings::IniFormat, QSettings::UserScope,
@@ -1238,6 +1240,10 @@ void MainWindow::writeSettings() {
 
 void MainWindow::zoomRatioChanged(qreal ratio) {
   _zoom->setText(QString("%1%").arg(qRound(ratio * 100)));
+}
+
+void MainWindow::statusBarMessage(QString message) {
+  statusBar()->showMessage(message, 2000);
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
