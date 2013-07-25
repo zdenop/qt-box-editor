@@ -561,7 +561,6 @@ void MainWindow::checkForUpdate() {
   statusBar()->showMessage(tr("Checking for new version..."), 2000);
 
   QNetworkRequest request;
-  request.setHeader(QNetworkRequest::ContentTypeHeader, "text/xml");
   request.setUrl(QUrl(UPDATE_URL));
 
   // TODO(zdenop): test for proxy, ask auth.
@@ -584,10 +583,9 @@ void MainWindow::requestFinished(QNetworkReply* reply) {
 
 void MainWindow::checkVersion(QNetworkReply* reply) {
   if (reply->error() == QNetworkReply::NoError) {
-    float current_version = QString(reply->readAll()).toFloat();
-    float app_version = (QString("%1").arg(VERSION).replace("dev", "",
-                         Qt::CaseInsensitive)).toFloat();
-
+    QString current_version = reply->readAll().trimmed();
+    QString app_version = QString("%1").arg(VERSION).replace("dev", "",
+                                                           Qt::CaseInsensitive);
     QString messageText;
 
     if (app_version == current_version) {
