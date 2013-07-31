@@ -1,3 +1,9 @@
+1.11
+- fixed compatibility with QT5
+- added multipage support
+- use leptonica for opening tif files to problems with tif
+- several bug fixes
+
 1.10
 - implemented bbox drag resizing (thanks to D. Silaev)
 - reload image, reload box file from disk
