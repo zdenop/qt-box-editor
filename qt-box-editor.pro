@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.11dev
+VERSION = 1.11
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -12,10 +12,10 @@ INCLUDEPATH += ./ \
     src
 
 QT += network svg
-QT += testlib
+#QT += testlib
 
-CONFIG += debug warn_on
-#CONFIG += release warn_off
+#CONFIG += debug warn_on
+CONFIG += release warn_off
 
 OBJECTS_DIR += temp
 MOC_DIR += temp
@@ -62,14 +62,11 @@ LIBS += -llept -ltesseract
 
 win32: {
     DESTDIR = ./win32
-    #DIR_SEPARATOR = \
-    # CONFIG += static release embed_manifest_exe
     CONFIG += release embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti -static
     #QTPLUGIN += qsvg # image formats
-    #DEFINES += _COMPOSE_STATIC_
-    DEFINES += WINDOWS __BLOB_T_DEFINED
+     DEFINES += WINDOWS
     #QMAKE_LFLAGS.gcc += -static-libgcc # -static
     RC_FILE = resources/win.rc
     INCLUDEPATH +=  win32-external/include/
