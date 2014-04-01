@@ -69,8 +69,8 @@ win32: {
      DEFINES += WINDOWS
     #QMAKE_LFLAGS.gcc += -static-libgcc # -static
     RC_FILE = resources/win.rc
-    INCLUDEPATH +=  win32-external/include/
-    LIBS += -lws2_32 -Lwin32-external/lib
+    INCLUDEPATH += $$PWD/win32-external/include/
+    LIBS += -lws2_32 -L$$PWD/win32-external/lib
 }
 
 unix: {
