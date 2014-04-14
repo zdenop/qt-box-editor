@@ -992,8 +992,9 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
   // find path + name + ext:
   int dotCount = QFileInfo(fileName).fileName().count(".");
   QStringList results = QFileInfo(fileName).fileName().split(".");
-  QString path, base, ext;
+  QString path, base, ext, imgExt;
   path = QFileInfo(fileName).path() + QDir::separator();
+  imgExt = "png";
 
   if (dotCount < 3) {
     base = QFileInfo(fileName).baseName();
@@ -1009,22 +1010,27 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
 
   if (normBoxes.size()) {
     saveString(path + base + "normal." + ext, normBoxes);
+    createStringImage(path + base + "normal." + imgExt, normBoxes);
   }
 
   if (boldBoxes.size()) {
     saveString(path + base + "bold." + ext, boldBoxes);
+    createStringImage(path + base + "bold." + imgExt, boldBoxes);
   }
 
   if (italicBoxes.size()) {
-    saveString(path + base + "italic." + ext, italicBoxes);
+    saveString(path + base + "italic." + imgExt, italicBoxes);
+    createStringImage(path + base + "italic." + imgExt, italicBoxes);
   }
 
   if (boldItaBoxes.size()) {
     saveString(path + base + "bolditalic." + ext, boldItaBoxes);
+    createStringImage(path + base + "bolditalic." + imgExt, boldItaBoxes);
   }
 
   if (underBoxes.size()) {
     saveString(path + base + "underline." + ext, underBoxes);
+    createStringImage(path + base + "underline." + imgExt, underBoxes);
   }
 
   QApplication::restoreOverrideCursor();
@@ -1047,6 +1053,35 @@ bool ChildWidget::saveString(const QString& fileName, const QString& qData) {
   out.setCodec("UTF-8");
   out << qData;
   file.close();
+  return true;
+}
+
+/*
+ * Copy defined boxes to new image file
+ */
+
+bool ChildWidget::createStringImage(const QString& fileName,
+                                    const QString& qData) {
+  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
+  QImage image = gItem2qImage();
+  QImage result = image;
+  result.fill(Qt::white);
+
+  QPainter painter(&result);
+  QStringList rowOfData = qData.split("\n");
+  for (int x = 0; x < rowOfData.size(); x++) {
+    QStringList rowData = rowOfData.at(x).split(" ");
+    if (rowData.size() < 4)
+            continue;  // skip rows without enough items
+    int x0 = rowData[1].toInt();
+    int y0 = imageHeight - rowData[2].toInt();
+    int w = rowData[3].toInt() - x0;
+    int h = rowData[4].toInt() - rowData[2].toInt() ;
+    QImage srcImage = image.copy(x0, y0 - h, w, h);
+    painter.drawImage(QPoint(x0, y0 - h), srcImage);
+  }
+  painter.end();
+  result.save(fileName, 0);
   return true;
 }
 
