@@ -2842,10 +2842,9 @@ void ChildWidget::undoJoin(UndoItem& ui, bool bIsRedo) {
   deleteModelItemBox(ui.m_extrarow);
   model->removeRow(ui.m_extrarow);
 
-  updateModelItemBox(ui.m_origrow);
-
   for (int i = 0; i < model->columnCount(); i++)
     model->setData(model->index(ui.m_origrow, i), ui.m_vdata[i]);
+  updateModelItemBox(ui.m_origrow);
 
   table->setCurrentIndex(model->index(ui.m_origrow, 0));
   table->setFocus();
