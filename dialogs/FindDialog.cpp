@@ -4,7 +4,7 @@
 * Author:      Zdenko Podobny
 * Created:     2011-09-23
 *
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2014, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@
 
 #include "dialogs/FindDialog.h"
 #include "Settings.h"
+#include <unistd.h>
+#include <QDebug>
 
 FindDialog::FindDialog(QWidget* parent, QString title)
   : QDialog(parent) {
@@ -50,7 +52,9 @@ FindDialog::FindDialog(QWidget* parent, QString title)
   connect(findPrevButton, SIGNAL(clicked()), this, SLOT(findPrev()));
   connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
   connect(checkBox_Mc, SIGNAL(toggled(bool)), this, SLOT(changed_Mc(bool)));
-
+  connect(parent, SIGNAL(blinkFindDialog()), this, SLOT(blinkFindDialog()));
+  timerBlink = new QTimeLine(10);
+  originalBackColor = this->palette().color(QPalette::Background);;
   getSettings();
 }
 
@@ -79,6 +83,25 @@ void FindDialog::changed_Mc(bool status) {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
   settings.setValue("Find/MatchCase", status);
+}
+
+void FindDialog::blinkFindDialog() {
+  QApplication::beep();
+  if(timerBlink->state() == QTimeLine::NotRunning)
+    {
+    timerBlink->resume();
+    connect(timerBlink, SIGNAL(finished()), this, SLOT(blinkFinished()));
+    }
+  QPalette pal = this->palette();
+  pal.setColor(QPalette::Background, Qt::red);
+  this->setPalette(pal);
+}
+
+void FindDialog::blinkFinished() {
+  disconnect(timerBlink, SIGNAL(finished()), this, SLOT(blinkFinished()));
+  QPalette pal = this->palette();
+  pal.setColor(QPalette::Background, originalBackColor);
+  this->setPalette(pal);
 }
 
 void FindDialog::closeEvent(QCloseEvent* event) {

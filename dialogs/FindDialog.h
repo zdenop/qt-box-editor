@@ -4,7 +4,7 @@
 * Author:      Zdenko Podobny
 * Created:     2011-09-23
 *
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2014, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@
 #include <QCloseEvent>
 #include <QPushButton>
 #include <QDialog>
+#include <QTimeLine>
 
 #include "ui_FindDialog.h"
 
@@ -35,6 +36,9 @@ class FindDialog : public QDialog, public Ui::Find {
 
   public:
     explicit FindDialog(QWidget* parent = 0, QString title = "");
+
+  public slots:
+    void blinkFindDialog();
 
   signals:
     void findNext(const QString &smbl, Qt::CaseSensitivity mc);
@@ -47,6 +51,8 @@ class FindDialog : public QDialog, public Ui::Find {
     QPushButton *findNextButton;
     QPushButton *findPrevButton;
     QPushButton *closeButton;
+    QTimeLine *timerBlink;
+    QColor originalBackColor;
 
     void writeGeometry();
 
@@ -54,6 +60,7 @@ class FindDialog : public QDialog, public Ui::Find {
     void on_lineEdit_textChanged();
     void findNext();
     void findPrev();
+    void blinkFinished();
     void changed_Mc(bool status);
     void getSettings();
 };

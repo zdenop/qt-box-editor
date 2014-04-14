@@ -2673,7 +2673,8 @@ void ChildWidget::findNext(const QString &symbol, Qt::CaseSensitivity mc) {
     }
     ++row;
   }
-  QApplication::beep();
+  emit blinkFindDialog();
+  emit statusBarMessage(tr("End of search!"));
 }
 
 void ChildWidget::findPrev(const QString &symbol,
@@ -2690,7 +2691,8 @@ void ChildWidget::findPrev(const QString &symbol,
     }
     --row;
   }
-  QApplication::beep();
+  emit blinkFindDialog();
+  emit statusBarMessage(tr("End of found!"));
 }
 
 bool ChildWidget::isUndoAvailable() {

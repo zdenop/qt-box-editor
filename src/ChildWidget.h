@@ -303,6 +303,7 @@ class ChildWidget : public QSplitter {
   signals:
     void boxChanged();
     void modifiedChanged();
+    void blinkFindDialog();
     void zoomRatioChanged(qreal);
     void statusBarMessage(QString);
 
