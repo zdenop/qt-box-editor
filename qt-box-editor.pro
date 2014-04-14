@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.11
+VERSION = 1.12dev
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
