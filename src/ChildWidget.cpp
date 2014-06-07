@@ -1019,7 +1019,7 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
   }
 
   if (italicBoxes.size()) {
-    saveString(path + base + "italic." + imgExt, italicBoxes);
+    saveString(path + base + "italic." + ext, italicBoxes);
     createStringImage(path + base + "italic." + imgExt, italicBoxes);
   }
 
