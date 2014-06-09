@@ -113,6 +113,7 @@ void MainWindow::addChild(const QString& imageFileName) {
       statusBar()->showMessage(tr("File loaded"), 2000);
       tabWidget->setCurrentIndex(tabWidget->addTab(child,
                                  child->userFriendlyCurrentFile()));
+      tabWidget->setTabToolTip(tabWidget->currentIndex(), imageFileName);
       connect(child, SIGNAL(boxChanged()), this, SLOT(updateCommandActions()));
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateTabTitle()));
       connect(child, SIGNAL(modifiedChanged()), this, SLOT(updateSaveAction()));
