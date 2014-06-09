@@ -994,7 +994,6 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
   QStringList results = QFileInfo(fileName).fileName().split(".");
   QString path, base, ext, imgExt;
   path = QFileInfo(fileName).path() + QDir::separator();
-  imgExt = "png";
 
   if (dotCount < 3) {
     base = QFileInfo(fileName).baseName();
@@ -1007,6 +1006,8 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
     }
     ext = results[(dotCount - 1)] + "." + results[dotCount];
   }
+  imgExt = ext;
+  imgExt.replace(imgExt.size() - 3 , 3, "png");
 
   if (normBoxes.size()) {
     saveString(path + base + "normal." + ext, normBoxes);
@@ -1019,7 +1020,7 @@ bool ChildWidget::splitToFeatureBF(const QString& fileName) {
   }
 
   if (italicBoxes.size()) {
-    saveString(path + base + "italic." + imgExt, italicBoxes);
+    saveString(path + base + "italic." + ext, italicBoxes);
     createStringImage(path + base + "italic." + imgExt, italicBoxes);
   }
 
