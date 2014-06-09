@@ -58,7 +58,7 @@ MainWindow::MainWindow() {
   updateMenus();
   updateCommandActions();
   updateSaveAction();
-  readSettings();
+  readSettings(true);
   setUnifiedTitleAndToolBarOnMac(true);
   setWindowIcon(QIcon(":/icons/qbe.png"));
   setWindowTitle(tr("%1 - v%2").arg(SETTING_APPLICATION).arg(VERSION));
@@ -278,9 +278,21 @@ void MainWindow::importTextSym() {
     statusBar()->showMessage(tr("File saved"), 2000);
 }
 
-// TODO(zdenop): simplified/join code symbolPerLine(), rowPerLine(),
-//               paragraphPerLine()
-void MainWindow::symbolPerLine() {
+/**
+ * Export box file to text file. File format is identified by type parameter.
+ *
+ * type 1 = symbolPerLine    => out file will have one symbol/box per line
+ *      2 = rowPerLine       => out file will have one text row per line
+ *      3 = paragraphPerLine => out file will have one paragraph per line
+ */
+void MainWindow::exportToFile(int type) {
+  /* Check if there is request (defined in settings) to open settings parameters
+   * for export. Parameters can effect how words paragraphs will be identified
+   */
+  if (openSettings) {
+    slotSettings(2);
+  };
+
   QString currentFileName = activeChild()->currentBoxFile().replace(
                               ".box", ".txt");
   QString fileName = QFileDialog::getSaveFileName(this,
@@ -291,39 +303,10 @@ void MainWindow::symbolPerLine() {
   if (fileName.isEmpty())
     return;
 
-  if (activeChild() && activeChild()->exportTxt(1, fileName))
+  if (activeChild() && activeChild()->exportTxt(type, fileName))
     statusBar()->showMessage(tr("Data exported"), 2000);
 }
 
-void MainWindow::rowPerLine() {
-  QString currentFileName = activeChild()->currentBoxFile().replace(
-                              ".box", ".txt");
-  QString fileName = QFileDialog::getSaveFileName(this,
-                     tr("Export symbols to file..."),
-                     currentFileName,
-                     tr("Text files (*.txt);;All files (*)"));
-
-  if (fileName.isEmpty())
-    return;
-
-  if (activeChild() && activeChild()->exportTxt(2, fileName))
-    statusBar()->showMessage(tr("Data exported"), 2000);
-}
-
-void MainWindow::paragraphPerLine() {
-  QString currentFileName = activeChild()->currentBoxFile().replace(
-                              ".box", ".txt");
-  QString fileName = QFileDialog::getSaveFileName(this,
-                     tr("Export symbols to file..."),
-                     currentFileName,
-                     tr("Text files (*.txt);;All files (*)"));
-
-  if (fileName.isEmpty())
-    return;
-
-  if (activeChild() && activeChild()->exportTxt(3, fileName))
-    statusBar()->showMessage(tr("Data exported"), 2000);
-}
 bool MainWindow::closeActiveTab() {
   if (tabWidget->currentWidget() && tabWidget->currentWidget()->close()) {
     tabWidget->removeTab(tabWidget->currentIndex());
@@ -520,11 +503,16 @@ void MainWindow::reReadSetting() {
   for (int i = 0; i < tabWidget->count(); ++i) {
     ChildWidget* child = qobject_cast<ChildWidget*> (tabWidget->widget(i));
     child->readSettings();
+    readSettings(false);
   }
 }
 
 void MainWindow::slotSettings() {
-  runSettingsDialog = new SettingsDialog(this);
+    slotSettings(0);
+}
+
+void MainWindow::slotSettings(int tab = 0) {
+  runSettingsDialog = new SettingsDialog(this, tab);
   connect(runSettingsDialog, SIGNAL(settingsChanged()), this, SLOT(reReadSetting()));
   runSettingsDialog->exec();
 }
@@ -841,25 +829,30 @@ void MainWindow::createActions() {
   importTextSymAct->setEnabled(false);
   connect(importTextSymAct, SIGNAL(triggered()), this, SLOT(importTextSym()));
 
-  // TODO(zdenop): implementation based on parameter?
+  exportMapper= new QSignalMapper(this);
+
   symbolPerLineAct = new QAction(tr("Symbol per line…"), this);
   symbolPerLineAct->setToolTip(tr("Export symbols to text file."));
   symbolPerLineAct->setStatusTip(tr("Export symbols to text file."));
   symbolPerLineAct->setEnabled(false);
-  connect(symbolPerLineAct, SIGNAL(triggered()), this, SLOT(symbolPerLine()));
+  connect(symbolPerLineAct, SIGNAL(triggered()), exportMapper, SLOT(map()));
 
   rowPerLineAct = new QAction(tr("Line by line…"), this);
   rowPerLineAct->setToolTip(tr("Export symbols to text file."));
   rowPerLineAct->setStatusTip(tr("Export symbols to text file."));
   rowPerLineAct->setEnabled(false);
-  connect(rowPerLineAct, SIGNAL(triggered()), this, SLOT(rowPerLine()));
+  connect(rowPerLineAct, SIGNAL(triggered()), exportMapper, SLOT(map()));
 
   paragraphPerLineAct = new QAction(tr("Paragraph per line…"), this);
   paragraphPerLineAct->setToolTip(tr("Export symbols to text file."));
   paragraphPerLineAct->setStatusTip(tr("Export symbols to text file."));
   paragraphPerLineAct->setEnabled(false);
-  connect(paragraphPerLineAct, SIGNAL(triggered()), this,
-          SLOT(paragraphPerLine()));
+  connect(paragraphPerLineAct, SIGNAL(triggered()), exportMapper, SLOT(map()));
+
+  exportMapper->setMapping(symbolPerLineAct,    1);
+  exportMapper->setMapping(rowPerLineAct,       2);
+  exportMapper->setMapping(paragraphPerLineAct, 3);
+  connect(exportMapper, SIGNAL(mapped(int)), this, SLOT(exportToFile(int)));
 
   closeAct = new QAction(QIcon::fromTheme("window-close"),
                          tr("Cl&ose"), this);
@@ -1217,14 +1210,19 @@ void MainWindow::createStatusBar() {
   statusBar()->addWidget(_zoom, 1);
 }
 
-void MainWindow::readSettings() {
+void MainWindow::readSettings(bool init) {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
 
-  settings.beginGroup("mainWindow");
-  restoreGeometry(settings.value("geometry").toByteArray());
-  restoreState(settings.value("state").toByteArray());
-  settings.endGroup();
+  // run this section only durin initializaiton time
+  if (init) {
+    settings.beginGroup("mainWindow");
+    restoreGeometry(settings.value("geometry").toByteArray());
+    restoreState(settings.value("state").toByteArray());
+    settings.endGroup();
+  }
+  if (settings.contains("Text/OpenDialog"))
+    openSettings = settings.value("Text/OpenDialog").toBool();
 }
 
 void MainWindow::writeSettings() {

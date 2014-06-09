@@ -91,9 +91,7 @@ class MainWindow : public QMainWindow {
     void reLoadImg();
     void importPLSym();
     void importTextSym();
-    void symbolPerLine();
-    void rowPerLine();
-    void paragraphPerLine();
+    void exportToFile(int type);
     bool closeActiveTab();
     bool closeAllTabs();
     void nextTab();
@@ -126,6 +124,7 @@ class MainWindow : public QMainWindow {
     void redo();
     void reReadSetting();
     void slotSettings();
+    void slotSettings(int tab);
     void shortCutList();
     void about();
     void aboutQt();
@@ -145,7 +144,7 @@ class MainWindow : public QMainWindow {
     void createMenus();
     void createToolBars();
     void createStatusBar();
-    void readSettings();
+    void readSettings(bool init);
     void writeSettings();
     void checkVersion(QNetworkReply* reply);
     void updateRecentFileActions();
@@ -153,6 +152,7 @@ class MainWindow : public QMainWindow {
     QTabWidget* tabWidget;
 
     QSignalMapper* windowMapper;
+    QSignalMapper* exportMapper;
 
     QMenu* fileMenu;
     QMenu* importMenu;
@@ -227,6 +227,8 @@ class MainWindow : public QMainWindow {
     QLabel* _utfCodeLabel;
     QLabel* _boxsize;
     QLabel* _zoom;
+
+    bool openSettings;
 };
 
 #endif  // SRC_INCLUDE_MAINWINDOW_H_
