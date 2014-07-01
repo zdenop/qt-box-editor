@@ -20,10 +20,14 @@
 *
 **********************************************************************/
 
-#include <tesseract/strngs.h>
 #include <locale.h>
 #include "TessTools.h"
 #include "Settings.h"
+
+#ifdef TESSERACT_VERSION
+#include <tesseract/strngs.h>
+#include <tesseract/renderer.h>
+#endif  // TESSERACT_VERSION
 
 #include <QApplication>
 #include <QWidget>
@@ -37,7 +41,7 @@
 
 #if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
 #include <QGuiApplication>
-#endif
+#endif  // QT5
 
 const char *TessTools::kTrainedDataSuffix = "traineddata";
 
@@ -97,14 +101,24 @@ QString TessTools::makeBoxes(const QImage& qImage, const int page) {
     return "";
   }
 
-  api->SetVariable("tessedit_create_boxfile", "1");
   STRING text_out;
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+  int timeout_millisec = 0;
+  const char* filename = NULL;
+  const char* retry_config = NULL;
+#ifdef TESSERACT_VERSION
+  const char* outputbase = NULL;
+  tesseract::TessResultRenderer* renderer = NULL;
+  renderer = new tesseract::TessBoxTextRenderer(outputbase);
+  if (!api->ProcessPage(pixs, page, filename, retry_config,
+                        timeout_millisec, renderer)) {
+#else
+  api->SetVariable("tessedit_create_boxfile", "1");
   if (!api->ProcessPage(pixs, page, NULL, NULL, 0, &text_out)) {
+#endif  // TESSERACT_VERSION
     msg("Error during processing.\n");
   }
-
   QApplication::restoreOverrideCursor();
 
   pixDestroy(&pixs);
