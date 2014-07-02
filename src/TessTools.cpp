@@ -195,14 +195,14 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
   result.setDotsPerMeterX(xres * toDPM);
   result.setDotsPerMeterY(yres * toDPM);
 
-  // Handle pallete
+  // Handle palette
   QVector<QRgb> _bwCT;
   _bwCT.append(qRgb(255,255,255));
   _bwCT.append(qRgb(0,0,0));
 
   QVector<QRgb> _grayscaleCT(256);
   for (int i = 0; i < 256; i++)  {
-    _grayscaleCT.append(qRgb(i, i, i));
+    _grayscaleCT[i] = qRgb(i, i, i);
   }
   switch (depth) {
     case 1:
@@ -225,7 +225,7 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
 }
 
 QImage TessTools::GetThresholded(const QImage& qImage) {
-    // TODO(zdenop): Check if here is not  memory leak
+    // TODO(zdenop): Check this for memory leak
     PIX * pixs = qImage2PIX(qImage);
 
     // Set tessdata as Enviromental Variable to avoid problems
