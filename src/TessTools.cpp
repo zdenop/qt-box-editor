@@ -24,10 +24,10 @@
 #include "TessTools.h"
 #include "Settings.h"
 
-#ifdef TESSERACT_VERSION
-#include <tesseract/strngs.h>
+#ifdef TESSERACT_VERSION  // 3.03 API
 #include <tesseract/renderer.h>
 #endif  // TESSERACT_VERSION
+#include <tesseract/strngs.h>
 
 #include <QApplication>
 #include <QWidget>
@@ -115,7 +115,8 @@ QString TessTools::makeBoxes(const QImage& qImage, const int page) {
                         timeout_millisec, renderer)) {
 #else
   api->SetVariable("tessedit_create_boxfile", "1");
-  if (!api->ProcessPage(pixs, page, NULL, NULL, 0, &text_out)) {
+  if (!api->ProcessPage(pixs, page, filename, retry_config, timeout_millisec,
+                        &text_out)) {
 #endif  // TESSERACT_VERSION
     msg("Error during processing.\n");
   }
