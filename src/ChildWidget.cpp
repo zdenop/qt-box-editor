@@ -633,11 +633,16 @@ bool ChildWidget::readPageToVector(QTextStream &boxdata) {
   for (int i = 0; i < lineBoxes.size(); ++i) {
     QString line = lineBoxes.at(i);
     QStringList box = line.split(" ");
-    if (box.size() != 6) {
+    if (box.size() == 7) {
+        if (line.startsWith(" "))
+            box.removeFirst ();  // tess2image generate also box for spaces
+    } else if (box.size() != 6) {
+      qDebug() << "box:" << box;
       QMessageBox::warning(this, SETTING_APPLICATION,
-                           tr("File can not be loaded because of wrong " \
-                              "(non tesseract-ocr 3.02) box " \
-                              "file format at line '%1'!").arg(i + 1));
+                           tr("File can not be loaded because of wrong "
+                              "(non tesseract-ocr 3.02) box "
+                              "file format at line '%1'! (box.size: %2)")
+                              .arg(i + 1).arg (box.size()));
       QApplication::restoreOverrideCursor();
       return false;
     }
@@ -663,14 +668,20 @@ bool ChildWidget::readToVector(QTextStream &boxdata) {
   for (int i = 0; i < lineBoxes.size(); ++i) {
     QString line = lineBoxes.at(i);
     QStringList box = line.split(" ");
-    if (box.size() != 6) {
+    if (box.size() == 7) {
+        if (line.startsWith(" "))
+            box.removeFirst ();  // tess2image generate also box for spaces
+    } else if (box.size() != 6) {
+      qDebug() << "box:" << box;
       QMessageBox::warning(this, SETTING_APPLICATION,
-                           tr("File can not be loaded because of wrong " \
-                              "(non tesseract-ocr 3.02) box " \
-                              "file format at line '%1'!").arg(i + 1));
+                           tr("File can not be loaded because of wrong "
+                              "(non tesseract-ocr 3.02) box "
+                              "file format at line '%1'! (box.size: %2)")
+                              .arg(i + 1).arg (box.size()));
       QApplication::restoreOverrideCursor();
       return false;
     }
+
     if (box[5] == pagePrev) {
       page.append(box);
     } else {
