@@ -275,11 +275,6 @@ class ChildWidget : public QSplitter {
      *  and box.
      */
     bool readToVector(QTextStream &boxdata);
-    /**
-     * @brief Read data from textstream and replace with them current page
-     * @param boxdata
-     */
-    bool readPageToVector(QTextStream &boxdata);
     /** Store current page to pages.
      *  It takes data from table view and put it to vector that keeps data
      *  of all pages.

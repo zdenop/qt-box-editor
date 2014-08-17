@@ -607,7 +607,7 @@ bool ChildWidget::makeBoxPage() {
     return false;
 
   QTextStream boxdata(&str);
-  readPageToVector(boxdata);
+  readToVector(boxdata);
   return true;
 }
 
@@ -621,39 +621,6 @@ void ChildWidget::loadTable() {
     table->setCurrentIndex(model->index(0, 0));
     updateSelectionRects();
   }
-}
-
-bool ChildWidget::readPageToVector(QTextStream &boxdata) {
-  if (DMESS > 10) qDebug() << Q_FUNC_INFO;
-  boxdata.setCodec("UTF-8");
-  QString data = boxdata.readAll();
-  QStringList lineBoxes = data.split(QRegExp("\n"),
-                                     QString::SkipEmptyParts);
-  QVector<QStringList> page;
-  for (int i = 0; i < lineBoxes.size(); ++i) {
-    QString line = lineBoxes.at(i);
-    QStringList box = line.split(" ");
-    if (box.size() == 7) {
-        if (line.startsWith(" "))
-            box.removeFirst ();  // tess2image generate also box for spaces
-    } else if (box.size() != 6) {
-      qDebug() << "box:" << box;
-      QMessageBox::warning(this, SETTING_APPLICATION,
-                           tr("File can not be loaded because of wrong "
-                              "(non tesseract-ocr 3.02) box "
-                              "file format at line '%1'! (box.size: %2)")
-                              .arg(i + 1).arg (box.size()));
-      QApplication::restoreOverrideCursor();
-      return false;
-    }
-    page.append(box);
-  }
-
-  if (currPage == pages.size())
-    pages.append(page);
-  else
-    pages[currPage] = page;
-  return true;
 }
 
 bool ChildWidget::readToVector(QTextStream &boxdata) {
