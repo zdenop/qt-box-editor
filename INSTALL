@@ -3,7 +3,7 @@ REQUIREMENTS
 * QT4 (tested with QT-4.7.3, QT-4.8.2)
 * leptonica library
 * tesseract 3.01 or 3.02 build as library
-
+Obs.: In case you're compiling it with QT5 >= then you must to install libqt5svg5-dev/libqt5svg5-devel 
 
 BUILDING
 ========
