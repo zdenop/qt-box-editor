@@ -121,6 +121,7 @@ void MainWindow::addChild(const QString& imageFileName) {
               SLOT(zoomRatioChanged(qreal)));
       connect(child, SIGNAL(statusBarMessage(QString)), this,
               SLOT(statusBarMessage(QString)));
+      connect(child, SIGNAL(drawRectangleChoosen()), this, SLOT(updateCommandActions()));
       child->setZoomStatus();
       // save path of open image file
       QSettings settings(QSettings::IniFormat, QSettings::UserScope,

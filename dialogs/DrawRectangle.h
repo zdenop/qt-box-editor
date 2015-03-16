@@ -25,6 +25,7 @@
 
 #include <QDialog>
 #include <QRect>
+#include <QLineEdit>
 
 namespace Ui {
     class DrawRect;
@@ -42,6 +43,7 @@ public:
 
 private:
     Ui::DrawRect *ui;
+    QLineEdit *edtTesseractOutput;
 };
 
 
