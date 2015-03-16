@@ -301,6 +301,7 @@ class ChildWidget : public QSplitter {
     void blinkFindDialog();
     void zoomRatioChanged(qreal);
     void statusBarMessage(QString);
+    void drawRectangleChoosen();
 
   protected:
     bool directType(QKeyEvent* event);
@@ -321,6 +322,11 @@ class ChildWidget : public QSplitter {
     QWidget* pageWidget;
     QGraphicsItem* imageItem;
     QGraphicsRectItem* rectangle;
+    QGraphicsLineItem* vertLineLeft;
+    QGraphicsLineItem* vertLineRight;
+    QGraphicsLineItem* horLineTop;
+    QGraphicsLineItem* horLineBottom;
+
     QLabel* numberOfPages;
     QSpinBox* currentPage;
 

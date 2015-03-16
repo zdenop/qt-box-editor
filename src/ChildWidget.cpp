@@ -351,6 +351,10 @@ ChildWidget::ChildWidget(QWidget* parent)
   f_dialog = 0;
   m_DrawRectangle = 0;
   rectangle = 0;
+  vertLineLeft = 0;
+  vertLineRight = 0;
+  horLineTop = 0;
+  horLineBottom = 0;
   currPage = 0;
 
   rubberBand = new QRubberBand(QRubberBand::Rectangle, imageView);
@@ -1602,17 +1606,45 @@ void ChildWidget::drawRectangle(bool checked) {
                                           imageWidth, imageHeight);
     }
     int ret = m_DrawRectangle->exec();
-    if (ret) {
-      QRect newCoords = m_DrawRectangle->getRectangle();
+    QRect newCoords = m_DrawRectangle->getRectangle();
+    int x1, y1, x2, y2;
+    newCoords.getCoords(&x1, &y1, &x2, &y2);
+    const bool rectNotSet(x1 == 0 && y1 == 0 && x2 == 0 && y2 == 0);
+
+    if (ret && !rectNotSet) {
       if (rectangle) {
         qDebug() << "Something went wrong. Object rectangle should not exist!";
       }
+
+      const QPen redPen(QColor(255, 0, 0, 255));
+
       rectangle = imageScene->addRect(newCoords.x(), newCoords.y(),
                                       newCoords.width(), newCoords.height(),
-                                      QPen(QColor(255, 0, 0, 255)),
+                                      redPen,
                                       QBrush(QColor(255, 0, 0, 100)));
       rectangle->setZValue(1);
       rectangle->setVisible(true);
+
+      vertLineLeft = imageScene->addLine(newCoords.x(), 0,
+                                         newCoords.x(), imageScene->height(), redPen);
+      vertLineLeft->setZValue(1);
+      vertLineLeft->setVisible(true);
+
+      vertLineRight = imageScene->addLine(newCoords.bottomRight().x(), 0,
+                                          newCoords.bottomRight().x(), imageScene->height(), redPen);
+      vertLineRight->setZValue(1);
+      vertLineRight->setVisible(true);
+
+      horLineTop = imageScene->addLine(0, newCoords.y(),
+                                       imageScene->width(), newCoords.y(), redPen);
+      horLineTop->setZValue(1);
+      horLineTop->setVisible(true);
+
+      horLineBottom = imageScene->addLine(0, newCoords.bottomRight().y(),
+                                          imageScene->width(), newCoords.bottomRight().y(), redPen);
+      horLineBottom->setZValue(1);
+      horLineBottom->setVisible(true);
+
       drawnRectangle = true;
     }
   } else {
@@ -1621,6 +1653,19 @@ void ChildWidget::drawRectangle(bool checked) {
       // http://www.qtcentre.org/threads/28749-Qt-4.6-GraphicsView-items-remove-problem
       imageScene->removeItem(rectangle);
       delete rectangle;
+
+      imageScene->removeItem(vertLineLeft);
+      delete vertLineLeft;
+
+      imageScene->removeItem(vertLineRight);
+      delete vertLineRight;
+
+      imageScene->removeItem(horLineTop);
+      delete horLineTop;
+
+      imageScene->removeItem(horLineBottom);
+      delete horLineBottom;
+
       // Workaround
       QRectF isCoords = imageScene->sceneRect();
       imageScene->update(isCoords);
@@ -1628,6 +1673,7 @@ void ChildWidget::drawRectangle(bool checked) {
       drawnRectangle = false;
     }
   }
+  emit drawRectangleChoosen();
 }
 
 QGraphicsRectItem* ChildWidget::modelItemBox(int row) {

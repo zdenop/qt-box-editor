@@ -44,7 +44,20 @@ DrawRectangle::DrawRectangle(QWidget* parent, QString title, int maxWidth,
   ui->spinBox_x1->stepUp();
   ui->spinBox_x1->stepDown();
 
+  QLabel *lbl = new QLabel("<b>OR</b> you can insert line from Tesseract output e.g. <i>((1645,6315),(1756,6432))</i>", this);
+  lbl->setToolTip("Use this, if you got Tesseract's output like <br/><pre>FAIL! APPLY_BOXES: boxfile line 58/D"
+                  "((3166,6595),(3267,6686)): FAILURE! Couldn't find a matching blob</pre>");
 
+  // NOTE: We do next here:
+  //    1) delete buttonBox from layout
+  //    2) insert our widgets with respective span parameters
+  //    3) insert original buttonBox
+  QLayoutItem *buttonBox = ui->gridLayout->itemAt(ui->gridLayout->rowCount());
+  ui->gridLayout->addWidget(lbl, ui->gridLayout->rowCount(), 0, 4, 0);
+  edtTesseractOutput = new QLineEdit(this);
+  edtTesseractOutput->setPlaceholderText("Enter here numbers like '((3183,6605),(3291,6716))'");
+  ui->gridLayout->addWidget(edtTesseractOutput, ui->gridLayout->rowCount(), 0, 4, 0);
+  ui->gridLayout->addWidget(buttonBox->widget(), ui->gridLayout->rowCount(), 0, 4, 0);
 }
 
 DrawRectangle::~DrawRectangle()
@@ -58,12 +71,39 @@ DrawRectangle::~DrawRectangle()
 QRect DrawRectangle::getRectangle() const
 {
     QRect coords;
-    ui->spinBox_x1->setFocus();
-    ui->spinBox_x1->selectAll();
+    if (edtTesseractOutput && !edtTesseractOutput->text().isEmpty()) {
+        const QString output(edtTesseractOutput->text());
+        QRegExp rx("(\\d+)");
+        QStringList list;
+        int pos = 0;
+        while ((pos = rx.indexIn(output, pos)) != -1) {
+            list << rx.cap(1);
+            pos += rx.matchedLength();
+        }
+        if (list.isEmpty() || list.count() != 4) {
+            coords.setCoords(0, 0, 0, 0);
+        } else {
+            coords.setTopLeft(QPoint(list.at(0).toInt(), ui->spinBox_y1->maximum() - list.at(1).toInt()));
+            coords.setBottomRight(QPoint(list.at(2).toInt(), ui->spinBox_y2->maximum() - list.at(3).toInt()));
+        }
+        edtTesseractOutput->clear();
+    } else {
+        ui->spinBox_x1->setFocus();
+        ui->spinBox_x1->selectAll();
 
-    coords.setCoords(ui->spinBox_x1->value(),
-                     ui->spinBox_y1->maximum() - ui->spinBox_y1->value(),
-                     ui->spinBox_x2->value(),
-                     ui->spinBox_y2->maximum() - ui->spinBox_y2->value());
+        if (ui->spinBox_x1->value() == 0
+                && ui->spinBox_y1->value() == 0
+                && ui->spinBox_x2->value() == 0
+                && ui->spinBox_y2->value() == 0) {
+            // NOTE: User hasn't changed anything
+            coords.setCoords(0, 0, 0, 0);
+        } else {
+            // NOTE: User input some values
+            coords.setCoords(ui->spinBox_x1->value(),
+                             ui->spinBox_y1->maximum() - ui->spinBox_y1->value(),
+                             ui->spinBox_x2->value(),
+                             ui->spinBox_y2->maximum() - ui->spinBox_y2->value());
+        }
+    }
     return coords;
 }
