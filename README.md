@@ -1,4 +1,4 @@
-Qt Box Editor
+QT Box Editor
 =============
 
 Project homepage: [zdenop.github.com/qt-box-editor](http://zdenop.github.com/qt-box-editor/)
@@ -17,11 +17,11 @@ Licence: [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.
 DESCRIPTION
 -----------
 
-Qt Box Editor is tool for adjusting [tesseract-ocr](http://code.google.com/p/tesseract-ocr/) box files. Aim of this project is to provide easy and efficient way for editing regardless file size.
+QT Box Editor is tool for adjusting [tesseract-ocr](http://code.google.com/p/tesseract-ocr/) box files. Aim of this project is to provide easy and efficient way for editing regardless file size.
 
 Release information can be found in CHANGELOG file. Code and artwork contribution is welcomed.
 
-Qt box editor is a successor of [tesseract-gui project](https://github.com/mk219533/tesseract-gui) that is not developed anymore. Name of application was changed due to name collision with project http://tesseract-gui.sourceforge.net.
+QT box editor is a successor of [tesseract-gui project](https://github.com/mk219533/tesseract-gui) that is not developed anymore. Name of application was changed due to name collision with project http://tesseract-gui.sourceforge.net.
 
 
 LICENSE
@@ -70,4 +70,4 @@ For Windows users there is binary a version in [sourceforge.net](http://sourcefo
 * qt-box-editor dependecies (e.g. qt-box-editor-1.11-dependecies.zip) - needed 3rd party libraries to run qt-box editor.
 There is a hope that qt-box-editor dependecies can be used for next few qt-box-editor releases.
 
-On other platforms you need to build qt-box-editor from source. You will need Qt4 (v1.11 is compatible with Qt5), leptonica and tesseract.
+On other platforms you need to build qt-box-editor from source. You will need QT4 (v1.11 is compatible with QT5), leptonica and tesseract.
