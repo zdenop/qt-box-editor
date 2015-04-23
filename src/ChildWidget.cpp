@@ -2261,8 +2261,10 @@ void ChildWidget::deleteSymbol() {
   int rowstodelete = indexes.size();
   int rownum = indexes.front().row();
 
-  for (int i = rowstodelete; i > 0; i--) {
-    deleteSymbolByRow(rownum);
+  while (!indexes.empty())
+  {
+    deleteSymbolByRow(indexes.back().row());
+    indexes.pop_back();
   }
 
   if (model->rowCount() != 0) {
