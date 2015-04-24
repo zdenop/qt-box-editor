@@ -2261,8 +2261,10 @@ void ChildWidget::deleteSymbol() {
   int rowstodelete = indexes.size();
   int rownum = indexes.front().row();
 
-  for (int i = rowstodelete; i > 0; i--) {
-    deleteSymbolByRow(rownum);
+  while (!indexes.empty())
+  {
+    deleteSymbolByRow(indexes.back().row());
+    indexes.pop_back();
   }
 
   if (model->rowCount() != 0) {
@@ -2403,7 +2405,7 @@ void ChildWidget::documentWasModified() {
 void ChildWidget::emitBoxChanged() {
   if (DMESS > 10) qDebug() << Q_FUNC_INFO;
   clearBalloons();
-  updateBalloons();
+  // updateBalloons();
   emit boxChanged();
 }
 
@@ -2527,7 +2529,7 @@ void ChildWidget::updateSelectionRects() {
       updateBalloons();
       resizer->setFromRect(modelItemBox()->rect().toRect());
     } else {
-      resizer->disable();
+      resizer->setFromRect(modelItemBox()->rect().toRect());
     }
   } else {
     clearBalloons();
