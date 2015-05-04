@@ -2260,6 +2260,8 @@ void ChildWidget::deleteSymbol() {
 
   int rowstodelete = indexes.size();
   int rownum = indexes.front().row();
+  int afterRow = my_min(indexes.back().row() - indexes.size() + 1,
+			model->rowCount() - 1);
 
   while (!indexes.empty())
   {
@@ -2268,8 +2270,6 @@ void ChildWidget::deleteSymbol() {
   }
 
   if (model->rowCount() != 0) {
-    int afterRow = my_min(indexes.back().row() - indexes.size() + 1,
-                          model->rowCount() - 1);
     table->setCurrentIndex(model->index(afterRow, 0));
   }
   table->setFocus();
