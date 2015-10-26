@@ -13,3 +13,14 @@ qmake
 make
 
 In case of Windows, output is in win32 directory.
+
+BUILDING ON UBUNTU
+==================
+
+sudo apt-get install qt5-qmake
+sudo apt-get install qt5-default
+sudo apt-get install libqt5gui5
+sudo apt-get install qt5-doc
+ 
+qmake -qt=5
+make
