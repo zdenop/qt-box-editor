@@ -67,6 +67,7 @@ const char *TessTools::qString2Char(QString string) {
  */
 QString TessTools::makeBoxes(const QImage& qImage, const int page) {
   PIX   *pixs;
+  char  *outText;
 
   if ((pixs = qImage2PIX(qImage)) == NULL) {
     msg("Unsupported image type");
@@ -101,31 +102,29 @@ QString TessTools::makeBoxes(const QImage& qImage, const int page) {
     return "";
   }
 
-  STRING text_out;
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
+#ifdef TESSERACT_VERSION
+  api->SetImage(pixs);
+  outText = api->GetBoxText(page);
+#else
+  api->SetVariable("tessedit_create_boxfile", "1");
   int timeout_millisec = 0;
   const char* filename = NULL;
   const char* retry_config = NULL;
-#ifdef TESSERACT_VERSION
-  const char* outputbase = NULL;
-  tesseract::TessResultRenderer* renderer = NULL;
-  renderer = new tesseract::TessBoxTextRenderer(outputbase);
+  STRING text_out;
   if (!api->ProcessPage(pixs, page, filename, retry_config,
-                        timeout_millisec, renderer)) {
-#else
-  api->SetVariable("tessedit_create_boxfile", "1");
-  if (!api->ProcessPage(pixs, page, filename, retry_config, timeout_millisec,
-                        &text_out)) {
-#endif  // TESSERACT_VERSION
+                        timeout_millisec, &text_out)) {
     msg("Error during processing.\n");
   }
+  outText = text_out.string();
+#endif  // TESSERACT_VERSION
   QApplication::restoreOverrideCursor();
 
   pixDestroy(&pixs);
   api->End();
   delete api;
-  return QString::fromUtf8(text_out.string());
+  return QString::fromUtf8(outText);
 }
 
 /*!
