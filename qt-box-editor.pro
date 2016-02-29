@@ -85,7 +85,7 @@ unix:!macx {
 
 # Libraries may be installed this way on Mac OS X:
 # brew install leptonica
-# brew install tesseract
+# brew install --training-tools --all-languages --HEAD https://gist.githubusercontent.com/fake-or-dead/8f1e817681847b689d2d/raw/915a5f6726a7aced6d75b902959fda1ae2d559c7/tesseract.rb
 macx {
     message(Starting OSX build...)
     QT += widgets
