@@ -1,5 +1,5 @@
 TEMPLATE = app
-VERSION = 1.12dev
+VERSION = 1.13dev
 TARGET = qt-box-editor-$${VERSION}
 
 DEPENDPATH += ./ \
@@ -60,7 +60,7 @@ RESOURCES = resources/application.qrc \
 
 LIBS += -llept -ltesseract
 
-win32: {
+win32 {
     DESTDIR = ./win32
     CONFIG += release embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
@@ -73,11 +73,22 @@ win32: {
     LIBS += -lws2_32 -L$$PWD/win32-external/lib
 }
 
-unix: {
+unix:!macx {
+    message(Starting UNIX build...)
     greaterThan(QT_MAJOR_VERSION, 5) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
       INCLUDEPATH += /opt/include/
       LIBS += -L/opt/lib
     }
+}
+
+# Libraries may be installed this way on Mac OS X:
+# brew install leptonica
+# brew install tesseract
+macx {
+    message(Starting OSX build...)
+    QT += widgets
+    INCLUDEPATH += /usr/local/include/
+    LIBS += -L/usr/local/lib
 }
