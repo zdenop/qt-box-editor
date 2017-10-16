@@ -3,7 +3,7 @@ REQUIREMENTS
 * QT4 (tested with QT-4.7.3, QT-4.8.2)
 * leptonica library
 * tesseract 3.01 or 3.02 build as library
-Obs.: In case you're compiling it with QT5 >= then you must to install libqt5svg5-dev/libqt5svg5-devel 
+Obs.: In case you're compiling it with QT5 >= then you must to install libqt5svg5-dev/libqt5svg5-devel
 
 BUILDING
 ========
@@ -22,6 +22,17 @@ sudo apt-get install qt5-default
 sudo apt-get install libqt5gui5
 sudo apt-get install qt5-doc
 sudo apt-get install libqt5svg5-dev
- 
+
 qmake -qt=5
 make
+
+BUILDING ON OSX
+==================
+
+brew cask install xquartz
+brew install --with-training-tools tesseract
+brew install qt
+qmake
+make
+open qt-box-editor-1.13dev.app/
+
