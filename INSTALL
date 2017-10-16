@@ -30,6 +30,8 @@ make
 BUILDING ON OSX
 ==================
 
+Before you can run the qmake/ make commands below, you'll need to install the Apple published Xcode suite, and run it at least once so the terms can be agreed to.
+
 brew cask install xquartz
 brew install --with-training-tools tesseract
 brew install qt
