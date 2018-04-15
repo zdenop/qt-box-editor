@@ -66,7 +66,7 @@ win32 {
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti -static
     #QTPLUGIN += qsvg # image formats
-     DEFINES += WINDOWS
+    DEFINES += WINDOWS
     #QMAKE_LFLAGS.gcc += -static-libgcc # -static
     RC_FILE = resources/win.rc
     INCLUDEPATH += $$PWD/win32-external/include/
@@ -74,12 +74,13 @@ win32 {
 }
 
 unix:!macx {
-    message(Starting UNIX build...)
     greaterThan(QT_MAJOR_VERSION, 5) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
       INCLUDEPATH += /opt/include/
       LIBS += -L/opt/lib
+      QMAKE_CXXFLAGS += -std=c++11
+      CONFIG += c++11
     }
 }
 
