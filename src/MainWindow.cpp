@@ -61,7 +61,7 @@ MainWindow::MainWindow() {
   readSettings(true);
   setUnifiedTitleAndToolBarOnMac(true);
   setWindowIcon(QIcon(":/icons/qbe.png"));
-  setWindowTitle(tr("%1 - v%2").arg(SETTING_APPLICATION).arg(VERSION));
+  setWindowTitle(tr("%1 - v%2").arg(SETTING_APPLICATION).arg(APP_VERSION));
 }
 
 void MainWindow::closeEvent(QCloseEvent* event) {
@@ -574,14 +574,14 @@ void MainWindow::requestFinished(QNetworkReply* reply) {
 void MainWindow::checkVersion(QNetworkReply* reply) {
   if (reply->error() == QNetworkReply::NoError) {
     QString current_version = reply->readAll().trimmed();
-    QString app_version = QString("%1").arg(VERSION).replace("dev", "",
+    QString app_version = QString("%1").arg(APP_VERSION).replace("dev", "",
                                                            Qt::CaseInsensitive);
     QString messageText;
 
     if (app_version == current_version) {
       messageText = tr("<p>No newer version is available.</p>");
     } else if (app_version > current_version) {
-      messageText = tr("<p>Your version ('%1') is higher than ").arg(VERSION);
+      messageText = tr("<p>Your version ('%1') is higher than ").arg(APP_VERSION);
       messageText += tr("released stable version ('%2').").arg(current_version);
       messageText += tr("</p><p>Do you use develepment version? ");
       messageText += tr("Don't forget to install stable version manually!</p>");
@@ -608,7 +608,7 @@ void MainWindow::shortCutList() {
 
 void MainWindow::about() {
   QString abouttext =
-    tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(VERSION);
+    tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(APP_VERSION);
 
   abouttext.append(tr("<p><a href=\"http://qt-project.org/\">QT</a> "));
   abouttext.append(tr("editor of tesseract-ocr box files</p>"));

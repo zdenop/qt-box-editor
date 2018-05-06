@@ -1,6 +1,8 @@
 TEMPLATE = app
-VERSION = 1.13dev
-TARGET = qt-box-editor-$${VERSION}
+QTB_VERSION = "1.13dev"
+TARGET = qt-box-editor-$${QTB_VERSION}
+DEFINES += APP_VERSION=\\\"$${QTB_VERSION}\\\"
+DESTDIR = .
 
 DEPENDPATH += ./ \
     resource/images \
@@ -12,16 +14,23 @@ INCLUDEPATH += ./ \
     src
 
 QT += network svg
-#QT += testlib
 
-#CONFIG += debug warn_on
-CONFIG += release warn_off
-
-OBJECTS_DIR += temp
-MOC_DIR += temp
-UI_DIR += temp
-RCC_DIR += temp
-DEFINES += VERSION=\\\"$${VERSION}\\\"
+CONFIG(debug, debug|release) {
+    CONFIG += debug warn_on
+    DESTDIR = debug
+    QT += testlib
+    OBJECTS_DIR += build/debug
+    MOC_DIR += build/debug
+    UI_DIR += build/debug
+    RCC_DIR += build/debug
+} else {
+    CONFIG += release warn_off
+    DESTDIR = release
+    OBJECTS_DIR += build/release
+    MOC_DIR += build/release
+    UI_DIR += build/release
+    RCC_DIR += build/release
+}
 
 FORMS += \
     dialogs/ShortCutDialog.ui \
@@ -58,11 +67,9 @@ RESOURCES = resources/application.qrc \
     resources/QBE-Oxygen.qrc \
     resources/QBE-Tango.qrc
 
-LIBS += -llept -ltesseract
-
 win32 {
-    DESTDIR = ./win32
-    CONFIG += release embed_manifest_exe
+    # DESTDIR = ./win32
+    CONFIG += embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti -static
     #QTPLUGIN += qsvg # image formats
@@ -73,12 +80,19 @@ win32 {
     LIBS += -lws2_32 -L$$PWD/win32-external/lib
 }
 
+win32:CONFIG(debug, debug|release) {
+    TARGET = $$join(TARGET,,,d)
+    LIBS += -ltesseract305d -lleptonica-1.76.0d
+} else {
+    LIBS += -ltesseract305 -lleptonica-1.76.0
+}
+
 unix:!macx {
     greaterThan(QT_MAJOR_VERSION, 5) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
       INCLUDEPATH += /opt/include/
-      LIBS += -L/opt/lib
+      LIBS += -L/opt/lib -ltesseract -llept
       QMAKE_CXXFLAGS += -std=c++11
       CONFIG += c++11
     }
