@@ -12,3 +12,5 @@ Makefile.Debug
 Makefile.Release
 object_script.*
 win32*
+*.dll
+build/*
