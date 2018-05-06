@@ -5,7 +5,7 @@
 * Created:     2010-01-04
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011-2014, Zdenko Podobny
+* (C) Copyright 2011-2018, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,6 +24,7 @@
 
 #include "MainWindow.h"
 #include "dialogs/ShortCutsDialog.h"
+#include <tesseract/baseapi.h>
 
 MainWindow::MainWindow() {
   tabWidget = new QTabWidget;
@@ -612,12 +613,13 @@ void MainWindow::about() {
 
   abouttext.append(tr("<p><a href=\"http://qt-project.org/\">QT</a> "));
   abouttext.append(tr("editor of tesseract-ocr box files</p>"));
+  abouttext.append(tr("<p>Tesseract library version: %2</p>").arg(TESSERACT_VERSION_STR));
   abouttext.append(tr("<p>Project page: <a href=%1>%2</a></p>").
                    arg(PROJECT_URL).arg(PROJECT_URL_NAME));
   abouttext.append(tr("<p>Copyright 2010 Marcel Kolodziejczyk<br/>"));
   abouttext.append(tr("Copyright 2012 Zohar Gofer<br/>"));
   abouttext.append(tr("Copyright 2012 Dmitri Silaev<br/>"));
-  abouttext.append(tr("Copyright 2011-2014 Zdenko Podobný</p>"));
+  abouttext.append(tr("Copyright 2011-2018 Zdenko Podobný</p>"));
   abouttext.append(tr("<p>This software is released under "
                       "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\"" \
                       ">Apache License 2.0</a></p>"));
