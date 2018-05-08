@@ -1,5 +1,5 @@
 TEMPLATE = app
-QTB_VERSION = "1.13dev"
+QTB_VERSION = "1.12rc1"
 TARGET = qt-box-editor-$${QTB_VERSION}
 DEFINES += APP_VERSION=\\\"$${QTB_VERSION}\\\"
 DESTDIR = .
@@ -82,9 +82,9 @@ win32 {
 
 win32:CONFIG(debug, debug|release) {
     TARGET = $$join(TARGET,,,d)
-    LIBS += -ltesseract305d -lleptonica-1.76.0d
+    LIBS += -ltesseract305d -lleptonica-1.76.1d
 } else {
-    LIBS += -ltesseract305 -lleptonica-1.76.0
+    LIBS += -ltesseract305 -lleptonica-1.76.1
 }
 
 unix:!macx {
