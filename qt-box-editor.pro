@@ -88,7 +88,8 @@ win32 {
 }
 
 unix:!macx {
-    greaterThan(QT_MAJOR_VERSION, 5) {
+    # qt-5 or later
+    greaterThan(QT_MAJOR_VERSION, 4) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
       INCLUDEPATH += /opt/include/
