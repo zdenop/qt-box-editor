@@ -78,13 +78,13 @@ win32 {
     RC_FILE = resources/win.rc
     INCLUDEPATH += $$PWD/win32-external/include/
     LIBS += -lws2_32 -L$$PWD/win32-external/lib
-}
 
-win32:CONFIG(debug, debug|release) {
-    TARGET = $$join(TARGET,,,d)
-    LIBS += -ltesseract305d -lleptonica-1.76.1d
-} else {
-    LIBS += -ltesseract305 -lleptonica-1.76.1
+    CONFIG(debug, debug|release) {
+        TARGET = $$join(TARGET,,,d)
+        LIBS += -ltesseract305d -lleptonica-1.76.1d
+    } else {
+        LIBS += -ltesseract305 -lleptonica-1.76.1
+    }
 }
 
 unix:!macx {
