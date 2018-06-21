@@ -78,17 +78,18 @@ win32 {
     RC_FILE = resources/win.rc
     INCLUDEPATH += $$PWD/win32-external/include/
     LIBS += -lws2_32 -L$$PWD/win32-external/lib
-}
 
-win32:CONFIG(debug, debug|release) {
-    TARGET = $$join(TARGET,,,d)
-    LIBS += -ltesseract305d -lleptonica-1.76.1d
-} else {
-    LIBS += -ltesseract305 -lleptonica-1.76.1
+    CONFIG(debug, debug|release) {
+        TARGET = $$join(TARGET,,,d)
+        LIBS += -ltesseract305d -lleptonica-1.76.1d
+    } else {
+        LIBS += -ltesseract305 -lleptonica-1.76.1
+    }
 }
 
 unix:!macx {
-    greaterThan(QT_MAJOR_VERSION, 5) {
+    # qt-5 or later
+    greaterThan(QT_MAJOR_VERSION, 4) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
       INCLUDEPATH += /opt/include/
