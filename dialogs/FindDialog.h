@@ -28,6 +28,7 @@
 #include <QPushButton>
 #include <QDialog>
 #include <QTimeLine>
+#include <QRegExpValidator>
 
 #include "ui_FindDialog.h"
 
