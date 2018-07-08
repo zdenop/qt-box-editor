@@ -99,15 +99,13 @@ unix:!macx {
     }
 }
 
-# Libraries may be installed this way on Mac OS X:
-# brew install leptonica
-# brew install --training-tools --all-languages --HEAD https://gist.githubusercontent.com/fake-or-dead/8f1e817681847b689d2d/raw/915a5f6726a7aced6d75b902959fda1ae2d559c7/tesseract.rb
+# Libraries may be installed this way on macOS:
+# brew install --with-training-tools --with-all-languages tesseract
 #
-# TESSDATE_PREFIX in the Settings of the App is: /usr/local/share/
-# Then close Settings and reopen Settings to select the language
+# TESSDATA_PREFIX in the Settings of the App is: /usr/local/share/
 macx {
     message(Starting OSX build...)
     QT += widgets
     INCLUDEPATH += /usr/local/include/
-    LIBS += -L/usr/local/lib
+    LIBS += -L/usr/local/lib -ltesseract -llept
 }
