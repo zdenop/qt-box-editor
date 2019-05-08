@@ -92,11 +92,11 @@ unix:!macx {
     greaterThan(QT_MAJOR_VERSION, 4) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
-      INCLUDEPATH += /opt/include/
-      LIBS += -L/opt/lib -ltesseract -llept
       QMAKE_CXXFLAGS += -std=c++11
       CONFIG += c++11
     }
+    INCLUDEPATH += /opt/include/
+    LIBS += -L/opt/lib -ltesseract -llept
 }
 
 # Libraries may be installed this way on macOS:
