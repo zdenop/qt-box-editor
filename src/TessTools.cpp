@@ -75,7 +75,7 @@ QString TessTools::makeBoxes(const QImage& qImage, const int page) {
   }
 
   // http://code.google.com/p/tesseract-ocr/issues/detail?id=228
-  setlocale(LC_NUMERIC, "C");
+  setlocale(LC_ALL, "C");
   // QString to  const char *
   #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
   QByteArray byteArray = getLang().toAscii();
@@ -246,7 +246,7 @@ QImage TessTools::GetThresholded(const QImage& qImage) {
     #endif
     const char * apiLang = byteArray.constData();
 
-    setlocale(LC_NUMERIC, "C");
+    setlocale(LC_ALL, "C");
 
     tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
     if (api->Init(NULL, apiLang)) {
