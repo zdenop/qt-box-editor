@@ -15,6 +15,9 @@ INCLUDEPATH += ./ \
 
 QT += network svg
 
+INSTALLS += target
+target.path = $$PREFIX/bin
+
 CONFIG(debug, debug|release) {
     CONFIG += debug warn_on
     DESTDIR = debug
