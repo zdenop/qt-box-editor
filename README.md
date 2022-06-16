@@ -2,6 +2,7 @@ QT Box Editor
 =============
 
 Project homepage: [https://github.com/zdenop/qt-box-editor](https://github.com/zdenop/qt-box-editor)
+Project description: [https://zdenop.github.io/qt-box-editor/](https://zdenop.github.io/qt-box-editor/)
 
 Screenshots: [wiki](https://github.com/zdenop/qt-box-editor/wiki)
 
