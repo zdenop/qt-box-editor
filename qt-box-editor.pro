@@ -1,5 +1,5 @@
 TEMPLATE = app
-QTB_VERSION = "1.12rc1"
+QTB_VERSION = "1.13.0-alpha"
 TARGET = qt-box-editor-$${QTB_VERSION}
 DEFINES += APP_VERSION=\\\"$${QTB_VERSION}\\\"
 DESTDIR = .
