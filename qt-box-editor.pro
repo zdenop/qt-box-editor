@@ -84,9 +84,9 @@ win32 {
 
     CONFIG(debug, debug|release) {
         TARGET = $$join(TARGET,,,d)
-        LIBS += -ltesseract305d -lleptonica-1.76.1d
+        LIBS += -lltesseract535d -lleptonica-1.83.1d
     } else {
-        LIBS += -ltesseract305 -lleptonica-1.76.1
+        LIBS += -ltesseract53 -lleptonica-1.83.1
     }
 }
 
@@ -99,7 +99,7 @@ unix:!macx {
       CONFIG += c++11
     }
     INCLUDEPATH += /opt/include/
-    LIBS += -L/opt/lib -ltesseract -llept
+    LIBS += -L/opt/lib -ltesseract -lleptonica
 }
 
 # Libraries may be installed this way on macOS:
@@ -110,5 +110,5 @@ macx {
     message(Starting OSX build...)
     QT += widgets
     INCLUDEPATH += /usr/local/include/
-    LIBS += -L/usr/local/lib -ltesseract -llept
+    LIBS += -L/usr/local/lib -ltesseract -lleptonica
 }

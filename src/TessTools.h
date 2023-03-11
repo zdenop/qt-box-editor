@@ -25,7 +25,9 @@
 
 #include <tesseract/baseapi.h>
 #include <leptonica/allheaders.h>
-#include "TessTools.h"
+#if (LIBLEPT_MAJOR_VERSION > 1) || (LIBLEPT_MINOR_VERSION > 82)
+    #include <leptonica/pix_internal.h>
+#endif
 #include <QString>
 #include <QImage>
 

@@ -27,7 +27,9 @@
 #ifdef TESSERACT_VERSION  // 3.03 API
 #include <tesseract/renderer.h>
 #endif  // TESSERACT_VERSION
-#include <tesseract/strngs.h>
+#if (TESSERACT_MAJOR_VERSION < 5)
+   #include <tesseract/strngs.h>
+#endif
 
 #include <QApplication>
 #include <QWidget>
