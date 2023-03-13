@@ -58,7 +58,7 @@ FindDialog::FindDialog(QWidget* parent, QString title)
   connect(checkBox_Mc, SIGNAL(toggled(bool)), this, SLOT(changed_Mc(bool)));
   connect(parent, SIGNAL(blinkFindDialog()), this, SLOT(blinkFindDialog()));
   timerBlink = new QTimeLine(10);
-  originalBackColor = this->palette().color(QPalette::Background);;
+  originalBackColor = this->palette().color(QPalette::Window);;
   getSettings();
 }
 
@@ -97,14 +97,14 @@ void FindDialog::blinkFindDialog() {
     connect(timerBlink, SIGNAL(finished()), this, SLOT(blinkFinished()));
     }
   QPalette pal = this->palette();
-  pal.setColor(QPalette::Background, Qt::red);
+  pal.setColor(QPalette::Window, Qt::red);
   this->setPalette(pal);
 }
 
 void FindDialog::blinkFinished() {
   disconnect(timerBlink, SIGNAL(finished()), this, SLOT(blinkFinished()));
   QPalette pal = this->palette();
-  pal.setColor(QPalette::Background, originalBackColor);
+  pal.setColor(QPalette::Window, originalBackColor);
   this->setPalette(pal);
 }
 
