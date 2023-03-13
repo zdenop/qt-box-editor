@@ -20,6 +20,8 @@
 *
 **********************************************************************/
 
+#define _CRT_NONSTDC_NO_DEPRECATE
+
 #include <locale.h>
 #include "TessTools.h"
 #include "Settings.h"
