@@ -320,7 +320,7 @@ QList<QString> TessTools::getLanguages(QString datapath) {
       QFileInfo fileInfo = list.at(i);
       languages.append(QString("%1").arg(fileInfo.baseName()));
     }
-    qSort(languages);
+    std::sort(languages.begin(), languages.end());
 
     return languages;
 }
