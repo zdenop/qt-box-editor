@@ -2371,7 +2371,7 @@ QString ChildWidget::getSymbolHexCode() {
     }
     return result;
   }
-  return QString::null;
+  return QString();
 }
 
 /* Get size of box */
@@ -2388,7 +2388,7 @@ QString ChildWidget::getBoxSize() {
     result = QString("%1x%2").arg(right - left).arg(bottom - top);
     return result;
   }
-  return QString::null;
+  return QString();
 }
 
 QString ChildWidget::currentBoxFile() {
