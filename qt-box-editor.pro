@@ -84,7 +84,7 @@ win32 {
 
     CONFIG(debug, debug|release) {
         TARGET = $$join(TARGET,,,d)
-        LIBS += -lltesseract535d -lleptonica-1.83.1d
+        LIBS += -ltesseract53d -lleptonica-1.83.1d
     } else {
         LIBS += -ltesseract53 -lleptonica-1.83.1
     }
