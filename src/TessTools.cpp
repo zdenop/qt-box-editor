@@ -86,8 +86,12 @@ QString TessTools::makeBoxes(const QImage& qImage, const int page) {
   #else
   QByteArray byteArray = getLang().toLocal8Bit();
   #endif
-  const char * apiLang = byteArray.constData();
-
+  const char * apiLang;
+  if (byteArray.isEmpty()) {
+    apiLang = NULL;
+  } else {
+    apiLang = byteArray.constData();
+    }
   // workaroung if datapath/TESSDATA_PREFIX is set...
   setDataPath();
 
