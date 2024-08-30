@@ -89,16 +89,7 @@ QString TessTools::makeBoxes(const QImage& qImage, const int page) {
   const char * apiLang = byteArray.constData();
 
   // workaroung if datapath/TESSDATA_PREFIX is set...
-  #ifdef _WIN32
-  QString envQString = "TESSDATA_PREFIX=" + getDataPath() ;
-  QByteArray byteArrayWin = envQString.toUtf8();
-  const char * env = byteArrayWin.data();
-  putenv(env);
-  #else
-  QByteArray byteArray1 = getDataPath().toUtf8();
-  const char * datapath = byteArray1.data();
-  setenv("TESSDATA_PREFIX", datapath, 1);
-  #endif
+  setDataPath();
 
   tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
   if (api->Init(NULL, apiLang)) {
@@ -230,17 +221,7 @@ QImage TessTools::PIX2qImage(PIX *pixImage) {
 QImage TessTools::GetThresholded(const QImage& qImage) {
     // TODO(zdenop): Check this for memory leak
     PIX * pixs = qImage2PIX(qImage);
-
-    // Set tessdata as Enviromental Variable to avoid problems
-    QByteArray byteArray1 = getDataPath().toUtf8();
-    #ifdef _WIN32
-    QString envQString = "TESSDATA_PREFIX=" + byteArray1 ;
-    const char * env = qString2Char(envQString);
-    putenv(env);
-    #else
-    const char * datapath = byteArray1.data();
-    setenv("TESSDATA_PREFIX", datapath, 1);
-    #endif
+    setDataPath();
 
     // TODO(zdenop): Why apiLang = qString2Char(getLang()) do not work???
     #if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
@@ -329,5 +310,25 @@ void TessTools::msg(QString messageText) {
     QMessageBox msgBox;
     msgBox.setText(messageText);
     msgBox.exec();
+}
+
+/*
+ *  Set tessdata as Enviromental Variable
+ */
+void TessTools::setDataPath() {
+    QByteArray tessDataPath = getDataPath().toUtf8();
+#if (TESSERACT_MAJOR_VERSION >= 5)
+    tessDataPath += "/tessdata";
+#endif
+
+#ifdef _WIN32
+    tessDataPath.prepend("TESSDATA_PREFIX=");
+    const char * env = tessDataPath.data();
+    putenv(env);
+    qDebug() << "env: " << env;
+#else // non _WIN32
+    const char * env = tessDataPath.data();
+    setenv("TESSDATA_PREFIX", env, 1);
+#endif // _WIN32
 }
 

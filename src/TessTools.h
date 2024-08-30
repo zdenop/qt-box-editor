@@ -46,6 +46,7 @@ public:
 private:
   static QString getDataPath();
   static QString getLang();
+  static void setDataPath();
   static void msg(QString messageText);
   static const char *kTrainedDataSuffix;
 };
