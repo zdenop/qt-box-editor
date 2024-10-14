@@ -11,8 +11,8 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(Qt5 REQUIRED Widgets Svg Network)
-find_package(tesseract REQUIRED)
-find_package(leptonica REQUIRED)
+find_package(Leptonica REQUIRED)
+find_package(Tesseract REQUIRED)
 
 include_directories(${Tesseract_INCLUDE_DIRS} ${Leptonica_INCLUDE_DIRS})
 include_directories(
