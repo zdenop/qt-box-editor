@@ -632,7 +632,7 @@ bool ChildWidget::readToVector(QTextStream &boxdata) {
   boxdata.setCodec("UTF-8");
   QString data = boxdata.readAll();
   QStringList lineBoxes = data.split(QRegExp("\n"),
-                                     QString::SkipEmptyParts);
+                                     Qt::SkipEmptyParts);
   QString pagePrev = "0";
   QVector<QStringList> page;
 
