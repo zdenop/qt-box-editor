@@ -1,3 +1,16 @@
+1.13
+- fixed compatibility with QT5
+- build build against the tesseract 5.4.x and leptonica 1.84
+- add cmake support
+
+1.12
+- fixed compatibility with Tesseract API 3.02 and 3.03
+- fix generating box file with tesserac 3.04 and 3.05
+- fix grayscale palette in PIXqImage
+- fix opening box files created by text2image
+- use c++11 for bulding
+- several other bug fixes
+
 1.11
 - fixed compatibility with QT5
 - added multipage support

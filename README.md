@@ -9,7 +9,7 @@ Screenshots: [wiki](https://github.com/zdenop/qt-box-editor/wiki)
 
 Download current (devel) source: [tar.gz](https://github.com/zdenop/qt-box-editor/tarball/master) or [zip](https://github.com/zdenop/qt-box-editor/zipball/master).
 
-The latest released source is [qt-box-editor-v1.11](https://github.com/zdenop/qt-box-editor/tarball/master/tree/v1.11).
+The latest released source is [qt-box-editor-v1.13](https://github.com/zdenop/qt-box-editor/tarball/master/tree/v1.13).
 
 Download [win32 binary build](http://sourceforge.net/projects/qtboxeditor/?source=dlp) from [sourceforge.net](http://sourceforge.net/projects/qtboxeditor/)
 
@@ -19,7 +19,8 @@ Licence: [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.
 DESCRIPTION
 -----------
 
-QT Box Editor is tool for adjusting [tesseract-ocr](http://code.google.com/p/tesseract-ocr/) box files. Aim of this project is to provide easy and efficient way for editing regardless file size.
+QT Box Editor is tool for adjusting [tesseract-ocr](https://github.com/tesseract-ocr/tesseract) v3 (a.k.a Legacy engine) box files. Aim of this project is to provide easy and efficient way for editing regardless file size.
+**It is useless for training tesseract v4 and above (LSTM engine).**
 
 Release information can be found in CHANGELOG file. Code and artwork contribution is welcomed.
 
@@ -67,9 +68,43 @@ Other icons/artwork were created for Qt Box Editor and they are released under A
 Distribution
 ------------
 
-For Windows users there is binary a version in [sourceforge.net](http://sourceforge.net/projects/qtboxeditor/?source=dlp) section. From version 1.09 distribution is split to 2 part:
-* qt-box-editor executable (e.g. qt-box-editor-1.11.exe) - share build
-* qt-box-editor dependecies (e.g. qt-box-editor-1.11-dependecies.zip) - needed 3rd party libraries to run qt-box editor.
-There is a hope that qt-box-editor dependecies can be used for next few qt-box-editor releases.
+See [release page](https://github.com/zdenop/qt-box-editor/releases)
 
-On other platforms you need to build qt-box-editor from source. You will need QT4 (v1.11 is compatible with QT5), leptonica and tesseract.
+
+
+Instalation
+-----------
+
+Requirements: QT5, tesseract & leptonica and (optionally) cmake.
+
+For building you can use `qmake-qt5` or `cmake`
+
+For cmake build you will need to compile&install tesseract by cmake otherwise cmake relevant files (e.g. ` tesseractConfig.cmake`) will not be created and installed.
+
+## cmake windows build
+
+`<your_QT5_path>` could be e.g. `f:/Qt/5.15.2/msvc2019_64`
+`<your_tesseract_installation>` could be e.g. `f:/win64`
+
+```sh
+set QTDIR=<your_QT5_path>
+set PATH=%QTDIR%/bin;%PATH%
+cmake -G "Visual Studio 16 2019" -A x64 -S . -B build -DCMAKE_PREFIX_PATH="<your_QT5_path>;<your_tesseract_installation>"
+cmake --build build --config Release --verbose
+```
+
+The Output will be at build\Release\qt-box-editor-1.13.0.exe
+
+## cmake linux build
+
+```sh
+cmake -B build
+make
+```
+
+## qmake linux build
+
+```sh
+qmake-qt5
+make
+```

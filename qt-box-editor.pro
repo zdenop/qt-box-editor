@@ -1,5 +1,5 @@
 TEMPLATE = app
-QTB_VERSION = "1.13.0-alpha"
+QTB_VERSION = "1.13.0"
 TARGET = qt-box-editor-$${QTB_VERSION}
 DEFINES += APP_VERSION=\\\"$${QTB_VERSION}\\\"
 DESTDIR = .
@@ -71,7 +71,7 @@ RESOURCES = resources/application.qrc \
     resources/QBE-Tango.qrc
 
 win32 {
-    # DESTDIR = ./win32
+    DESTDIR = ./win32
     CONFIG += embed_manifest_exe
     TMAKE_CXXFLAGS += -DQT_NODLL
     TMAKE_CXXFLAGS += -fno-exceptions -fno-rtti -static
@@ -84,9 +84,9 @@ win32 {
 
     CONFIG(debug, debug|release) {
         TARGET = $$join(TARGET,,,d)
-        LIBS += -ltesseract53d -lleptonica-1.83.1d
+        LIBS += -lltesseract54d -lleptonica-1.84.1d
     } else {
-        LIBS += -ltesseract53 -lleptonica-1.83.1
+        LIBS += -ltesseract54 -lleptonica-1.84.1
     }
 }
 
