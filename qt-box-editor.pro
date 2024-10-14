@@ -95,8 +95,8 @@ unix:!macx {
     greaterThan(QT_MAJOR_VERSION, 4) {
       message(Qt $$[QT_VERSION] was detected.)
       QT += widgets
-      QMAKE_CXXFLAGS += -std=c++11
-      CONFIG += c++11
+      QMAKE_CXXFLAGS += -std=c++17
+      CONFIG += c++17
     }
     INCLUDEPATH += /opt/include/
     LIBS += -L/opt/lib -ltesseract -lleptonica
