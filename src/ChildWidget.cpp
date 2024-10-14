@@ -686,8 +686,8 @@ bool ChildWidget::fillTableData(int pageNum) {
       case QMessageBox::No:
       case QMessageBox::Cancel:
       default:
+        QApplication::restoreOverrideCursor();
         return false;
-        break;
     }
   }
   int row = 0;
