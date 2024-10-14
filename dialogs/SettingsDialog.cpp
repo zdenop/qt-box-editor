@@ -4,7 +4,7 @@
 * Author:      Zdenko Podobny
 * Created:     2011-02-11
 *
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2024, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.
@@ -149,14 +149,14 @@ void SettingsDialog::initSettings() {
     imageFontColor = Qt::red;
   }
 
-  if (settings.contains("GUI/Rectagle")) {
-    rectColor = settings.value("GUI/Rectagle").value<QColor>();
+  if (settings.contains("GUI/Rectangle")) {
+    rectColor = settings.value("GUI/Rectangle").value<QColor>();
   } else {
     rectColor = Qt::red;
   }
 
-  if (settings.contains("GUI/Rectagle_fill")) {
-    rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
+  if (settings.contains("GUI/Rectangle_fill")) {
+    rectFillColor = settings.value("GUI/Rectangle_fill").value<QColor>();
   } else {
     rectFillColor = Qt::red;
     rectFillColor.setAlpha(127);
@@ -224,8 +224,8 @@ void SettingsDialog::saveSettings() {
   settings.setValue("GUI/IconTheme", themeComboBox->currentText());
 
   settings.setValue("GUI/ImageFontColor", imageFontColor);
-  settings.setValue("GUI/Rectagle", rectColor);
-  settings.setValue("GUI/Rectagle_fill", rectFillColor);
+  settings.setValue("GUI/Rectangle", rectColor);
+  settings.setValue("GUI/Rectangle_fill", rectFillColor);
   settings.setValue("GUI/Box", boxColor);
   settings.setValue("GUI/BackgroundColor", backgroundColor);
 
@@ -292,7 +292,7 @@ void SettingsDialog::on_pbSelectDP_clicked() {
                           lnPrefix->text(),
                           QFileDialog::ShowDirsOnly
                           | QFileDialog::DontResolveSymlinks);
-    // we need only prefix endswith "/" and without tessdata!!!
+    // we need only prefix ends with "/" and without tessdata!!!
     if (prefix_dir.contains(QRegExp("/tessdata$")))
             prefix_dir.replace(QRegExp("/tessdata$"),"/");
     else if (prefix_dir.contains(QRegExp("/tessdata/$")))

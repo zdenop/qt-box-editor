@@ -6,7 +6,7 @@
 * Author:      Zdenko Podobny
 * Created:     2011-07-06
 *
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2024, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");

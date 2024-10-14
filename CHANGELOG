@@ -22,22 +22,22 @@
 - implemented option to change QT Style
 - implemented redo (thanks to Z. Gofer)
 - improved undo (thanks to Z. Gofer)
-- Rubber band selection with Ctrl + mouse click and drag from image 
+- Rubber band selection with Ctrl + mouse click and drag from image
   (thanks to D. Silaev)
 - multiline join and delete (thanks to D. Silaev)
-- baloon effect - posibility to define how many symbols will be displayed 
+- baloon effect - possibility to define how many symbols will be displayed
   (thanks to D. Silaev)
-- exteded settings for more customisation
-- several fixed of segfault 
+- extended settings for more customisation
+- several fixed of segfault
 
 1.08
 - show/hide columns with font formatting (thanks to D. Silaev)
 - char table col width management, Font column fixes (thanks to D. Silaev)
 - fixed MSVC build (thanks to D. Silaev)
 - multiple Balloon Symbols to increase proofreading (thanks to D. Silaev)
-- initial implementiation of undo for table operation: Add, Delete, Change, 
+- initial implementation of undo for table operation: Add, Delete, Change,
   Join, Split, Replace (thanks to Z. Gofer)
-- Halo text effect for better readibility (thanks to D. Silaev)
+- Halo text effect for better readability (thanks to D. Silaev)
 - fixes related to direct typing mode thanks to D. Silaev)
 - fix segfault when zooming
 
@@ -79,8 +79,8 @@
 - setting dialog
 - option to select font for table, colors for boxes
 - shortcuts help/dialog
-- added fuction to insert box
-- added funtion to move box within table/model
+- added function to insert box
+- added function to move box within table/model
 
 1.02
 - replace icons from Faenza Icons set

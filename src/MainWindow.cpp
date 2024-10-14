@@ -5,7 +5,7 @@
 * Created:     2010-01-04
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011-2018, Zdenko Podobny
+* (C) Copyright 2011-2024, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
@@ -178,7 +178,7 @@ void MainWindow::save() {
 
 /**
  * @brief MainWindow::splitToFeatureBF
- * create infividual box file per feature e.g.:
+ * create individual box file per feature e.g.:
  * eng.timesnormal.exp001.box
  * eng.timesbold.exp001.box
  * eng.timesitalic.exp001.box
@@ -196,7 +196,7 @@ void MainWindow::splitToFeatureBF() {
 /**
  * @brief MainWindow::saveAs
  * Make a copy but do not update title of tab etc.
- * because there is not correcponding image file
+ * because there is not corresponding image file
  */
 void MainWindow::saveAs() {
   QString currentFileName = activeChild()->currentBoxFile();
@@ -523,7 +523,7 @@ void MainWindow::genBoxFile() {
     QString currentFileName = activeChild()->currentBoxFile();
     switch (QMessageBox::question(
                     this,
-                    tr("Warning: Request to renerage box file!"),
+                    tr("Warning: Request to regenerate box file!"),
                       tr("Do you want to regenerate current page in '%1'?\n"
                          "This will replace boxfile stored on disk.\n\n" \
                          "Warning: This operation can not be undone!")
@@ -584,7 +584,7 @@ void MainWindow::checkVersion(QNetworkReply* reply) {
     } else if (app_version > current_version) {
       messageText = tr("<p>Your version ('%1') is higher than ").arg(APP_VERSION);
       messageText += tr("released stable version ('%2').").arg(current_version);
-      messageText += tr("</p><p>Do you use develepment version? ");
+      messageText += tr("</p><p>Do you use development version? ");
       messageText += tr("Don't forget to install stable version manually!</p>");
     } else {
       messageText = tr("<p>New version '%1' is available!<br/>Please visit ")
@@ -612,14 +612,14 @@ void MainWindow::about() {
     tr("<h1>%1 %3</h1>").arg(SETTING_APPLICATION).arg(APP_VERSION);
 
   abouttext.append(tr("<p><a href=\"http://qt-project.org/\">QT</a> "));
-  abouttext.append(tr("editor of tesseract-ocr box files</p>"));
+  abouttext.append(tr("editor of Tesseract-OCR box files</p>"));
   abouttext.append(tr("<p>Tesseract library version: %2</p>").arg(TESSERACT_VERSION_STR));
   abouttext.append(tr("<p>Project page: <a href=%1>%2</a></p>").
                    arg(PROJECT_URL).arg(PROJECT_URL_NAME));
   abouttext.append(tr("<p>Copyright 2010 Marcel Kolodziejczyk<br/>"));
   abouttext.append(tr("Copyright 2012 Zohar Gofer<br/>"));
   abouttext.append(tr("Copyright 2012 Dmitri Silaev<br/>"));
-  abouttext.append(tr("Copyright 2011-2018 Zdenko Podobný</p>"));
+  abouttext.append(tr("Copyright 2011-2024 Zdenko Podobný</p>"));
   abouttext.append(tr("<p>This software is released under "
                       "<a href=\"http://www.apache.org/licenses/LICENSE-2.0\"" \
                       ">Apache License 2.0</a></p>"));
@@ -1040,8 +1040,8 @@ void MainWindow::createActions() {
   settingsAct = new QAction(QIcon::fromTheme("settings"),
                             tr("&Settings..."), this);
   settingsAct->setShortcut(tr("Ctrl+T"));
-  settingsAct->setToolTip(tr("Programm settings"));
-  settingsAct->setStatusTip(tr("Programm settings"));
+  settingsAct->setToolTip(tr("Program settings"));
+  settingsAct->setStatusTip(tr("Program settings"));
   connect(settingsAct, SIGNAL(triggered()), this, SLOT(slotSettings()));
 
   genBoxAct = new QAction(tr("Generate boxes for page"), this);
@@ -1217,7 +1217,7 @@ void MainWindow::readSettings(bool init) {
   QSettings settings(QSettings::IniFormat, QSettings::UserScope,
                      SETTING_ORGANIZATION, SETTING_APPLICATION);
 
-  // run this section only durin initializaiton time
+  // run this section only during initialization time
   if (init) {
     settings.beginGroup("mainWindow");
     restoreGeometry(settings.value("geometry").toByteArray());

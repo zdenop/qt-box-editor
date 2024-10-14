@@ -320,7 +320,7 @@ void TessTools::msg(QString messageText) {
 }
 
 /*
- *  Set tessdata as Enviromental Variable
+ *  Set tessdata as Environmental Variable
  */
 void TessTools::setDataPath() {
   QByteArray tessDataPath = getDataPath().toUtf8();

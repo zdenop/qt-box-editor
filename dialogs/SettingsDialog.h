@@ -5,7 +5,7 @@
 * Created:         2011-02-11
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011, Zdenko Podobny
+* (C) Copyright 2011-2024, Zdenko Podobny
 **
 ** Licensed under the Apache License, Version 2.0 (the "License");
 ** you may not use this file except in compliance with the License.

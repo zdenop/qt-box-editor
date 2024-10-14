@@ -5,7 +5,7 @@
 * Created:     2010-01-06
 *
 * (C) Copyright 2010, Marcel Kolodziejczyk
-* (C) Copyright 2011-2014, Zdenko Podobny
+* (C) Copyright 2011-2024, Zdenko Podobny
 * (C) Copyright 2012, Zohar Gofer
 * (C) Copyright 2012, Dmitri Silaev
 **
@@ -465,14 +465,14 @@ void ChildWidget::readSettings() {
     imageFontColor = Qt::red;
   }
 
-  if (settings.contains("GUI/Rectagle")) {
-    rectColor = settings.value("GUI/Rectagle").value<QColor>();
+  if (settings.contains("GUI/Rectangle")) {
+    rectColor = settings.value("GUI/Rectangle").value<QColor>();
   } else {
     rectColor = Qt::red;
   }
 
-  if (settings.contains("GUI/Rectagle_fill")) {
-    rectFillColor = settings.value("GUI/Rectagle_fill").value<QColor>();
+  if (settings.contains("GUI/Rectangle_fill")) {
+    rectFillColor = settings.value("GUI/Rectangle_fill").value<QColor>();
   } else {
     rectFillColor = Qt::red;
     rectFillColor.setAlpha(127);
@@ -711,7 +711,7 @@ bool ChildWidget::fillTableData(int pageNum) {
     QStringList pieces = pageData[i];
     QString letter = pieces.value(0);
     bool bold = false, italic = false, underline = false;
-    // formating is present only in case there are more than 2 letters
+    // formatting is present only in case there are more than 2 letters
     if (letter.at(0) == '@' && letter.size() > 1) {
       bold = true;
       letterFont.setBold(true);
